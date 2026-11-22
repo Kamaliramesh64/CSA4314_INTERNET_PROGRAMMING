@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>SkyDesk – Flight Reservation</title>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+:root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);
+--bg:#eef2f6;--card:#fff;--ink:#12263f;--mute:#5d6b7d;--line:#d6dde6;--accent:#f2a900;--accent-ink:#2a1d00;--ok:#1d7a4b;--bad:#b3261e;--seat:#dfe8f2;color-scheme:light}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0e1a2b;--card:#16263c;--ink:#eaf0f7;--mute:#9fb0c4;--line:#2b405c;--accent:#f2b73a;--accent-ink:#2a1d00;--ok:#5ad08f;--bad:#ff8a80;--seat:#24384f;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#0e1a2b;--card:#16263c;--ink:#eaf0f7;--mute:#9fb0c4;--line:#2b405c;--accent:#f2b73a;--accent-ink:#2a1d00;--ok:#5ad08f;--bad:#ff8a80;--seat:#24384f;color-scheme:dark}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.5 Sora,system-ui,Segoe UI,sans-serif}
+header{background:var(--ink);color:#fff;padding:12px 16px;display:flex;flex-wrap:wrap;gap:8px 18px;align-items:center}
+header b{font-size:18px;margin-right:auto}
+header a{color:#fff;text-decoration:none;opacity:.8;cursor:pointer;font-size:13px;padding:4px 0;border-bottom:2px solid transparent}
+header a.on,header a:hover{opacity:1;border-color:var(--accent)}
+main{max-width:860px;margin:0 auto;padding:18px 14px 60px}
+h1{font-size:22px;margin:4px 0 14px}h2{font-size:16px;margin:0 0 10px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:16px;margin-bottom:14px}
+.row{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px}
+label{display:block;font-size:12px;color:var(--mute);margin-bottom:3px}
+input,select,textarea{width:100%;padding:9px 10px;border:1px solid var(--line);border-radius:7px;background:var(--bg);color:var(--ink);font:inherit}
+input:focus,select:focus,textarea:focus,button:focus-visible,a:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
+button{background:var(--accent);color:var(--accent-ink);border:0;border-radius:7px;padding:9px 16px;font:600 14px Sora,system-ui,sans-serif;cursor:pointer}
+button.sec{background:transparent;color:var(--ink);border:1px solid var(--line)}
+button.bad{background:transparent;color:var(--bad);border:1px solid var(--bad)}
+.flight{display:flex;flex-wrap:wrap;gap:10px 18px;align-items:center;justify-content:space-between}
+.big{font-size:20px;font-weight:700}.mute{color:var(--mute);font-size:13px}
+.msg{padding:10px 12px;border-radius:7px;margin-bottom:12px;font-size:14px;background:var(--seat)}
+.ok{color:var(--ok)}.err{color:var(--bad)}
+.seats{display:grid;grid-template-columns:repeat(7,34px);gap:6px;justify-content:center;margin:10px 0}
+.seat{width:34px;height:34px;padding:0;background:var(--seat);color:var(--ink);font-size:11px;border:1px solid var(--line)}
+.seat.taken{opacity:.35;cursor:not-allowed}.seat.sel{background:var(--accent);color:var(--accent-ink)}
+.aisle{width:34px}
+table{width:100%;border-collapse:collapse;font-size:14px}th,td{text-align:left;padding:8px 6px;border-bottom:1px solid var(--line)}
+.tbl{overflow-x:auto}
+.ticket{border:2px dashed var(--ink);border-radius:12px;padding:18px;background:var(--card)}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin-bottom:14px}
+.stat{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:12px}.stat b{font-size:22px;display:block}
+.hide{display:none}
+@media print{header,.noprint{display:none}body{background:#fff;color:#000}.ticket{border-color:#000;background:#fff;color:#000}}
+</style>
+</head>
+<body>
+<header>
+<b>SkyDesk</b>
+<a data-v="search">Search flights</a><a data-v="tickets">My tickets</a><a data-v="status">Booking status</a><a data-v="feedback">Feedback</a><a data-v="admin">Admin</a>
+</header>
+<main id="app"></main>
+<script>
+var CITIES=["Chennai","Delhi","Mumbai","Bengaluru","Kolkata","Hyderabad","Dubai","Singapore"];
+var flights=[],bookings=[],feedback=[],admin=false,view="search",ctx={},flash="";
+function seed(){var n=1,pairs=[["Chennai","Delhi",5200],["Delhi","Mumbai",4300],["Mumbai","Bengaluru",3600],["Bengaluru","Chennai",2400],["Chennai","Dubai",18500],["Kolkata","Hyderabad",4800],["Hyderabad","Singapore",21000],["Delhi","Chennai",5400]];
+ var d=new Date();
+ for(var k=0;k<3;k++)pairs.forEach(function(p,i){var dt=new Date(d.getTime()+(k+1)*864e5);
+  flights.push({id:n,no:"SD"+(100+n),from:p[0],to:p[1],date:dt.toISOString().slice(0,10),time:("0"+(5+(i*3+k*2)%17)).slice(-2)+":"+(i%2?"30":"00"),fare:p[2]+k*300,taken:takenSeats(n),active:true});n++;});}
+function takenSeats(s){var t=[];for(var i=0;i<12;i++)t.push((s*7+i*5)%42);return t;}
+function esc(s){return String(s).replace(/[&<>"]/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]})}
+function opts(a,sel){return a.map(function(c){return"<option"+(c===sel?" selected":"")+">"+c+"</option>"}).join("")}
+function money(n){return"₹"+Number(n).toLocaleString("en-IN")}
+function seatName(i){return(Math.floor(i/6)+1)+"ABCDEF"[i%6]}
+function go(v,c){view=v;ctx=c||ctx;render();window.scrollTo(0,0)}
+function note(){var m=flash;flash="";return m?'<div class="msg">'+m+'</div>':""}
+function render(){
+ document.querySelectorAll("header a").forEach(function(a){a.classList.toggle("on",a.dataset.v===view||(view==="book"||view==="pay")&&a.dataset.v==="search"||(view==="cancel"||view==="print")&&a.dataset.v==="tickets"||(view==="forgot"||view==="report")&&a.dataset.v==="admin")});
+ var f=V[view];document.getElementById("app").innerHTML=note()+f();if(V[view+"_after"])V[view+"_after"]();}
+var V={};
+V.search=function(){var s=ctx.q||{from:"Chennai",to:"Delhi",date:"",cls:"Economy"};
+ var res=flights.filter(function(f){return f.active&&f.from===s.from&&f.to===s.to&&(!s.date||f.date===s.date)});
+ var list=ctx.q?(res.length?res.map(function(f){var left=42-f.taken.length,m=s.cls==="Business"?2.2:s.cls==="Premium"?1.5:1;
+  return'<div class="card flight"><div><div class="big">'+f.from+' → '+f.to+'</div><div class="mute">'+f.no+' · '+f.date+' · '+f.time+'</div></div><div class="mute">'+left+' seats left</div><div><div class="big">'+money(Math.round(f.fare*m))+'</div><div class="mute">'+s.cls+'</div></div><button data-book="'+f.id+'">Book ticket</button></div>'}).join(""):'<div class="card">No flights match. Try another date or route.</div>'):"";
+ return'<h1>Search flights</h1><div class="card"><form id="sf" class="row"><div><label>From</label><select name="from">'+opts(CITIES,s.from)+'</select></div><div><label>To</label><select name="to">'+opts(CITIES,s.to)+'</select></div><div><label>Date (optional)</label><input type="date" name="date" value="'+s.date+'"></div><div><label>Class</label><select name="cls">'+opts(["Economy","Premium","Business"],s.cls)+'</select></div><div style="align-self:end"><button>Search</button></div></form></div>'+list;};
+V.search_after=function(){document.getElementById("sf").onsubmit=function(e){e.preventDefault();var d=new FormData(e.target);ctx={q:{from:d.get("from"),to:d.get("to"),date:d.get("date"),cls:d.get("cls")}};render();};
+ document.querySelectorAll("[data-book]").forEach(function(b){b.onclick=function(){go("book",{q:ctx.q,fid:+b.dataset.book,seat:null})}});};
+function mult(c){return c==="Business"?2.2:c==="Premium"?1.5:1}
+V.book=function(){var f=flights.find(function(x){return x.id===ctx.fid}),h="";
+ for(var i=0;i<42;i++){if(i%6===3)h+='<span class="aisle"></span>';var t=f.taken.indexOf(i)>-1;h+='<button type="button" class="seat'+(t?" taken":"")+(ctx.seat===i?" sel":"")+'" '+(t?"disabled":'data-s="'+i+'"')+'>'+seatName(i)+'</button>';}
+ return'<h1>Book ticket</h1><div class="card"><div class="big">'+f.from+' → '+f.to+'</div><div class="mute">'+f.no+' · '+f.date+' · '+f.time+' · '+ctx.q.cls+' · '+money(Math.round(f.fare*mult(ctx.q.cls)))+'</div></div><div class="card"><h2>Choose a seat</h2><div class="seats">'+h+'</div><div class="mute" style="text-align:center">'+(ctx.seat===null?"No seat selected":"Seat "+seatName(ctx.seat)+" selected")+'</div></div><div class="card"><h2>Passenger details</h2><form id="pf" class="row"><div><label>Full name</label><input name="name" required value="'+esc(ctx.p&&ctx.p.name||"")+'"></div><div><label>Age</label><input name="age" type="number" min="1" max="110" required value="'+esc(ctx.p&&ctx.p.age||"")+'"></div><div><label>Email</label><input name="email" type="email" required value="'+esc(ctx.p&&ctx.p.email||"")+'"></div><div><label>Phone</label><input name="phone" required pattern="[0-9+ ]{8,15}" value="'+esc(ctx.p&&ctx.p.phone||"")+'"></div><div style="align-self:end"><button>Continue to payment</button></div></form></div>';};
+V.book_after=function(){document.querySelectorAll("[data-s]").forEach(function(b){b.onclick=function(){var d=new FormData(document.getElementById("pf"));ctx.p={name:d.get("name"),age:d.get("age"),email:d.get("email"),phone:d.get("phone")};ctx.seat=+b.dataset.s;render();}});
+ document.getElementById("pf").onsubmit=function(e){e.preventDefault();if(ctx.seat===null){flash="Pick a seat before paying.";render();return;}var d=new FormData(e.target);ctx.p={name:d.get("name"),age:d.get("age"),email:d.get("email"),phone:d.get("phone")};go("pay");};};
+V.pay=function(){var f=flights.find(function(x){return x.id===ctx.fid}),amt=Math.round(f.fare*mult(ctx.q.cls));
+ return'<h1>Ticket payment</h1><div class="card"><div class="mute">'+esc(ctx.p.name)+' · '+f.no+' · seat '+seatName(ctx.seat)+'</div><div class="big">'+money(amt)+'</div></div><div class="card"><h2>Card details</h2><p class="mute">Demo gateway: no real card is charged. Use any 16 digits.</p><form id="cf" class="row"><div><label>Card number</label><input name="num" required inputmode="numeric" pattern="[0-9 ]{16,19}" placeholder="4111 1111 1111 1111"></div><div><label>Expiry (MM/YY)</label><input name="exp" required pattern="(0[1-9]|1[0-2])/[0-9]{2}" placeholder="08/29"></div><div><label>CVV</label><input name="cvv" required type="password" pattern="[0-9]{3,4}"></div><div style="align-self:end"><button>Pay '+money(amt)+'</button></div></form></div>';};
+V.pay_after=function(){document.getElementById("cf").onsubmit=function(e){e.preventDefault();var f=flights.find(function(x){return x.id===ctx.fid});
+ if(f.taken.indexOf(ctx.seat)>-1){flash="That seat was just taken. Pick another.";go("book");return;}
+ f.taken.push(ctx.seat);var pnr="SD"+Math.random().toString(36).slice(2,7).toUpperCase();
+ bookings.push({pnr:pnr,fid:f.id,seat:ctx.seat,cls:ctx.q.cls,p:ctx.p,amt:Math.round(f.fare*mult(ctx.q.cls)),status:"Confirmed",refund:0});
+ flash='Payment received. Booking <b>'+pnr+'</b> confirmed. An e-ticket was sent to '+esc(ctx.p.email)+'.';go("tickets",{});};};
+function fl(id){return flights.find(function(x){return x.id===id})}
+V.tickets=function(){var rows=bookings.map(function(b){var f=fl(b.fid);return'<tr><td>'+b.pnr+'</td><td>'+f.from+' → '+f.to+'</td><td>'+f.date+' '+f.time+'</td><td>'+esc(b.p.name)+'</td><td>'+seatName(b.seat)+'</td><td class="'+(b.status==="Confirmed"?"ok":"err")+'">'+b.status+'</td><td>'+(b.status==="Confirmed"?'<button class="sec" data-pr="'+b.pnr+'">Print</button> <button class="bad" data-cn="'+b.pnr+'">Cancel</button>':'')+'</td></tr>'}).join("");
+ return'<h1>My tickets</h1>'+(bookings.length?'<div class="card tbl"><table><tr><th>PNR</th><th>Route</th><th>Departs</th><th>Passenger</th><th>Seat</th><th>Status</th><th></th></tr>'+rows+'</table></div>':'<div class="card">No bookings yet. Search for a flight to book your first trip.</div>');};
+V.tickets_after=function(){document.querySelectorAll("[data-pr]").forEach(function(b){b.onclick=function(){go("print",{pnr:b.dataset.pr})}});document.querySelectorAll("[data-cn]").forEach(function(b){b.onclick=function(){go("cancel",{pnr:b.dataset.cn})}});};
+function bk(p){return bookings.find(function(b){return b.pnr===p})}
+V.cancel=function(){var b=bk(ctx.pnr),f=fl(b.fid);return'<h1>Cancel ticket</h1><div class="card"><div class="big">'+b.pnr+' · '+f.from+' → '+f.to+'</div><p class="mute">'+f.date+' · '+esc(b.p.name)+' · seat '+seatName(b.seat)+'</p><p>Cancelling refunds 80% of the fare: <b>'+money(Math.round(b.amt*.8))+'</b>. This can’t be undone.</p><button class="bad" id="yes">Cancel this ticket</button> <button class="sec" id="no">Keep ticket</button></div>';};
+V.cancel_after=function(){document.getElementById("no").onclick=function(){go("tickets")};document.getElementById("yes").onclick=function(){var b=bk(ctx.pnr),f=fl(b.fid);b.status="Cancelled";b.refund=Math.round(b.amt*.8);f.taken=f.taken.filter(function(s){return s!==b.seat});flash="Ticket "+b.pnr+" cancelled. Refund of "+money(b.refund)+" is on its way.";go("tickets")};};
+V.print=function(){var b=bk(ctx.pnr),f=fl(b.fid);return'<h1 class="noprint">Print ticket</h1><div class="ticket"><div class="mute">SkyDesk e-ticket · PNR</div><div class="big">'+b.pnr+'</div><hr><div class="big">'+f.from+' → '+f.to+'</div><p>Flight '+f.no+'<br>'+f.date+' at '+f.time+'<br>Passenger: '+esc(b.p.name)+' ('+esc(b.p.age)+')<br>Seat '+seatName(b.seat)+' · '+b.cls+'<br>Fare paid: '+money(b.amt)+'</p></div><p class="noprint"><button id="pb">Print</button> <button class="sec" id="bk">Back</button></p>';};
+V.print_after=function(){document.getElementById("pb").onclick=function(){window.print()};document.getElementById("bk").onclick=function(){go("tickets")};};
+V.status=function(){var r=ctx.res;return'<h1>Booking status</h1><div class="card"><form id="st" class="row"><div><label>PNR</label><input name="pnr" required placeholder="SDXXXXX" value="'+esc(ctx.last||"")+'"></div><div style="align-self:end"><button>Check status</button></div></form></div>'+(r===undefined?"":r?'<div class="card"><div class="big">'+r.pnr+' · <span class="'+(r.status==="Confirmed"?"ok":"err")+'">'+r.status+'</span></div><div class="mute">'+fl(r.fid).from+' → '+fl(r.fid).to+' · '+fl(r.fid).date+' · seat '+seatName(r.seat)+(r.refund?' · refund '+money(r.refund):'')+'</div></div>':'<div class="card err">No booking found for that PNR. Check the code on your e-ticket.</div>');};
+V.status_after=function(){document.getElementById("st").onsubmit=function(e){e.preventDefault();var p=new FormData(e.target).get("pnr").trim().toUpperCase();ctx={last:p,res:bk(p)||null};render();};};
+V.feedback=function(){return'<h1>Customer feedback</h1><div class="card"><form id="ff"><div class="row"><div><label>Name</label><input name="n" required></div><div><label>Rating</label><select name="r"><option>5</option><option>4</option><option>3</option><option>2</option><option>1</option></select></div></div><label style="margin-top:10px">Comments</label><textarea name="c" rows="4" required></textarea><p><button>Send feedback</button></p></form></div>';};
+V.feedback_after=function(){document.getElementById("ff").onsubmit=function(e){e.preventDefault();var d=new FormData(e.target);feedback.push({n:d.get("n"),r:+d.get("r"),c:d.get("c")});flash="Thank you. Your feedback was sent.";go("search",{});};};
+V.admin=function(){return'<h1>Administrator login</h1><div class="card"><p class="mute">Demo login: admin / admin123</p><form id="af" class="row"><div><label>Username</label><input name="u" required autocomplete="username"></div><div><label>Password</label><input name="p" type="password" required autocomplete="current-password"></div><div style="align-self:end"><button>Log in</button></div></form><p><a href="#" id="fg">Forgot password?</a></p></div>';};
+V.admin_after=function(){if(admin){go("report");return;}document.getElementById("fg").onclick=function(e){e.preventDefault();go("forgot")};
+ document.getElementById("af").onsubmit=function(e){e.preventDefault();var d=new FormData(e.target);if(d.get("u")==="admin"&&d.get("p")==="admin123"){admin=true;go("report");}else{flash='<span class="err">Wrong username or password. Check both and try again.</span>';render();}};};
+V.forgot=function(){return'<h1>Forgot password</h1><div class="card"><form id="fp" class="row"><div><label>Admin email</label><input name="e" type="email" required></div><div style="align-self:end"><button>Send reset link</button></div></form><p><a href="#" id="bk">Back to login</a></p></div>';};
+V.forgot_after=function(){document.getElementById("bk").onclick=function(e){e.preventDefault();go("admin")};document.getElementById("fp").onsubmit=function(e){e.preventDefault();flash="If that email belongs to an admin account, a reset link is on its way.";go("admin");};};
+V.report=function(){var ok=bookings.filter(function(b){return b.status==="Confirmed"}),rev=ok.reduce(function(s,b){return s+b.amt},0),can=bookings.length-ok.length,avg=feedback.length?(feedback.reduce(function(s,x){return s+x.r},0)/feedback.length).toFixed(1):"–";
+ var fr=flights.map(function(f){return'<tr><td>'+f.no+'</td><td>'+f.from+' → '+f.to+'</td><td>'+f.date+' '+f.time+'</td><td>'+money(f.fare)+'</td><td>'+(42-f.taken.length)+'</td><td>'+(f.active?'<button class="sec" data-t="'+f.id+'">Cancel flight</button>':'<span class="err">Cancelled</span>')+'</td></tr>'}).join("");
+ var fb=feedback.map(function(x){return'<tr><td>'+esc(x.n)+'</td><td>'+x.r+'/5</td><td>'+esc(x.c)+'</td></tr>'}).join("")||'<tr><td colspan="3" class="mute">No feedback yet.</td></tr>';
+ return'<h1>Admin report</h1><div class="stats"><div class="stat"><b>'+ok.length+'</b>Confirmed bookings</div><div class="stat"><b>'+can+'</b>Cancellations</div><div class="stat"><b>'+money(rev)+'</b>Revenue</div><div class="stat"><b>'+avg+'</b>Average rating</div></div><div class="card"><h2>Add a flight</h2><form id="nf" class="row"><div><label>From</label><select name="from">'+opts(CITIES)+'</select></div><div><label>To</label><select name="to">'+opts(CITIES,"Delhi")+'</select></div><div><label>Date</label><input type="date" name="date" required></div><div><label>Time</label><input type="time" name="time" required></div><div><label>Base fare (₹)</label><input type="number" name="fare" min="500" required></div><div style="align-self:end"><button>Add flight</button></div></form></div><div class="card tbl"><h2>Flight schedule and seat inventory</h2><table><tr><th>Flight</th><th>Route</th><th>Departs</th><th>Fare</th><th>Seats left</th><th></th></tr>'+fr+'</table></div><div class="card tbl"><h2>Customer feedback</h2><table><tr><th>Name</th><th>Rating</th><th>Comment</th></tr>'+fb+'</table></div><button class="sec" id="lo">Log out</button>';};
+V.report_after=function(){if(!admin){go("admin");return;}document.getElementById("lo").onclick=function(){admin=false;go("admin")};
+ document.querySelectorAll("[data-t]").forEach(function(b){b.onclick=function(){var f=fl(+b.dataset.t);f.active=false;bookings.forEach(function(x){if(x.fid===f.id&&x.status==="Confirmed"){x.status="Cancelled";x.refund=x.amt}});render();}});
+ document.getElementById("nf").onsubmit=function(e){e.preventDefault();var d=new FormData(e.target);if(d.get("from")===d.get("to")){flash="Choose different origin and destination.";render();return;}var id=flights.length+1;flights.push({id:id,no:"SD"+(100+id),from:d.get("from"),to:d.get("to"),date:d.get("date"),time:d.get("time"),fare:+d.get("fare"),taken:[],active:true});flash="Flight SD"+(100+id)+" added.";render();};};
+document.querySelector("header").onclick=function(e){var v=e.target.dataset&&e.target.dataset.v;if(v)go(v,{});};
+seed();render();
+</script>
+</body>
+</html>

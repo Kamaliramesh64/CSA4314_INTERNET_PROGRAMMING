@@ -1,0 +1,2242 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ReNewMarket - Second-Hand Marketplace</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            background: #f4f8f5;
+            color: #263238;
+        }
+
+        header {
+            background: linear-gradient(135deg, #087f5b, #064e3b);
+            color: white;
+            padding: 20px 6%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        header h1 {
+            font-size: 30px;
+        }
+
+        header p {
+            margin-top: 5px;
+            font-size: 13px;
+        }
+
+        nav {
+            background: white;
+            padding: 15px 5%;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            justify-content: center;
+            box-shadow: 0 3px 8px #00000010;
+        }
+
+        nav button {
+            background: transparent;
+            border: none;
+            color: #087f5b;
+            font-weight: bold;
+            cursor: pointer;
+            font-size: 14px;
+            padding: 8px;
+        }
+
+        nav button:hover {
+            color: #064e3b;
+            text-decoration: underline;
+        }
+
+        .hero {
+            background: linear-gradient(120deg, #d1fae5, #ecfdf5);
+            padding: 55px 8%;
+            text-align: center;
+        }
+
+        .hero h2 {
+            color: #065f46;
+            font-size: 34px;
+            margin-bottom: 15px;
+        }
+
+        .hero p {
+            margin-bottom: 22px;
+            line-height: 1.7;
+        }
+
+        .btn {
+            background: #087f5b;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            padding: 11px 18px;
+            cursor: pointer;
+            margin: 4px;
+            font-size: 14px;
+        }
+
+        .btn:hover {
+            background: #065f46;
+        }
+
+        .btn-danger {
+            background: #dc3545;
+        }
+
+        .btn-danger:hover {
+            background: #b02a37;
+        }
+
+        .btn-secondary {
+            background: #64748b;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 1200px;
+            margin: 30px auto;
+        }
+
+        .section-title {
+            color: #065f46;
+            margin-bottom: 20px;
+            font-size: 25px;
+        }
+
+        .categories {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin-bottom: 30px;
+        }
+
+        .category {
+            background: white;
+            border: 1px solid #d1fae5;
+            border-radius: 10px;
+            padding: 15px 22px;
+            cursor: pointer;
+            color: #065f46;
+            font-weight: bold;
+        }
+
+        .category:hover {
+            background: #d1fae5;
+        }
+
+        .search-area {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-bottom: 25px;
+        }
+
+        input, select, textarea {
+            width: 100%;
+            padding: 11px;
+            border: 1px solid #cbd5e1;
+            border-radius: 5px;
+            margin: 7px 0 14px;
+            font-size: 14px;
+        }
+
+        .search-area input {
+            flex: 1;
+            min-width: 200px;
+        }
+
+        .search-area select {
+            width: 200px;
+            margin: 0;
+        }
+
+        .products {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 22px;
+        }
+
+        .product-card {
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 3px 12px #00000010;
+            padding-bottom: 15px;
+            transition: transform 0.2s;
+        }
+
+        .product-card:hover {
+            transform: translateY(-4px);
+        }
+
+        .product-image {
+            width: 100%;
+            height: 170px;
+            object-fit: cover;
+            background: #e2e8f0;
+        }
+
+        .product-info {
+            padding: 15px;
+        }
+
+        .product-info h3 {
+            margin-bottom: 8px;
+            color: #064e3b;
+        }
+
+        .price {
+            color: #087f5b;
+            font-size: 20px;
+            font-weight: bold;
+            margin: 10px 0;
+        }
+
+        .badge {
+            display: inline-block;
+            background: #d1fae5;
+            color: #065f46;
+            padding: 5px 8px;
+            border-radius: 5px;
+            font-size: 12px;
+            margin: 5px 0;
+        }
+
+        .panel {
+            background: white;
+            border-radius: 10px;
+            padding: 25px;
+            margin-bottom: 25px;
+            box-shadow: 0 3px 12px #00000010;
+        }
+
+        .form-box {
+            max-width: 500px;
+            margin: 30px auto;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+            background: white;
+        }
+
+        th, td {
+            padding: 12px;
+            border: 1px solid #e2e8f0;
+            text-align: left;
+        }
+
+        th {
+            background: #d1fae5;
+            color: #065f46;
+        }
+
+        .table-wrapper {
+            overflow-x: auto;
+        }
+
+        .message {
+            padding: 12px;
+            border-radius: 5px;
+            margin: 12px 0;
+            background: #d1fae5;
+            color: #065f46;
+        }
+
+        .danger-message {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        .small-text {
+            font-size: 13px;
+            color: #64748b;
+        }
+
+        .admin-menu {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 20px;
+        }
+
+        .admin-menu button {
+            background: #e2f5eb;
+            color: #065f46;
+            border: none;
+            border-radius: 5px;
+            padding: 10px 14px;
+            cursor: pointer;
+        }
+
+        footer {
+            background: #064e3b;
+            color: white;
+            text-align: center;
+            padding: 25px;
+            margin-top: 40px;
+        }
+
+        @media(max-width: 600px) {
+            header {
+                justify-content: center;
+                text-align: center;
+            }
+
+            .hero h2 {
+                font-size: 27px;
+            }
+
+            .container {
+                width: 94%;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<header>
+    <div>
+        <h1>♻ ReNewMarket</h1>
+        <p>Buy • Sell • Give Pre-Loved Items a New Home</p>
+    </div>
+
+    <div>
+        <span id="welcomeUser">Welcome, Guest!</span>
+    </div>
+</header>
+
+<nav>
+    <button onclick="showPage('home')">Home</button>
+    <button onclick="showPage('home'); scrollToProducts()">Browse Products</button>
+    <button onclick="showPage('sell')">Sell an Item</button>
+    <button onclick="showPage('cart')">🛒 Cart (<span id="cartCount">0</span>)</button>
+    <button onclick="showPage('orders')">My Orders</button>
+    <button onclick="showPage('favorites')">Favorites</button>
+    <button onclick="showPage('profile')">My Profile</button>
+    <button onclick="showPage('login')">Login / Register</button>
+    <button onclick="showPage('contact')">Contact</button>
+    <button onclick="showPage('adminLogin')">Admin</button>
+    <button onclick="logout()">Logout</button>
+</nav>
+
+<!-- HOME PAGE -->
+<section id="homePage">
+
+    <div class="hero">
+        <h2>Give Pre-Loved Items a New Life!</h2>
+        <p>
+            Discover affordable second-hand products, sell items you no longer need,
+            and help create a more sustainable world.
+        </p>
+        <button class="btn" onclick="scrollToProducts()">Explore Products</button>
+        <button class="btn" onclick="showPage('sell')">Start Selling</button>
+    </div>
+
+    <div class="container">
+
+        <h2 class="section-title">Shop by Category</h2>
+
+        <div class="categories">
+            <button class="category" onclick="filterCategory('All')">All Items</button>
+            <button class="category" onclick="filterCategory('Electronics')">💻 Electronics</button>
+            <button class="category" onclick="filterCategory('Furniture')">🪑 Furniture</button>
+            <button class="category" onclick="filterCategory('Clothing')">👕 Clothing</button>
+            <button class="category" onclick="filterCategory('Books')">📚 Books</button>
+            <button class="category" onclick="filterCategory('Collectibles')">🧸 Collectibles</button>
+            <button class="category" onclick="filterCategory('Other')">📦 Other</button>
+        </div>
+
+        <h2 class="section-title" id="productsHeading">Available Products</h2>
+
+        <div class="search-area">
+            <input type="text" id="searchInput"
+                   placeholder="Search products, brands, or keywords..."
+                   oninput="renderProducts()">
+
+            <select id="categoryFilter" onchange="renderProducts()">
+                <option value="All">All Categories</option>
+                <option value="Electronics">Electronics</option>
+                <option value="Furniture">Furniture</option>
+                <option value="Clothing">Clothing</option>
+                <option value="Books">Books</option>
+                <option value="Collectibles">Collectibles</option>
+                <option value="Other">Other</option>
+            </select>
+
+            <select id="priceFilter" onchange="renderProducts()">
+                <option value="default">Sort by Price</option>
+                <option value="low">Price: Low to High</option>
+                <option value="high">Price: High to Low</option>
+            </select>
+        </div>
+
+        <div id="productList" class="products"></div>
+
+    </div>
+</section>
+
+<!-- LOGIN PAGE -->
+<section id="loginPage" class="hidden container">
+
+    <div class="panel form-box">
+        <h2 class="section-title">User Login</h2>
+
+        <form onsubmit="loginUser(event)">
+            <label>Email Address</label>
+            <input type="email" id="loginEmail" required>
+
+            <label>Password</label>
+            <input type="password" id="loginPassword" required>
+
+            <button class="btn" type="submit">Login</button>
+        </form>
+
+        <p class="small-text">New user? Register below.</p>
+
+        <hr style="margin:20px 0;">
+
+        <h2 class="section-title">Create Account</h2>
+
+        <form onsubmit="registerUser(event)">
+            <label>Full Name</label>
+            <input type="text" id="registerName" required>
+
+            <label>Email Address</label>
+            <input type="email" id="registerEmail" required>
+
+            <label>Phone Number</label>
+            <input type="tel" id="registerPhone" required>
+
+            <label>Password</label>
+            <input type="password" id="registerPassword" minlength="6" required>
+
+            <button class="btn" type="submit">Register</button>
+        </form>
+
+        <div id="loginMessage"></div>
+    </div>
+
+</section>
+
+<!-- SELL ITEM PAGE -->
+<section id="sellPage" class="hidden container">
+
+    <div class="panel form-box">
+        <h2 class="section-title">Create a Listing</h2>
+        <p class="small-text">Login to list your second-hand products for sale.</p>
+
+        <form onsubmit="addProduct(event)">
+            <label>Item Name</label>
+            <input type="text" id="itemName" required>
+
+            <label>Category</label>
+            <select id="itemCategory" required>
+                <option value="Electronics">Electronics</option>
+                <option value="Furniture">Furniture</option>
+                <option value="Clothing">Clothing</option>
+                <option value="Books">Books</option>
+                <option value="Collectibles">Collectibles</option>
+                <option value="Other">Other</option>
+            </select>
+
+            <label>Description</label>
+            <textarea id="itemDescription" rows="4" required></textarea>
+
+            <label>Price (₹)</label>
+            <input type="number" id="itemPrice" min="1" required>
+
+            <label>Item Condition</label>
+            <select id="itemCondition">
+                <option>Like New</option>
+                <option>Good</option>
+                <option>Fair</option>
+            </select>
+
+            <label>Image URL (optional)</label>
+            <input type="url" id="itemImage" placeholder="https://example.com/image.jpg">
+
+            <label>Pickup / Delivery Details</label>
+            <input type="text" id="itemDelivery" placeholder="e.g. Chennai pickup or courier">
+
+            <button class="btn" type="submit">Publish Listing</button>
+        </form>
+
+        <div id="sellMessage"></div>
+    </div>
+
+</section>
+
+<!-- CART PAGE -->
+<section id="cartPage" class="hidden container">
+    <div class="panel">
+        <h2 class="section-title">Shopping Cart</h2>
+        <div id="cartItems"></div>
+    </div>
+</section>
+
+<!-- CHECKOUT PAGE -->
+<section id="checkoutPage" class="hidden container">
+
+    <div class="panel form-box">
+        <h2 class="section-title">Checkout</h2>
+
+        <form onsubmit="placeOrder(event)">
+            <label>Customer Name</label>
+            <input type="text" id="checkoutName" required>
+
+            <label>Email</label>
+            <input type="email" id="checkoutEmail" required>
+
+            <label>Phone Number</label>
+            <input type="tel" id="checkoutPhone" required>
+
+            <label>Delivery Address / Pickup Location</label>
+            <textarea id="checkoutAddress" rows="3" required></textarea>
+
+            <label>Fulfilment Method</label>
+            <select id="deliveryMethod">
+                <option>Delivery</option>
+                <option>Self Pickup</option>
+            </select>
+
+            <label>Payment Method</label>
+            <select id="paymentMethod">
+                <option>Cash on Delivery</option>
+                <option>Pay on Pickup</option>
+                <option>Online Payment (Demo)</option>
+            </select>
+
+            <div id="checkoutSummary"></div>
+
+            <p class="small-text">
+                Demo checkout only. No real payment will be processed.
+            </p>
+
+            <button type="submit" class="btn">Place Order</button>
+        </form>
+    </div>
+
+</section>
+
+<!-- ORDERS PAGE -->
+<section id="ordersPage" class="hidden container">
+    <div class="panel">
+        <h2 class="section-title">My Orders & Transaction History</h2>
+        <div id="ordersList"></div>
+    </div>
+</section>
+
+<!-- FAVORITES PAGE -->
+<section id="favoritesPage" class="hidden container">
+    <h2 class="section-title">My Favorite Items</h2>
+    <div id="favoriteList" class="products"></div>
+</section>
+
+<!-- PROFILE PAGE -->
+<section id="profilePage" class="hidden container">
+    <div class="panel form-box">
+        <h2 class="section-title">Manage My Profile</h2>
+
+        <form onsubmit="updateProfile(event)">
+            <label>Full Name</label>
+            <input type="text" id="profileName" required>
+
+            <label>Email Address</label>
+            <input type="email" id="profileEmail" required>
+
+            <label>Phone Number</label>
+            <input type="tel" id="profilePhone" required>
+
+            <button class="btn" type="submit">Update Profile</button>
+            <button class="btn btn-danger" type="button" onclick="deleteAccount()">
+                Delete Account
+            </button>
+        </form>
+
+        <div id="profileMessage"></div>
+    </div>
+</section>
+
+<!-- CONTACT PAGE -->
+<section id="contactPage" class="hidden container">
+    <div class="panel form-box">
+        <h2 class="section-title">Contact ReNewMarket</h2>
+
+        <form onsubmit="sendInquiry(event)">
+            <label>Your Name</label>
+            <input type="text" id="contactName" required>
+
+            <label>Email Address</label>
+            <input type="email" id="contactEmail" required>
+
+            <label>Subject</label>
+            <input type="text" id="contactSubject" required>
+
+            <label>Message</label>
+            <textarea id="contactMessage" rows="5" required></textarea>
+
+            <button class="btn" type="submit">Submit Inquiry</button>
+        </form>
+
+        <div id="contactResult"></div>
+        <p class="small-text">Demo mode: inquiries are stored locally in this browser.</p>
+    </div>
+</section>
+
+<!-- ADMIN LOGIN -->
+<section id="adminLoginPage" class="hidden container">
+    <div class="panel form-box">
+        <h2 class="section-title">Administrator Login</h2>
+
+        <form onsubmit="adminLogin(event)">
+            <label>Admin Username</label>
+            <input type="text" id="adminUsername" required>
+
+            <label>Admin Password</label>
+            <input type="password" id="adminPassword" required>
+
+            <button class="btn" type="submit">Admin Login</button>
+        </form>
+
+        <p class="small-text">
+            Demo credentials: admin / Admin@123
+        </p>
+
+        <div id="adminLoginMessage"></div>
+    </div>
+</section>
+
+<!-- ADMIN DASHBOARD -->
+<section id="adminPage" class="hidden container">
+
+    <h2 class="section-title">Administrator Dashboard</h2>
+
+    <div class="panel">
+        <h3>Dashboard Overview</h3>
+        <p id="adminStats"></p>
+        <button class="btn btn-danger" onclick="adminLogout()">Admin Logout</button>
+    </div>
+
+    <div class="admin-menu">
+        <button onclick="showAdminSection('users')">User Management</button>
+        <button onclick="showAdminSection('categories')">Category Management</button>
+        <button onclick="showAdminSection('products')">Commodity Management</button>
+        <button onclick="showAdminSection('orders')">Order Management</button>
+        <button onclick="showAdminSection('inquiries')">Customer Inquiries</button>
+    </div>
+
+    <!-- USER MANAGEMENT -->
+    <div id="adminUsers" class="panel admin-section">
+        <h3 class="section-title">User Management</h3>
+        <div id="usersTable"></div>
+    </div>
+
+    <!-- CATEGORY MANAGEMENT -->
+    <div id="adminCategories" class="panel admin-section hidden">
+        <h3 class="section-title">Category Management</h3>
+
+        <form onsubmit="addCategory(event)">
+            <label>New Category Name</label>
+            <input type="text" id="newCategory" required>
+            <button class="btn" type="submit">Add Category</button>
+        </form>
+
+        <div id="categoriesTable"></div>
+    </div>
+
+    <!-- COMMODITY MANAGEMENT -->
+    <div id="adminProducts" class="panel admin-section hidden">
+        <h3 class="section-title">Commodity Management</h3>
+        <div id="adminProductsTable"></div>
+    </div>
+
+    <!-- ORDER MANAGEMENT -->
+    <div id="adminOrders" class="panel admin-section hidden">
+        <h3 class="section-title">Order Management & Order Summary</h3>
+        <div id="adminOrdersTable"></div>
+    </div>
+
+    <!-- INQUIRY MANAGEMENT -->
+    <div id="adminInquiries" class="panel admin-section hidden">
+        <h3 class="section-title">Customer Inquiries</h3>
+        <div id="adminInquiriesTable"></div>
+    </div>
+
+</section>
+
+<footer>
+    <h3>♻ ReNewMarket</h3>
+    <p style="margin-top:10px;">
+        Buy Smart. Sell Responsibly. Make Sustainability a Habit.
+    </p>
+    <p style="margin-top:10px;font-size:12px;">
+        © 2026 ReNewMarket. Demo marketplace project.
+    </p>
+</footer>
+
+<script>
+    // ----------------------------------------
+    // LOCAL STORAGE AND INITIAL DATA
+    // ----------------------------------------
+
+    function loadData(key, fallback) {
+        try {
+            const value = localStorage.getItem(key);
+            return value ? JSON.parse(value) : fallback;
+        } catch (error) {
+            return fallback;
+        }
+    }
+
+    function saveData(key, value) {
+        localStorage.setItem(key, JSON.stringify(value));
+    }
+
+    let users = loadData("renew_users", []);
+    let products = loadData("renew_products", [
+        {
+            id: 1,
+            name: "Second-Hand Laptop",
+            category: "Electronics",
+            description: "Laptop in good working condition. Suitable for students and office work.",
+            price: 18000,
+            condition: "Good",
+            image: "",
+            seller: "Demo Seller",
+            sellerEmail: "seller@example.com",
+            delivery: "Chennai",
+            available: true
+        },
+        {
+            id: 2,
+            name: "Wooden Study Table",
+            category: "Furniture",
+            description: "Pre-owned wooden study table with storage space.",
+            price: 2500,
+            condition: "Good",
+            image: "",
+            seller: "Demo Seller",
+            sellerEmail: "seller@example.com",
+            delivery: "Chennai pickup",
+            available: true
+        },
+        {
+            id: 3,
+            name: "Casual Denim Jacket",
+            category: "Clothing",
+            description: "Comfortable denim jacket in excellent condition.",
+            price: 650,
+            condition: "Like New",
+            image: "",
+            seller: "Demo Seller",
+            sellerEmail: "seller@example.com",
+            delivery: "Courier available",
+            available: true
+        },
+        {
+            id: 4,
+            name: "Programming Books Set",
+            category: "Books",
+            description: "Collection of used programming and computer science books.",
+            price: 450,
+            condition: "Good",
+            image: "",
+            seller: "Demo Seller",
+            sellerEmail: "seller@example.com",
+            delivery: "Chennai",
+            available: true
+        },
+        {
+            id: 5,
+            name: "Vintage Collectible",
+            category: "Collectibles",
+            description: "Pre-owned collectible item for enthusiasts.",
+            price: 900,
+            condition: "Fair",
+            image: "",
+            seller: "Demo Seller",
+            sellerEmail: "seller@example.com",
+            delivery: "Pickup or delivery",
+            available: true
+        }
+    ]);
+
+    let categories = loadData("renew_categories", [
+        "Electronics",
+        "Furniture",
+        "Clothing",
+        "Books",
+        "Collectibles",
+        "Other"
+    ]);
+
+    let orders = loadData("renew_orders", []);
+    let inquiries = loadData("renew_inquiries", []);
+    let currentUser = loadData("renew_current_user", null);
+    let isAdmin = false;
+
+    let cart = loadData("renew_cart", []);
+    let favorites = loadData("renew_favorites", []);
+
+    function persistAll() {
+        saveData("renew_users", users);
+        saveData("renew_products", products);
+        saveData("renew_categories", categories);
+        saveData("renew_orders", orders);
+        saveData("renew_inquiries", inquiries);
+        saveData("renew_cart", cart);
+        saveData("renew_favorites", favorites);
+        saveData("renew_current_user", currentUser);
+    }
+
+    function escapeHTML(value) {
+        return String(value ?? "").replace(/[&<>"']/g, function(character) {
+            return {
+                "&": "&amp;",
+                "<": "&lt;",
+                ">": "&gt;",
+                '"': "&quot;",
+                "'": "&#39;"
+            }[character];
+        });
+    }
+
+    function formatPrice(price) {
+        return "₹" + Number(price).toLocaleString("en-IN");
+    }
+
+    function makeId() {
+        return Date.now() + Math.floor(Math.random() * 1000);
+    }
+
+    // ----------------------------------------
+    // PAGE NAVIGATION
+    // ----------------------------------------
+
+    const pageNames = [
+        "home",
+        "login",
+        "sell",
+        "cart",
+        "checkout",
+        "orders",
+        "favorites",
+        "profile",
+        "contact",
+        "adminLogin",
+        "admin"
+    ];
+
+    function showPage(page) {
+        if (page === "admin" && !isAdmin) {
+            page = "adminLogin";
+        }
+
+        if (["sell", "cart", "checkout", "orders", "favorites", "profile"].includes(page)) {
+            if (!currentUser) {
+                alert("Please log in first.");
+                page = "login";
+            }
+        }
+
+        pageNames.forEach(name => {
+            const section = document.getElementById(name + "Page");
+            if (section) section.classList.add("hidden");
+        });
+
+        document.getElementById(page + "Page").classList.remove("hidden");
+
+        if (page === "cart") renderCart();
+        if (page === "checkout") renderCheckout();
+        if (page === "orders") renderOrders();
+        if (page === "favorites") renderFavorites();
+        if (page === "profile") renderProfile();
+        if (page === "admin") renderAdminDashboard();
+
+        window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+
+    function scrollToProducts() {
+        showPage("home");
+        setTimeout(() => {
+            document.getElementById("productsHeading").scrollIntoView({
+                behavior: "smooth"
+            });
+        }, 100);
+    }
+
+    // ----------------------------------------
+    // USER REGISTRATION AND LOGIN
+    // ----------------------------------------
+
+    function registerUser(event) {
+        event.preventDefault();
+
+        const name = document.getElementById("registerName").value.trim();
+        const email = document.getElementById("registerEmail").value.trim().toLowerCase();
+        const phone = document.getElementById("registerPhone").value.trim();
+        const password = document.getElementById("registerPassword").value;
+
+        if (users.some(user => user.email === email)) {
+            document.getElementById("loginMessage").innerHTML =
+                '<div class="message danger-message">An account with this email already exists.</div>';
+            return;
+        }
+
+        const user = {
+            id: makeId(),
+            name,
+            email,
+            phone,
+            password
+        };
+
+        users.push(user);
+        currentUser = {
+            id: user.id,
+            name: user.name,
+            email: user.email,
+            phone: user.phone
+        };
+
+        persistAll();
+        updateHeader();
+
+        document.getElementById("loginMessage").innerHTML =
+            '<div class="message">Registration successful! You are now logged in.</div>';
+
+        event.target.reset();
+
+        setTimeout(() => showPage("home"), 1000);
+    }
+
+    function loginUser(event) {
+        event.preventDefault();
+
+        const email = document.getElementById("loginEmail").value.trim().toLowerCase();
+        const password = document.getElementById("loginPassword").value;
+
+        const user = users.find(
+            item => item.email === email && item.password === password
+        );
+
+        if (!user) {
+            document.getElementById("loginMessage").innerHTML =
+                '<div class="message danger-message">Invalid email or password.</div>';
+            return;
+        }
+
+        currentUser = {
+            id: user.id,
+            name: user.name,
+            email: user.email,
+            phone: user.phone
+        };
+
+        persistAll();
+        updateHeader();
+
+        document.getElementById("loginMessage").innerHTML =
+            '<div class="message">Login successful!</div>';
+
+        event.target.reset();
+
+        setTimeout(() => showPage("home"), 500);
+    }
+
+    function logout() {
+        if (!currentUser) {
+            alert("You are not logged in.");
+            return;
+        }
+
+        currentUser = null;
+        persistAll();
+        updateHeader();
+        showPage("home");
+        alert("You have logged out successfully.");
+    }
+
+    function updateHeader() {
+        document.getElementById("welcomeUser").textContent =
+            currentUser ? "Welcome, " + currentUser.name + "!" : "Welcome, Guest!";
+
+        document.getElementById("cartCount").textContent =
+            cart.reduce((sum, item) => sum + item.quantity, 0);
+    }
+
+    // ----------------------------------------
+    // PRODUCT DISPLAY, SEARCH AND FILTER
+    // ----------------------------------------
+
+    function filterCategory(category) {
+        document.getElementById("categoryFilter").value = category;
+        renderProducts();
+        document.getElementById("productsHeading").scrollIntoView({
+            behavior: "smooth"
+        });
+    }
+
+    function getProductImage(product) {
+        if (product.image && /^https?:\/\//i.test(product.image)) {
+            return escapeHTML(product.image);
+        }
+
+        const pictures = {
+            Electronics: "https://images.unsplash.com/photo-1496181133206-80ce9b88a853?w=500",
+            Furniture: "https://images.unsplash.com/photo-1499933374294-4584851497cc?w=500",
+            Clothing: "https://images.unsplash.com/photo- jacket?w=500",
+            Books: "https://images.unsplash.com/photo-1512820790803-83ca734da794?w=500",
+            Collectibles: "https://images.unsplash.com/photo- toy?w=500",
+            Other: "https://images.unsplash.com/photo-1490312278390-ab64016e0aa9?w=500"
+        };
+
+        const safePictures = {
+            Electronics: "https://images.unsplash.com/photo-1496181133206-80ce9b88a853?w=500",
+            Furniture: "https://images.unsplash.com/photo-1499933374294-4584851497cc?w=500",
+            Clothing: "https://images.unsplash.com/photo-1483985988355-763728e1935b?w=500",
+            Books: "https://images.unsplash.com/photo-1512820790803-83ca734da794?w=500",
+            Collectibles: "https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=500",
+            Other: "https://images.unsplash.com/photo-1490312278390-ab64016e0aa9?w=500"
+        };
+
+        return safePictures[product.category] || safePictures.Other;
+    }
+
+    function renderProducts() {
+        const search = document.getElementById("searchInput").value.toLowerCase().trim();
+        const category = document.getElementById("categoryFilter").value;
+        const sort = document.getElementById("priceFilter").value;
+
+        let filtered = products.filter(product => {
+            const matchesSearch =
+                product.name.toLowerCase().includes(search) ||
+                product.description.toLowerCase().includes(search) ||
+                product.category.toLowerCase().includes(search);
+
+            const matchesCategory =
+                category === "All" || product.category === category;
+
+            return matchesSearch && matchesCategory && product.available !== false;
+        });
+
+        if (sort === "low") filtered.sort((a, b) => a.price - b.price);
+        if (sort === "high") filtered.sort((a, b) => b.price - a.price);
+
+        const list = document.getElementById("productList");
+
+        if (!filtered.length) {
+            list.innerHTML = '<div class="panel">No matching products found.</div>';
+            return;
+        }
+
+        list.innerHTML = filtered.map(product => {
+            const favorite = favorites.some(
+                item => item.userEmail === (currentUser?.email || "") &&
+                        item.productId === product.id
+            );
+
+            return `
+                <div class="product-card">
+                    <img class="product-image"
+                         src="${getProductImage(product)}"
+                         alt="${escapeHTML(product.name)}"
+                         onerror="this.onerror=null;this.src='https://placehold.co/400x250?text=ReNewMarket'">
+
+                    <div class="product-info">
+                        <span class="badge">${escapeHTML(product.category)}</span>
+                        <h3>${escapeHTML(product.name)}</h3>
+                        <p>${escapeHTML(product.description)}</p>
+                        <p class="small-text">Condition: ${escapeHTML(product.condition)}</p>
+                        <p class="small-text">Seller: ${escapeHTML(product.seller)}</p>
+                        <p class="price">${formatPrice(product.price)}</p>
+
+                        <button class="btn" onclick="addToCart(${product.id})">Add to Cart</button>
+
+                        <button class="btn btn-secondary"
+                                onclick="toggleFavorite(${product.id})">
+                            ${favorite ? "♥ Saved" : "♡ Favorite"}
+                        </button>
+
+                        <button class="btn btn-secondary"
+                                onclick="negotiatePrice(${product.id})">
+                            Negotiate
+                        </button>
+                    </div>
+                </div>
+            `;
+        }).join("");
+    }
+
+    // ----------------------------------------
+    // SELLER LISTING MANAGEMENT
+    // ----------------------------------------
+
+    function addProduct(event) {
+        event.preventDefault();
+
+        if (!currentUser) {
+            alert("Please log in to sell an item.");
+            showPage("login");
+            return;
+        }
+
+        const product = {
+            id: makeId(),
+            name: document.getElementById("itemName").value.trim(),
+            category: document.getElementById("itemCategory").value,
+            description: document.getElementById("itemDescription").value.trim(),
+            price: Number(document.getElementById("itemPrice").value),
+            condition: document.getElementById("itemCondition").value,
+            image: document.getElementById("itemImage").value.trim(),
+            delivery: document.getElementById("itemDelivery").value.trim(),
+            seller: currentUser.name,
+            sellerEmail: currentUser.email,
+            available: true
+        };
+
+        if (product.price <= 0) {
+            alert("Enter a valid price.");
+            return;
+        }
+
+        products.push(product);
+        persistAll();
+
+        document.getElementById("sellMessage").innerHTML =
+            '<div class="message">Your item has been listed successfully!</div>';
+
+        event.target.reset();
+        renderProducts();
+    }
+
+    function negotiatePrice(productId) {
+        if (!currentUser) {
+            alert("Please log in to contact the seller.");
+            showPage("login");
+            return;
+        }
+
+        const product = products.find(item => item.id === productId);
+        if (!product) return;
+
+        const offer = prompt(
+            "Listed price: " + formatPrice(product.price) +
+            "\nEnter your offer price in ₹:"
+        );
+
+        if (offer === null) return;
+
+        const amount = Number(offer);
+
+        if (!Number.isFinite(amount) || amount <= 0) {
+            alert("Enter a valid offer price.");
+            return;
+        }
+
+        inquiries.push({
+            id: makeId(),
+            name: currentUser.name,
+            email: currentUser.email,
+            subject: "Price negotiation: " + product.name,
+            message: "Offer price: " + formatPrice(amount) +
+                ". Seller: " + product.sellerEmail,
+            date: new Date().toLocaleString()
+        });
+
+        persistAll();
+
+        alert("Your offer has been recorded. In this demo, the seller must contact you separately to accept it.");
+    }
+
+    // ----------------------------------------
+    // CART MANAGEMENT
+    // ----------------------------------------
+
+    function addToCart(productId) {
+        if (!currentUser) {
+            alert("Please log in before adding items to your cart.");
+            showPage("login");
+            return;
+        }
+
+        const product = products.find(item => item.id === productId);
+
+        if (!product || product.available === false) {
+            alert("This item is no longer available.");
+            return;
+        }
+
+        if (product.sellerEmail === currentUser.email) {
+            alert("You cannot purchase your own listing.");
+            return;
+        }
+
+        const existing = cart.find(
+            item => item.productId === productId &&
+                    item.userEmail === currentUser.email
+        );
+
+        if (existing) {
+            existing.quantity += 1;
+        } else {
+            cart.push({
+                productId,
+                quantity: 1,
+                userEmail: currentUser.email
+            });
+        }
+
+        persistAll();
+        updateHeader();
+        alert("Item added to your cart.");
+    }
+
+    function changeQuantity(productId, amount) {
+        const item = cart.find(
+            entry => entry.productId === productId &&
+                     entry.userEmail === currentUser.email
+        );
+
+        if (!item) return;
+
+        item.quantity += amount;
+
+        if (item.quantity <= 0) {
+            cart = cart.filter(entry => entry !== item);
+        }
+
+        persistAll();
+        updateHeader();
+        renderCart();
+    }
+
+    function removeFromCart(productId) {
+        cart = cart.filter(
+            item => !(item.productId === productId &&
+                      item.userEmail === currentUser.email)
+        );
+
+        persistAll();
+        updateHeader();
+        renderCart();
+    }
+
+    function renderCart() {
+        const userCart = cart.filter(
+            item => item.userEmail === currentUser.email
+        );
+
+        const container = document.getElementById("cartItems");
+
+        if (!userCart.length) {
+            container.innerHTML = '<p>Your cart is empty.</p>';
+            return;
+        }
+
+        let total = 0;
+
+        let html = `
+            <div class="table-wrapper">
+            <table>
+                <tr>
+                    <th>Item</th>
+                    <th>Price</th>
+                    <th>Quantity</th>
+                    <th>Subtotal</th>
+                    <th>Action</th>
+                </tr>
+        `;
+
+        userCart.forEach(item => {
+            const product = products.find(p => p.id === item.productId);
+            if (!product || product.available === false) return;
+
+            const subtotal = product.price * item.quantity;
+            total += subtotal;
+
+            html += `
+                <tr>
+                    <td>${escapeHTML(product.name)}</td>
+                    <td>${formatPrice(product.price)}</td>
+                    <td>
+                        <button class="btn btn-secondary"
+                                onclick="changeQuantity(${product.id}, -1)">−</button>
+                        ${item.quantity}
+                        <button class="btn btn-secondary"
+                                onclick="changeQuantity(${product.id}, 1)">+</button>
+                    </td>
+                    <td>${formatPrice(subtotal)}</td>
+                    <td>
+                        <button class="btn btn-danger"
+                                onclick="removeFromCart(${product.id})">Remove</button>
+                    </td>
+                </tr>
+            `;
+        });
+
+        html += `
+            </table>
+            </div>
+            <h3 style="margin-top:20px">Total: ${formatPrice(total)}</h3>
+            <button class="btn" onclick="showPage('checkout')">Proceed to Checkout</button>
+            <button class="btn btn-secondary" onclick="showPage('home')">Continue Shopping</button>
+        `;
+
+        container.innerHTML = html;
+    }
+
+    // ----------------------------------------
+    // CHECKOUT AND ORDER PLACEMENT
+    // ----------------------------------------
+
+    function renderCheckout() {
+        const user = users.find(item => item.id === currentUser.id);
+
+        if (user) {
+            document.getElementById("checkoutName").value = user.name;
+            document.getElementById("checkoutEmail").value = user.email;
+            document.getElementById("checkoutPhone").value = user.phone;
+        }
+
+        const userCart = cart.filter(
+            item => item.userEmail === currentUser.email
+        );
+
+        let total = 0;
+
+        userCart.forEach(item => {
+            const product = products.find(p => p.id === item.productId);
+            if (product && product.available !== false) {
+                total += product.price * item.quantity;
+            }
+        });
+
+        document.getElementById("checkoutSummary").innerHTML =
+            `<h3>Order Total: ${formatPrice(total)}</h3>`;
+    }
+
+    function placeOrder(event) {
+        event.preventDefault();
+
+        const userCart = cart.filter(
+            item => item.userEmail === currentUser.email
+        );
+
+        const orderItems = [];
+
+        for (const item of userCart) {
+            const product = products.find(p => p.id === item.productId);
+
+            if (!product || product.available === false) {
+                alert("One or more items are no longer available. Please review your cart.");
+                showPage("cart");
+                return;
+            }
+
+            if (product.sellerEmail === currentUser.email) {
+                alert("You cannot purchase your own listing.");
+                showPage("cart");
+                return;
+            }
+
+            orderItems.push({
+                productId: product.id,
+                name: product.name,
+                price: product.price,
+                quantity: item.quantity,
+                sellerEmail: product.sellerEmail
+            });
+        }
+
+        if (!orderItems.length) {
+            alert("Your cart is empty.");
+            showPage("cart");
+            return;
+        }
+
+        const total = orderItems.reduce(
+            (sum, item) => sum + item.price * item.quantity, 0
+        );
+
+        const order = {
+            id: "RNM" + Date.now(),
+            userId: currentUser.id,
+            customerName: document.getElementById("checkoutName").value.trim(),
+            customerEmail: document.getElementById("checkoutEmail").value.trim(),
+            customerPhone: document.getElementById("checkoutPhone").value.trim(),
+            address: document.getElementById("checkoutAddress").value.trim(),
+            deliveryMethod: document.getElementById("deliveryMethod").value,
+            paymentMethod: document.getElementById("paymentMethod").value,
+            items: orderItems,
+            total,
+            status: "Shipped",
+            date: new Date().toLocaleString()
+        };
+
+        orders.push(order);
+
+        orderItems.forEach(item => {
+            const product = products.find(p => p.id === item.productId);
+            if (product) product.available = false;
+        });
+
+        cart = cart.filter(item => item.userEmail !== currentUser.email);
+
+        persistAll();
+        updateHeader();
+
+        alert("Order placed successfully! Order ID: " + order.id);
+        showPage("orders");
+    }
+
+    // ----------------------------------------
+    // ORDER HISTORY AND STATUS
+    // ----------------------------------------
+
+    function renderOrders() {
+        const userOrders = orders.filter(
+            order => order.userId === currentUser.id
+        );
+
+        const container = document.getElementById("ordersList");
+
+        if (!userOrders.length) {
+            container.innerHTML = "<p>You have not placed any orders yet.</p>";
+            return;
+        }
+
+        container.innerHTML = userOrders.map(order => `
+            <div class="panel">
+                <h3>Order ID: ${escapeHTML(order.id)}</h3>
+                <p>Date: ${escapeHTML(order.date)}</p>
+                <p>Total: ${formatPrice(order.total)}</p>
+                <p>Payment: ${escapeHTML(order.paymentMethod)}</p>
+                <p>Fulfilment: ${escapeHTML(order.deliveryMethod)}</p>
+                <p>Status: <span class="badge">${escapeHTML(order.status)}</span></p>
+
+                <h4 style="margin-top:12px">Items</h4>
+                <ul style="padding-left:25px;margin:10px 0">
+                    ${order.items.map(item => `
+                        <li>${escapeHTML(item.name)} × ${item.quantity}
+                            — ${formatPrice(item.price * item.quantity)}</li>
+                    `).join("")}
+                </ul>
+
+                ${order.status !== "Received" ? `
+                    <button class="btn"
+                            onclick="confirmReceived('${escapeHTML(order.id)}')">
+                        Confirm Received
+                    </button>
+                ` : '<p class="message">Order received successfully.</p>'}
+
+                <button class="btn btn-secondary"
+                        onclick="leaveFeedback('${escapeHTML(order.id)}')">
+                    Leave Feedback
+                </button>
+            </div>
+        `).join("");
+    }
+
+    function confirmReceived(orderId) {
+        const order = orders.find(
+            item => item.id === orderId && item.userId === currentUser.id
+        );
+
+        if (!order) return;
+
+        order.status = "Received";
+        persistAll();
+        renderOrders();
+
+        alert("Order marked as received.");
+    }
+
+    function leaveFeedback(orderId) {
+        const order = orders.find(
+            item => item.id === orderId && item.userId === currentUser.id
+        );
+
+        if (!order) return;
+
+        const feedback = prompt("Enter your feedback for this order:");
+
+        if (!feedback || !feedback.trim()) return;
+
+        inquiries.push({
+            id: makeId(),
+            name: currentUser.name,
+            email: currentUser.email,
+            subject: "Feedback for " + orderId,
+            message: feedback.trim(),
+            date: new Date().toLocaleString()
+        });
+
+        persistAll();
+        alert("Thank you! Your feedback has been recorded.");
+    }
+
+    // ----------------------------------------
+    // FAVORITES MANAGEMENT
+    // ----------------------------------------
+
+    function toggleFavorite(productId) {
+        if (!currentUser) {
+            alert("Please log in to manage favorites.");
+            showPage("login");
+            return;
+        }
+
+        const existing = favorites.find(
+            item => item.productId === productId &&
+                    item.userEmail === currentUser.email
+        );
+
+        if (existing) {
+            favorites = favorites.filter(item => item !== existing);
+            alert("Item removed from favorites.");
+        } else {
+            favorites.push({
+                productId,
+                userEmail: currentUser.email
+            });
+            alert("Item added to favorites.");
+        }
+
+        persistAll();
+        renderProducts();
+    }
+
+    function renderFavorites() {
+        const userFavorites = favorites.filter(
+            item => item.userEmail === currentUser.email
+        );
+
+        const favoriteProducts = userFavorites
+            .map(item => products.find(p => p.id === item.productId))
+            .filter(product => product && product.available !== false);
+
+        const container = document.getElementById("favoriteList");
+
+        if (!favoriteProducts.length) {
+            container.innerHTML = "<p>You have no available favorite items.</p>";
+            return;
+        }
+
+        container.innerHTML = favoriteProducts.map(product => `
+            <div class="product-card">
+                <img class="product-image"
+                     src="${getProductImage(product)}"
+                     alt="${escapeHTML(product.name)}"
+                     onerror="this.onerror=null;this.src='https://placehold.co/400x250?text=ReNewMarket'">
+
+                <div class="product-info">
+                    <h3>${escapeHTML(product.name)}</h3>
+                    <p>${escapeHTML(product.description)}</p>
+                    <p class="price">${formatPrice(product.price)}</p>
+                    <button class="btn" onclick="addToCart(${product.id})">Add to Cart</button>
+                    <button class="btn btn-danger"
+                            onclick="toggleFavorite(${product.id});renderFavorites()">
+                        Remove Favorite
+                    </button>
+                </div>
+            </div>
+        `).join("");
+    }
+
+    // ----------------------------------------
+    // CUSTOMER PROFILE MANAGEMENT
+    // ----------------------------------------
+
+    function renderProfile() {
+        const user = users.find(item => item.id === currentUser.id);
+
+        if (!user) return;
+
+        document.getElementById("profileName").value = user.name;
+        document.getElementById("profileEmail").value = user.email;
+        document.getElementById("profilePhone").value = user.phone;
+    }
+
+    function updateProfile(event) {
+        event.preventDefault();
+
+        const user = users.find(item => item.id === currentUser.id);
+        if (!user) return;
+
+        const newEmail = document.getElementById("profileEmail").value.trim().toLowerCase();
+
+        const duplicate = users.some(
+            item => item.email === newEmail && item.id !== user.id
+        );
+
+        if (duplicate) {
+            document.getElementById("profileMessage").innerHTML =
+                '<div class="message danger-message">That email is already in use.</div>';
+            return;
+        }
+
+        const oldEmail = user.email;
+
+        user.name = document.getElementById("profileName").value.trim();
+        user.email = newEmail;
+        user.phone = document.getElementById("profilePhone").value.trim();
+
+        currentUser = {
+            id: user.id,
+            name: user.name,
+            email: user.email,
+            phone: user.phone
+        };
+
+        products.forEach(product => {
+            if (product.sellerEmail === oldEmail) {
+                product.sellerEmail = newEmail;
+                product.seller = user.name;
+            }
+        });
+
+        cart.forEach(item => {
+            if (item.userEmail === oldEmail) item.userEmail = newEmail;
+        });
+
+        favorites.forEach(item => {
+            if (item.userEmail === oldEmail) item.userEmail = newEmail;
+        });
+
+        orders.forEach(order => {
+            if (order.customerEmail === oldEmail) {
+                order.customerEmail = newEmail;
+            }
+        });
+
+        persistAll();
+        updateHeader();
+
+        document.getElementById("profileMessage").innerHTML =
+            '<div class="message">Profile updated successfully.</div>';
+    }
+
+    function deleteAccount() {
+        if (!confirm("Are you sure you want to delete your account? This cannot be undone.")) {
+            return;
+        }
+
+        users = users.filter(item => item.id !== currentUser.id);
+
+        products = products.filter(
+            product => product.sellerEmail !== currentUser.email
+        );
+
+        cart = cart.filter(item => item.userEmail !== currentUser.email);
+
+        favorites = favorites.filter(item => item.userEmail !== currentUser.email);
+
+        currentUser = null;
+
+        persistAll();
+        updateHeader();
+        alert("Your account has been deleted.");
+        showPage("home");
+    }
+
+    // ----------------------------------------
+    // CUSTOMER EMAIL INQUIRIES
+    // ----------------------------------------
+
+    function sendInquiry(event) {
+        event.preventDefault();
+
+        inquiries.push({
+            id: makeId(),
+            name: document.getElementById("contactName").value.trim(),
+            email: document.getElementById("contactEmail").value.trim(),
+            subject: document.getElementById("contactSubject").value.trim(),
+            message: document.getElementById("contactMessage").value.trim(),
+            date: new Date().toLocaleString()
+        });
+
+        persistAll();
+
+        document.getElementById("contactResult").innerHTML =
+            '<div class="message">Your inquiry has been recorded successfully.</div>';
+
+        event.target.reset();
+    }
+
+    // ----------------------------------------
+    // ADMIN AUTHENTICATION
+    // ----------------------------------------
+
+    function adminLogin(event) {
+        event.preventDefault();
+
+        const username = document.getElementById("adminUsername").value;
+        const password = document.getElementById("adminPassword").value;
+
+        if (username === "admin" && password === "Admin@123") {
+            isAdmin = true;
+
+            document.getElementById("adminLoginMessage").innerHTML =
+                '<div class="message">Administrator login successful.</div>';
+
+            showPage("admin");
+        } else {
+            document.getElementById("adminLoginMessage").innerHTML =
+                '<div class="message danger-message">Invalid administrator credentials.</div>';
+        }
+    }
+
+    function adminLogout() {
+        isAdmin = false;
+        showPage("home");
+        alert("Administrator logged out.");
+    }
+
+    function showAdminSection(section) {
+        if (!isAdmin) {
+            alert("Administrator login required.");
+            showPage("adminLogin");
+            return;
+        }
+
+        document.querySelectorAll(".admin-section").forEach(element => {
+            element.classList.add("hidden");
+        });
+
+        document.getElementById("admin" + capitalize(section)).classList.remove("hidden");
+
+        if (section === "users") renderAdminUsers();
+        if (section === "categories") renderAdminCategories();
+        if (section === "products") renderAdminProducts();
+        if (section === "orders") renderAdminOrders();
+        if (section === "inquiries") renderAdminInquiries();
+    }
+
+    function capitalize(text) {
+        return text.charAt(0).toUpperCase() + text.slice(1);
+    }
+
+    function renderAdminDashboard() {
+        if (!isAdmin) return;
+
+        document.getElementById("adminStats").innerHTML =
+            `Registered Users: <strong>${users.length}</strong> |
+             Products: <strong>${products.length}</strong> |
+             Orders: <strong>${orders.length}</strong> |
+             Customer Inquiries: <strong>${inquiries.length}</strong>`;
+
+        renderAdminUsers();
+        renderAdminCategories();
+        renderAdminProducts();
+        renderAdminOrders();
+        renderAdminInquiries();
+    }
+
+    // ----------------------------------------
+    // ADMIN: USER MANAGEMENT
+    // ----------------------------------------
+
+    function renderAdminUsers() {
+        const container = document.getElementById("usersTable");
+
+        if (!users.length) {
+            container.innerHTML = "<p>No registered users.</p>";
+            return;
+        }
+
+        container.innerHTML = `
+            <div class="table-wrapper">
+            <table>
+                <tr>
+                    <th>Name</th>
+                    <th>Email</th>
+                    <th>Phone</th>
+                    <th>Action</th>
+                </tr>
+
+                ${users.map(user => `
+                    <tr>
+                        <td>${escapeHTML(user.name)}</td>
+                        <td>${escapeHTML(user.email)}</td>
+                        <td>${escapeHTML(user.phone)}</td>
+                        <td>
+                            <button class="btn"
+                                    onclick="adminEditUser(${user.id})">Edit</button>
+                            <button class="btn btn-danger"
+                                    onclick="adminDeleteUser(${user.id})">Delete</button>
+                        </td>
+                    </tr>
+                `).join("")}
+            </table>
+            </div>
+        `;
+    }
+
+    function adminEditUser(userId) {
+        if (!isAdmin) return;
+
+        const user = users.find(item => item.id === userId);
+        if (!user) return;
+
+        const name = prompt("Enter new name:", user.name);
+        if (name === null || !name.trim()) return;
+
+        const email = prompt("Enter new email:", user.email);
+        if (email === null || !email.trim()) return;
+
+        const newEmail = email.trim().toLowerCase();
+
+        if (users.some(item => item.email === newEmail && item.id !== user.id)) {
+            alert("This email already belongs to another user.");
+            return;
+        }
+
+        const oldEmail = user.email;
+        const phone = prompt("Enter new phone number:", user.phone);
+        if (phone === null) return;
+
+        user.name = name.trim();
+        user.email = newEmail;
+        user.phone = phone.trim();
+
+        products.forEach(product => {
+            if (product.sellerEmail === oldEmail) {
+                product.sellerEmail = newEmail;
+                product.seller = user.name;
+            }
+        });
+
+        if (currentUser && currentUser.id === user.id) {
+            currentUser = {
+                id: user.id,
+                name: user.name,
+                email: user.email,
+                phone: user.phone
+            };
+            updateHeader();
+        }
+
+        persistAll();
+        renderAdminUsers();
+        renderAdminProducts();
+    }
+
+    function adminDeleteUser(userId) {
+        if (!isAdmin) return;
+
+        if (!confirm("Delete this user account?")) return;
+
+        const user = users.find(item => item.id === userId);
+        if (!user) return;
+
+        users = users.filter(item => item.id !== userId);
+
+        if (currentUser && currentUser.id === userId) {
+            currentUser = null;
+            updateHeader();
+        }
+
+        cart = cart.filter(item => item.userEmail !== user.email);
+        favorites = favorites.filter(item => item.userEmail !== user.email);
+
+        persistAll();
+        renderAdminUsers();
+        renderAdminDashboard();
+    }
+
+    // ----------------------------------------
+    // ADMIN: CATEGORY MANAGEMENT
+    // ----------------------------------------
+
+    function addCategory(event) {
+        event.preventDefault();
+
+        if (!isAdmin) return;
+
+        const name = document.getElementById("newCategory").value.trim();
+
+        if (categories.some(category => category.toLowerCase() === name.toLowerCase())) {
+            alert("This category already exists.");
+            return;
+        }
+
+        categories.push(name);
+        persistAll();
+
+        document.getElementById("newCategory").value = "";
+
+        renderAdminCategories();
+
+        alert("Category added successfully.");
+    }
+
+    function renderAdminCategories() {
+        const container = document.getElementById("categoriesTable");
+
+        container.innerHTML = `
+            <div class="table-wrapper">
+            <table>
+                <tr>
+                    <th>Category Name</th>
+                    <th>Items</th>
+                    <th>Action</th>
+                </tr>
+
+                ${categories.map(category => `
+                    <tr>
+                        <td>${escapeHTML(category)}</td>
+                        <td>${products.filter(p => p.category === category).length}</td>
+                        <td>
+                            <button class="btn btn-danger"
+                                    onclick="deleteCategory('${escapeHTML(category)}')">
+                                Delete
+                            </button>
+                        </td>
+                    </tr>
+                `).join("")}
+            </table>
+            </div>
+        `;
+    }
+
+    function deleteCategory(category) {
+        if (!isAdmin) return;
+
+        const categoryProducts = products.filter(
+            product => product.category === category
+        );
+
+        if (categoryProducts.length > 0) {
+            alert("Cannot delete this category while products are assigned to it. Edit or remove those products first.");
+            return;
+        }
+
+        if (!confirm("Delete category " + category + "?")) return;
+
+        categories = categories.filter(item => item !== category);
+
+        persistAll();
+        renderAdminCategories();
+    }
+
+    // ----------------------------------------
+    // ADMIN: COMMODITY MANAGEMENT
+    // ----------------------------------------
+
+    function renderAdminProducts() {
+        const container = document.getElementById("adminProductsTable");
+
+        if (!products.length) {
+            container.innerHTML = "<p>No products listed.</p>";
+            return;
+        }
+
+        container.innerHTML = `
+            <div class="table-wrapper">
+            <table>
+                <tr>
+                    <th>Product</th>
+                    <th>Category</th>
+                    <th>Price</th>
+                    <th>Seller</th>
+                    <th>Availability</th>
+                    <th>Action</th>
+                </tr>
+
+                ${products.map(product => `
+                    <tr>
+                        <td>${escapeHTML(product.name)}</td>
+                        <td>${escapeHTML(product.category)}</td>
+                        <td>${formatPrice(product.price)}</td>
+                        <td>${escapeHTML(product.seller)}</td>
+                        <td>${product.available ? "Available" : "Sold / Unavailable"}</td>
+                        <td>
+                            <button class="btn"
+                                    onclick="adminEditProduct(${product.id})">Edit</button>
+                            <button class="btn btn-danger"
+                                    onclick="adminDeleteProduct(${product.id})">Delete</button>
+                        </td>
+                    </tr>
+                `).join("")}
+            </table>
+            </div>
+        `;
+    }
+
+    function adminEditProduct(productId) {
+        if (!isAdmin) return;
+
+        const product = products.find(item => item.id === productId);
+        if (!product) return;
+
+        const name = prompt("Product name:", product.name);
+        if (name === null || !name.trim()) return;
+
+        const priceText = prompt("Product price:", product.price);
+        if (priceText === null) return;
+
+        const price = Number(priceText);
+
+        if (!Number.isFinite(price) || price <= 0) {
+            alert("Enter a valid price.");
+            return;
+        }
+
+        const description = prompt("Product description:", product.description);
+        if (description === null) return;
+
+        const category = prompt(
+            "Category (" + categories.join(", ") + "):",
+            product.category
+        );
+
+        if (category === null) return;
+
+        if (!categories.includes(category.trim())) {
+            alert("Please use an existing category.");
+            return;
+        }
+
+        product.name = name.trim();
+        product.price = price;
+        product.description = description.trim();
+        product.category = category.trim();
+
+        persistAll();
+        renderProducts();
+        renderAdminProducts();
+
+        alert("Product updated successfully.");
+    }
+
+    function adminDeleteProduct(productId) {
+        if (!isAdmin) return;
+
+        if (!confirm("Delete this product listing?")) return;
+
+        products = products.filter(product => product.id !== productId);
+
+        cart = cart.filter(item => item.productId !== productId);
+        favorites = favorites.filter(item => item.productId !== productId);
+
+        persistAll();
+
+        renderAdminProducts();
+        renderProducts();
+    }
+
+    // ----------------------------------------
+    // ADMIN: ORDER MANAGEMENT
+    // ----------------------------------------
+
+    function renderAdminOrders() {
+        const container = document.getElementById("adminOrdersTable");
+
+        if (!orders.length) {
+            container.innerHTML = "<p>No orders available.</p>";
+            return;
+        }
+
+        container.innerHTML = `
+            <div class="table-wrapper">
+            <table>
+                <tr>
+                    <th>Order ID</th>
+                    <th>Customer</th>
+                    <th>Phone</th>
+                    <th>Address</th>
+                    <th>Items</th>
+                    <th>Total</th>
+                    <th>Status</th>
+                    <th>Change Status</th>
+                    <th>Action</th>
+                </tr>
+
+                ${orders.map(order => `
+                    <tr>
+                        <td>${escapeHTML(order.id)}</td>
+                        <td>
+                            ${escapeHTML(order.customerName)}<br>
+                            ${escapeHTML(order.customerEmail)}
+                        </td>
+                        <td>${escapeHTML(order.customerPhone)}</td>
+                        <td>${escapeHTML(order.address)}</td>
+                        <td>
+                            ${order.items.map(item =>
+                                escapeHTML(item.name) + " × " + item.quantity
+                            ).join("<br>")}
+                        </td>
+                        <td>${formatPrice(order.total)}</td>
+                        <td>${escapeHTML(order.status)}</td>
+                        <td>
+                            <select id="status_${escapeHTML(order.id)}">
+                                <option value="Shipped" ${order.status === "Shipped" ? "selected" : ""}>
+                                    Shipped
+                                </option>
+                                <option value="Received" ${order.status === "Received" ? "selected" : ""}>
+                                    Received
+                                </option>
+                            </select>
+                            <button class="btn"
+                                    onclick="changeOrderStatus('${escapeHTML(order.id)}')">
+                                Update
+                            </button>
+                        </td>
+                        <td>
+                            <button class="btn btn-danger"
+                                    onclick="deleteOrder('${escapeHTML(order.id)}')">
+                                Delete Order
+                            </button>
+                        </td>
+                    </tr>
+                `).join("")}
+            </table>
+            </div>
+
+            <h3 style="margin-top:20px">
+                Total Order Value: ${formatPrice(
+                    orders.reduce((sum, order) => sum + order.total, 0)
+                )}
+            </h3>
+        `;
+    }
+
+    function changeOrderStatus(orderId) {
+        if (!isAdmin) return;
+
+        const order = orders.find(item => item.id === orderId);
+        if (!order) return;
+
+        const select = document.getElementById("status_" + orderId);
+        if (!select) return;
+
+        order.status = select.value;
+
+        persistAll();
+        renderAdminOrders();
+
+        alert("Order status updated to " + order.status + ".");
+    }
+
+    function deleteOrder(orderId) {
+        if (!isAdmin) return;
+
+        if (!confirm("Permanently delete this order?")) return;
+
+        orders = orders.filter(order => order.id !== orderId);
+
+        persistAll();
+        renderAdminOrders();
+
+        alert("Order deleted successfully.");
+    }
+
+    // ----------------------------------------
+    // ADMIN: CUSTOMER INQUIRIES
+    // ----------------------------------------
+
+    function renderAdminInquiries() {
+        const container = document.getElementById("adminInquiriesTable");
+
+        if (!inquiries.length) {
+            container.innerHTML = "<p>No customer inquiries or feedback available.</p>";
+            return;
+        }
+
+        container.innerHTML = `
+            <div class="table-wrapper">
+            <table>
+                <tr>
+                    <th>Date</th>
+                    <th>Customer</th>
+                    <th>Email</th>
+                    <th>Subject</th>
+                    <th>Message</th>
+                    <th>Action</th>
+                </tr>
+
+                ${inquiries.map(inquiry => `
+                    <tr>
+                        <td>${escapeHTML(inquiry.date)}</td>
+                        <td>${escapeHTML(inquiry.name)}</td>
+                        <td>${escapeHTML(inquiry.email)}</td>
+                        <td>${escapeHTML(inquiry.subject)}</td>
+                        <td>${escapeHTML(inquiry.message)}</td>
+                        <td>
+                            <button class="btn btn-danger"
+                                    onclick="deleteInquiry(${inquiry.id})">
+                                Delete
+                            </button>
+                        </td>
+                    </tr>
+                `).join("")}
+            </table>
+            </div>
+        `;
+    }
+
+    function deleteInquiry(inquiryId) {
+        if (!isAdmin) return;
+
+        if (!confirm("Delete this inquiry?")) return;
+
+        inquiries = inquiries.filter(item => item.id !== inquiryId);
+
+        persistAll();
+        renderAdminInquiries();
+    }
+
+    // ----------------------------------------
+    // INITIALIZATION
+    // ----------------------------------------
+
+    function initializeApp() {
+        // Ensure category options match stored categories.
+        const itemCategory = document.getElementById("itemCategory");
+        itemCategory.innerHTML = categories.map(category =>
+            `<option value="${escapeHTML(category)}">${escapeHTML(category)}</option>`
+        ).join("");
+
+        const categoryFilter = document.getElementById("categoryFilter");
+
+        categoryFilter.innerHTML =
+            '<option value="All">All Categories</option>' +
+            categories.map(category =>
+                `<option value="${escapeHTML(category)}">${escapeHTML(category)}</option>`
+            ).join("");
+
+        updateHeader();
+        renderProducts();
+        showPage("home");
+    }
+
+    initializeApp();
+</script>
+
+</body>
+</html>

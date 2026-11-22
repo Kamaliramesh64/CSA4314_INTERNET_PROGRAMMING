@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>City College Library</title>
+<style>
+:root{--bg:#f6f4ef;--card:#fff;--tx:#1f2430;--mut:#6b7280;--ac:#2f5d50;--acx:#fff;--bd:#e3dfd6;--bad:#b42318;--ok:#18794e;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#16191f;--card:#1f242c;--tx:#e8eaee;--mut:#9aa3b0;--ac:#6fb59f;--acx:#10231d;--bd:#2f3640;--bad:#f97066;--ok:#47cd89}}
+:root[data-theme="dark"]{--bg:#16191f;--card:#1f242c;--tx:#e8eaee;--mut:#9aa3b0;--ac:#6fb59f;--acx:#10231d;--bd:#2f3640;--bad:#f97066;--ok:#47cd89}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--tx);font:15px/1.5 Georgia,'Times New Roman',serif}
+header{background:var(--ac);color:var(--acx);padding:12px 20px;display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between}
+header h1{margin:0;font-size:20px}nav{display:flex;flex-wrap:wrap;gap:6px}
+nav button{background:transparent;color:var(--acx);border:1px solid transparent;padding:6px 12px;border-radius:6px;cursor:pointer;font:inherit}
+nav button.on,nav button:hover{border-color:var(--acx)}
+main{max-width:980px;margin:0 auto;padding:20px 16px}
+.card{background:var(--card);border:1px solid var(--bd);border-radius:10px;padding:16px;margin-bottom:16px}
+h2{margin:0 0 10px;font-size:18px}
+input,select,textarea{width:100%;padding:8px;border:1px solid var(--bd);border-radius:6px;background:var(--bg);color:var(--tx);font:inherit}
+.row{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:8px;margin-bottom:8px}
+button.b{background:var(--ac);color:var(--acx);border:0;padding:8px 14px;border-radius:6px;cursor:pointer;font:inherit}
+button.s{background:transparent;color:var(--ac);border:1px solid var(--ac);padding:3px 9px;border-radius:6px;cursor:pointer;font:inherit;margin:1px}
+button.d{color:var(--bad);border-color:var(--bad)}
+.tw{overflow-x:auto}table{width:100%;border-collapse:collapse;font-size:14px}
+th,td{text-align:left;padding:7px 8px;border-bottom:1px solid var(--bd);white-space:nowrap}th{color:var(--mut);font-weight:600}
+.tag{padding:2px 8px;border-radius:99px;font-size:12px;border:1px solid var(--bd)}.ok{color:var(--ok)}.bad{color:var(--bad)}.mut{color:var(--mut)}
+#toast{position:fixed;bottom:calc(16px + env(safe-area-inset-bottom,0px));left:50%;transform:translateX(-50%);background:var(--tx);color:var(--bg);padding:8px 16px;border-radius:8px;display:none;z-index:9}
+</style>
+</head>
+<body>
+<header><h1>📚 City College Library</h1><nav id="nav"></nav></header>
+<main id="app"></main><div id="toast"></div>
+<script>
+const FINE=5; // Rs per overdue day
+const $=s=>document.querySelector(s),v=id=>($('#'+id)||{}).value||'';
+const esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const today=()=>new Date().toISOString().slice(0,10);
+const addD=(d,n)=>{const x=new Date(d);x.setDate(x.getDate()+n);return x.toISOString().slice(0,10)};
+const diff=(a,b)=>Math.round((new Date(a)-new Date(b))/864e5);
+const seed=()=>({books:[
+{id:1,title:'Biomedical Instrumentation',author:'R. S. Khandpur',cat:'Biomedical',copies:3,out:0},
+{id:2,title:'Introduction to Algorithms',author:'T. H. Cormen',cat:'Computer Science',copies:2,out:0},
+{id:3,title:'Engineering Mathematics',author:'B. S. Grewal',cat:'Mathematics',copies:4,out:0},
+{id:4,title:'Signals and Systems',author:'A. V. Oppenheim',cat:'Electronics',copies:2,out:0}],
+users:[{id:1,role:'admin',name:'Librarian',email:'admin',pw:'admin123',dept:'Library'},
+{id:2,role:'user',name:'Demo Student',email:'student@college.edu',pw:'student123',dept:'Biomedical',year:3,sem:5}],
+issues:[],materials:[{id:1,title:'Biomaterials Notes',year:3,sem:5,text:'Unit 1: Properties of biomaterials...'}],msgs:[],n:10});
+let db;try{db=JSON.parse(localStorage.getItem('lib'))}catch(e){}
+if(!db||!db.books)db=seed();
+const save=()=>{try{localStorage.setItem('lib',JSON.stringify(db))}catch(e){}};
+let me=null,tab='catalog',q='',mq={y:'',s:''};
+const toast=m=>{const t=$('#toast');t.textContent=m;t.style.display='block';setTimeout(()=>t.style.display='none',2200)};
+const nid=()=>db.n++;
+const bk=id=>db.books.find(b=>b.id==id)||{title:'(deleted)'};
+const us=id=>db.users.find(u=>u.id==id)||{name:'?'};
+const fineOf=i=>{const late=Math.max(0,diff(i.ret||today(),i.due));return late*FINE+(i.extra||0)};
+const tabs=()=>!me?[['catalog','Catalog'],['login','Login'],['register','Register'],['contact','Contact']]
+:me.role=='admin'?[['catalog','Books'],['issue','Issue / Return'],['mat','Materials'],['msgs','Messages']]
+:[['catalog','Search Books'],['mine','My Borrow History'],['mat','Study Material'],['profile','My Profile']];
+function go(t){tab=t;render()}
+function render(){
+ $('#nav').innerHTML=tabs().map(([k,l])=>`<button class="${k==tab?'on':''}" onclick="go('${k}')">${l}</button>`).join('')+(me?`<button onclick="me=null;tab='catalog';render()">Logout (${esc(me.name)})</button>`:'');
+ const f={catalog,login,register,contact,issue,mat,mine,profile,msgs}[tab];$('#app').innerHTML=f();
+}
+function catalog(){
+ const adm=me&&me.role=='admin',r=db.books.filter(b=>(b.title+b.author+b.cat).toLowerCase().includes(q.toLowerCase()));
+ return `${adm?`<div class="card"><h2>Add / Update Book</h2><input type="hidden" id="bid">
+ <div class="row"><input id="bt" placeholder="Title"><input id="ba" placeholder="Author"><input id="bc" placeholder="Category"><input id="bn" type="number" min="1" placeholder="Copies"></div>
+ <button class="b" onclick="saveBook()">Save Book</button></div>`:''}
+ <div class="card"><h2>Search Catalog</h2><input placeholder="Title, author or category…" value="${esc(q)}" oninput="q=this.value;const p=this.selectionStart;render();const e=$('#app input[placeholder^=Title]');e.focus();e.setSelectionRange(p,p)">
+ <div class="tw"><table><tr><th>Title</th><th>Author</th><th>Category</th><th>Available</th><th></th></tr>
+ ${r.map(b=>`<tr><td>${esc(b.title)}</td><td>${esc(b.author)}</td><td>${esc(b.cat)}</td><td class="${b.copies-b.out?'ok':'bad'}">${b.copies-b.out}/${b.copies}</td>
+ <td><button class="s" onclick="det(${b.id})">Details</button>${adm?`<button class="s" onclick="edit(${b.id})">Edit</button><button class="s d" onclick="del(${b.id})">Delete</button>`:''}</td></tr>`).join('')||'<tr><td colspan=5 class="mut">No books found.</td></tr>'}
+ </table></div></div><div id="det"></div>`}
+function det(id){const b=bk(id);$('#det').innerHTML=`<div class="card"><h2>${esc(b.title)}</h2><p>Author: ${esc(b.author)}<br>Category: ${esc(b.cat)}<br>Copies available: ${b.copies-b.out} of ${b.copies}<br>Book ID: #${b.id}</p></div>`;$('#det').scrollIntoView()}
+function saveBook(){const t=v('bt').trim();if(!t)return toast('Title required');const id=v('bid');
+ const d={title:t,author:v('ba'),cat:v('bc'),copies:Math.max(1,+v('bn')||1)};
+ if(id){Object.assign(bk(id),d);}else db.books.push({id:nid(),out:0,...d});save();toast('Book saved');render()}
+function edit(id){const b=bk(id);$('#bid').value=id;$('#bt').value=b.title;$('#ba').value=b.author;$('#bc').value=b.cat;$('#bn').value=b.copies;window.scrollTo(0,0)}
+function del(id){if(db.issues.some(i=>i.bookId==id&&!i.ret))return toast('Book is currently issued');if(confirm('Delete this book?')){db.books=db.books.filter(b=>b.id!=id);save();render()}}
+function login(){return `<div class="card" style="max-width:380px"><h2>Login</h2><div class="row"><input id="le" placeholder="Email / username"></div><div class="row"><input id="lp" type="password" placeholder="Password"></div>
+ <button class="b" onclick="doLogin()">Login</button><p class="mut">Demo — admin: admin / admin123 · student: student@college.edu / student123</p></div>`}
+function doLogin(){const u=db.users.find(u=>u.email==v('le').trim()&&u.pw==v('lp'));if(!u)return toast('Invalid credentials');me=u;tab=u.role=='admin'?'catalog':'catalog';render()}
+function register(){return `<div class="card" style="max-width:480px"><h2>Student Registration</h2>
+ <div class="row"><input id="rn" placeholder="Full name"><input id="re" placeholder="Email"></div>
+ <div class="row"><input id="rp" type="password" placeholder="Password"><input id="rd" placeholder="Department"></div>
+ <div class="row"><input id="ry" type="number" min="1" max="4" placeholder="Year"><input id="rs" type="number" min="1" max="8" placeholder="Semester"></div>
+ <button class="b" onclick="doReg()">Register</button></div>`}
+function doReg(){const e=v('re').trim();if(!v('rn')||!e||!v('rp'))return toast('Fill name, email, password');if(db.users.some(u=>u.email==e))return toast('Email already registered');
+ db.users.push({id:nid(),role:'user',name:v('rn'),email:e,pw:v('rp'),dept:v('rd'),year:+v('ry')||'',sem:+v('rs')||''});save();toast('Registered — please login');go('login')}
+function contact(){return `<div class="card" style="max-width:480px"><h2>Contact Us</h2><div class="row"><input id="cn" placeholder="Your name"><input id="ce" placeholder="Email"></div>
+ <textarea id="cm" rows="4" placeholder="Message"></textarea><br><br><button class="b" onclick="sendMsg()">Send</button></div>`}
+function sendMsg(){if(!v('cm').trim())return toast('Write a message');db.msgs.push({id:nid(),n:v('cn'),e:v('ce'),m:v('cm'),d:today()});save();toast('Message sent');go('catalog')}
+function msgs(){return `<div class="card"><h2>Messages</h2>${db.msgs.map(m=>`<p><b>${esc(m.n)}</b> <span class="mut">${esc(m.e)} · ${m.d}</span><br>${esc(m.m)}</p>`).join('')||'<p class="mut">No messages.</p>'}</div>`}
+function issue(){
+ return `<div class="card"><h2>Issue Book</h2><div class="row">
+ <select id="is">${db.users.filter(u=>u.role=='user').map(u=>`<option value="${u.id}">${esc(u.name)} (${esc(u.email)})</option>`).join('')}</select>
+ <select id="ib">${db.books.filter(b=>b.copies>b.out).map(b=>`<option value="${b.id}">${esc(b.title)}</option>`).join('')}</select>
+ <input id="id" type="number" value="14" min="1" title="Loan days"></div><button class="b" onclick="doIssue()">Issue (loan days above)</button></div>
+ <div class="card"><h2>Issued Books &amp; Returns</h2><div class="tw"><table><tr><th>Student</th><th>Book</th><th>Issued</th><th>Due</th><th>Status</th><th>Fine (₹)</th><th></th></tr>
+ ${db.issues.slice().reverse().map(i=>`<tr><td>${esc(us(i.uid).name)}</td><td>${esc(bk(i.bookId).title)}</td><td>${i.issue}</td><td>${i.due}</td>
+ <td>${i.ret?`<span class="ok">Returned ${i.ret}</span>`:diff(today(),i.due)>0?'<span class="bad">Overdue</span>':'Issued'}</td><td class="${fineOf(i)?'bad':''}">${fineOf(i)}</td>
+ <td>${i.ret?'':`<button class="s" onclick="ret(${i.id})">Return</button>`}<button class="s" onclick="mkFine(${i.id})">Make Fine</button></td></tr>`).join('')||'<tr><td colspan=7 class="mut">Nothing issued yet.</td></tr>'}
+ </table></div><p class="mut">Late fine: ₹${FINE}/day after due date. "Make Fine" adds a manual charge (e.g. damage).</p></div>`}
+function doIssue(){const b=db.books.find(b=>b.id==v('ib'));if(!b||!v('is'))return toast('Select student and book');
+ b.out++;db.issues.push({id:nid(),uid:+v('is'),bookId:b.id,issue:today(),due:addD(today(),+v('id')||14),ret:null,extra:0});save();toast('Book issued');render()}
+function ret(id){const i=db.issues.find(i=>i.id==id);i.ret=today();bk(i.bookId).out--;save();toast('Returned. Fine: ₹'+fineOf(i));render()}
+function mkFine(id){const a=+prompt('Extra fine amount (₹):','0');if(a>0){db.issues.find(i=>i.id==id).extra+=a;save();render()}}
+function mat(){const adm=me&&me.role=='admin';
+ const r=db.materials.filter(m=>(!mq.y||m.year==mq.y)&&(!mq.s||m.sem==mq.s));
+ return `${adm?`<div class="card"><h2>Update Material</h2><div class="row"><input id="mt" placeholder="Title"><input id="my" type="number" placeholder="Year"><input id="ms" type="number" placeholder="Semester"></div>
+ <textarea id="mx" rows="3" placeholder="Content / notes / link"></textarea><br><br><button class="b" onclick="addMat()">Add Material</button></div>`:''}
+ <div class="card"><h2>${adm?'View':'Search'} Material</h2><div class="row"><select id="fy" onchange="mq.y=this.value;render()"><option value="">All years</option>${[1,2,3,4].map(y=>`<option ${mq.y==y?'selected':''}>${y}</option>`).join('')}</select>
+ <select id="fs" onchange="mq.s=this.value;render()"><option value="">All semesters</option>${[1,2,3,4,5,6,7,8].map(y=>`<option ${mq.s==y?'selected':''}>${y}</option>`).join('')}</select></div>
+ <div class="tw"><table><tr><th>Title</th><th>Year</th><th>Sem</th><th></th></tr>${r.map(m=>`<tr><td>${esc(m.title)}</td><td>${m.year}</td><td>${m.sem}</td>
+ <td><button class="s" onclick="dl(${m.id})">Download</button>${adm?`<button class="s d" onclick="delMat(${m.id})">Delete</button>`:''}</td></tr>`).join('')||'<tr><td colspan=4 class="mut">No material found.</td></tr>'}</table></div></div>`}
+function addMat(){if(!v('mt')||!v('my')||!v('ms'))return toast('Title, year, semester required');db.materials.push({id:nid(),title:v('mt'),year:+v('my'),sem:+v('ms'),text:v('mx')});save();render()}
+function delMat(id){db.materials=db.materials.filter(m=>m.id!=id);save();render()}
+function dl(id){const m=db.materials.find(m=>m.id==id);const a=document.createElement('a');
+ a.href=URL.createObjectURL(new Blob([`${m.title}\nYear ${m.year}, Semester ${m.sem}\n\n${m.text}`],{type:'text/plain'}));a.download=m.title.replace(/\W+/g,'_')+'.txt';a.click()}
+function mine(){const r=db.issues.filter(i=>i.uid==me.id).reverse(),tot=r.reduce((s,i)=>s+fineOf(i),0);
+ return `<div class="card"><h2>My Borrow History</h2><div class="tw"><table><tr><th>Book</th><th>Issue Date</th><th>Exp Date</th><th>Status</th><th>Fine (₹)</th></tr>
+ ${r.map(i=>`<tr><td>${esc(bk(i.bookId).title)}</td><td>${i.issue}</td><td>${i.due}</td><td>${i.ret?'Returned '+i.ret:diff(today(),i.due)>0?'<span class="bad">Overdue</span>':'Issued'}</td><td class="${fineOf(i)?'bad':''}">${fineOf(i)}</td></tr>`).join('')||'<tr><td colspan=5 class="mut">No books borrowed yet.</td></tr>'}
+ </table></div><h2 style="margin-top:12px">Check Fine: <span class="${tot?'bad':'ok'}">₹${tot}</span></h2></div>`}
+function profile(){return `<div class="card" style="max-width:420px"><h2>My Profile</h2><p>Name: <b>${esc(me.name)}</b><br>Email: ${esc(me.email)}<br>Department: ${esc(me.dept)}<br>Year / Sem: ${me.year||'-'} / ${me.sem||'-'}</p></div>`}
+render();
+</script>
+</body>
+</html>

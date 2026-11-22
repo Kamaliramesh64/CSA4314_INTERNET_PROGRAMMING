@@ -1,0 +1,129 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Grand Stay Hotel</title>
+<style>
+:root{--bg:#f5f3ee;--card:#fff;--tx:#1d2433;--mut:#6b7280;--ac:#1f3a5f;--acx:#fff;--gd:#b8862b;--bd:#e2ded4;--bad:#b42318;--ok:#18794e;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#14181f;--card:#1e242d;--tx:#e8eaee;--mut:#9aa3b0;--ac:#2c4d7a;--acx:#fff;--gd:#e0b25a;--bd:#2f3640;--bad:#f97066;--ok:#47cd89}}
+:root[data-theme="dark"]{--bg:#14181f;--card:#1e242d;--tx:#e8eaee;--mut:#9aa3b0;--ac:#2c4d7a;--acx:#fff;--gd:#e0b25a;--bd:#2f3640;--bad:#f97066;--ok:#47cd89}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--tx);font:15px/1.55 Georgia,serif}
+header{background:var(--ac);color:var(--acx);padding:12px 16px;display:flex;flex-wrap:wrap;gap:8px;align-items:center;justify-content:space-between}
+header h1{margin:0;font-size:20px}header h1 span{color:var(--gd)}
+nav{display:flex;flex-wrap:wrap;gap:4px}nav button{background:transparent;color:var(--acx);border:1px solid transparent;padding:6px 11px;border-radius:6px;cursor:pointer;font:inherit}
+nav button.on,nav button:hover{border-color:var(--gd)}
+main{max-width:980px;margin:0 auto;padding:18px 16px}
+.card{background:var(--card);border:1px solid var(--bd);border-radius:10px;padding:16px;margin-bottom:14px}
+h2{margin:0 0 10px;font-size:18px}
+input,select,textarea{width:100%;padding:8px;border:1px solid var(--bd);border-radius:6px;background:var(--bg);color:var(--tx);font:inherit}
+label{font-size:12px;color:var(--mut);display:block}
+.row{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:8px;margin-bottom:10px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:12px}
+button.b{background:var(--ac);color:var(--acx);border:0;padding:8px 14px;border-radius:6px;cursor:pointer;font:inherit}
+button.s{background:transparent;color:var(--ac);border:1px solid var(--ac);padding:3px 9px;border-radius:6px;cursor:pointer;font:inherit;margin:1px}
+@media (prefers-color-scheme:dark){button.s{color:var(--gd);border-color:var(--gd)}}
+button.d{color:var(--bad)!important;border-color:var(--bad)!important}
+.tw{overflow-x:auto}table{width:100%;border-collapse:collapse;font-size:14px}
+th,td{text-align:left;padding:7px 8px;border-bottom:1px solid var(--bd);white-space:nowrap}th{color:var(--mut)}
+.ok{color:var(--ok)}.bad{color:var(--bad)}.mut{color:var(--mut)}.price{color:var(--gd);font-size:18px}
+footer{text-align:center;padding:16px;border-top:1px solid var(--bd);display:flex;flex-wrap:wrap;gap:6px;justify-content:center}
+footer a{color:var(--ac);cursor:pointer;text-decoration:underline;margin:0 6px}
+@media (prefers-color-scheme:dark){footer a{color:var(--gd)}}
+pre{white-space:pre-wrap;font:inherit;margin:0}
+#toast{position:fixed;bottom:calc(16px + env(safe-area-inset-bottom,0px));left:50%;transform:translateX(-50%);background:var(--tx);color:var(--bg);padding:8px 16px;border-radius:8px;display:none;z-index:9}
+</style></head><body>
+<header><h1>🏨 Grand <span>Stay</span> Hotel</h1><nav id="nav"></nav></header>
+<main id="app"></main>
+<footer id="foot"></footer><div id="toast"></div>
+<script>
+const $=s=>document.querySelector(s),v=id=>($('#'+id)||{}).value||'';
+const esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const today=()=>new Date().toISOString().slice(0,10);
+const addD=(d,n)=>{const x=new Date(d);x.setDate(x.getDate()+n);return x.toISOString().slice(0,10)};
+const diff=(a,b)=>Math.round((new Date(a)-new Date(b))/864e5);
+const seed=()=>({n:10,
+rooms:[{t:'Standard',qty:10,price:2500,cap:2,d:'Cosy room, queen bed, Wi-Fi, TV.'},{t:'Deluxe',qty:8,price:4000,cap:3,d:'Larger room with city view and mini-bar.'},{t:'Suite',qty:4,price:7500,cap:4,d:'Separate living area, bathtub, breakfast included.'},{t:'Family',qty:5,price:6000,cap:6,d:'Two bedrooms, ideal for families.'}],
+users:[{id:1,role:'admin',name:'Hotel Admin',email:'admin',pw:'admin123',phone:''},{id:2,role:'user',name:'Demo Guest',email:'guest@mail.com',pw:'guest123',phone:'9876543210'}],
+bookings:[{id:3,uid:2,type:'Deluxe',in:addD(today(),10),out:addD(today(),12),guests:2,status:'Confirmed'}],
+pages:{rooms:'Standard: queen bed, Wi-Fi, TV.\nDeluxe: city view, mini-bar.\nSuite: living area, bathtub, breakfast.\nFamily: two bedrooms for up to 6 guests.',
+about:'Grand Stay Hotel has welcomed guests for over 20 years with warm hospitality and comfortable rooms.',
+contact:'Phone: +91 44 1234 5678\nEmail: stay@grandstay.example\nAddress: 12 Beach Road, Chennai',
+faq:'Q: What is check-in time?\nA: 2 PM. Check-out is 11 AM.\n\nQ: Can I change or cancel a booking?\nA: Yes, up to 3 days before arrival.',
+guide:'Local travel: Marina Beach (10 min), Kapaleeshwarar Temple (15 min).\nShipping: we can ship luggage or purchases to your home on request at the front desk.',
+privacy:'We collect only the details needed to manage your booking and never sell personal data.'}});
+let db;try{db=JSON.parse(localStorage.getItem('hotel'))}catch(e){}
+if(!db||!db.rooms)db=seed();
+const save=()=>{try{localStorage.setItem('hotel',JSON.stringify(db))}catch(e){}};
+const titles={rooms:'Room Types',about:'About Us',contact:'Contact Us',faq:'Customer Service Q&A',guide:'Local Travel & Shipping Guide',privacy:'Privacy Policy'};
+let me=null,tab='home',ed=null,av=null;
+const nid=()=>db.n++,rm=t=>db.rooms.find(r=>r.t==t),us=id=>db.users.find(u=>u.id==id)||{name:'?'};
+const toast=m=>{const t=$('#toast');t.textContent=m;t.style.display='block';setTimeout(()=>t.style.display='none',2400)};
+const free=(t,i,o,ex)=>rm(t).qty-db.bookings.filter(b=>b.type==t&&b.id!=ex&&b.status!='Cancelled'&&b.in<o&&i<b.out).length;
+const total=b=>diff(b.out,b.in)*rm(b.type).price;
+const canChange=b=>b.status!='Cancelled'&&diff(b.in,today())>=3;
+const adm=()=>me&&me.role=='admin';
+const go=t=>{tab=t;ed=null;render()};
+function render(){
+ const t=!me?[['home','Home'],['login','Login'],['register','Register']]:adm()?[['home','Home'],['rooms_admin','Rooms & Prices'],['bookings','All Bookings']]:[['home','Home'],['book','Book a Room'],['mybookings','My Bookings'],['profile','Profile']];
+ $('#nav').innerHTML=t.map(([k,l])=>`<button class="${k==tab?'on':''}" onclick="go('${k}')">${l}</button>`).join('')+(me?`<button onclick="me=null;go('home')">Logout (${esc(me.name)})</button>`:'');
+ $('#foot').innerHTML=Object.keys(titles).map(k=>`<a onclick="go('${k}')">${titles[k]}</a>`).join('');
+ const V={home,login,register,book,mybookings,profile,rooms_admin,bookings};
+ $('#app').innerHTML=titles[tab]?page(tab):V[tab]();
+}
+function home(){
+ return `<div class="card"><h2>Check Room Availability</h2><div class="row">
+ <div><label>Check-in</label><input type="date" id="ai" min="${today()}" value="${av?av.i:addD(today(),7)}"></div>
+ <div><label>Check-out</label><input type="date" id="ao" value="${av?av.o:addD(today(),9)}"></div>
+ <div><label>Guests</label><input type="number" id="ag" min="1" value="${av?av.g:2}"></div></div><button class="b" onclick="checkAv()">Check availability</button></div>
+ <div class="grid">${db.rooms.map(r=>{const f=av?free(r.t,av.i,av.o):null,ok=av&&f>0&&av.g<=r.cap;return `<div class="card"><h2>${r.t}</h2><div class="price">₹${r.price}<span class="mut" style="font-size:12px"> /night</span></div>
+ <p class="mut">${esc(r.d)}<br>Up to ${r.cap} guests</p>${av?`<p class="${ok?'ok':'bad'}">${av.g>r.cap?'Too many guests':f>0?f+' room(s) available':'Sold out'}</p>`:''}
+ ${ok&&!adm()?`<button class="b" onclick="startBook('${r.t}')">Book</button>`:''}</div>`}).join('')}</div>`}
+function checkAv(){const i=v('ai'),o=v('ao');if(!i||!o||o<=i)return toast('Choose valid dates');if(i<today())return toast('Check-in cannot be in the past');av={i,o,g:+v('ag')||1};render()}
+function startBook(t){go('book');ed={new:true,type:t,in:av.i,out:av.o,guests:av.g};render()}
+function login(){return `<div class="card" style="max-width:380px"><h2>Login</h2><div class="row"><input id="le" placeholder="Email / username"></div><div class="row"><input id="lp" type="password" placeholder="Password"></div>
+ <button class="b" onclick="doLogin()">Login</button><p class="mut">Demo — admin: admin / admin123 · guest: guest@mail.com / guest123</p></div>`}
+function doLogin(){const u=db.users.find(u=>u.email==v('le').trim()&&u.pw==v('lp'));if(!u)return toast('Invalid credentials');me=u;go(u.role=='admin'?'bookings':'home')}
+function register(){return `<div class="card" style="max-width:440px"><h2>Register</h2><div class="row"><input id="rn" placeholder="Full name"><input id="re" placeholder="Email"></div>
+ <div class="row"><input id="rp" type="password" placeholder="Password"><input id="rph" placeholder="Phone"></div><button class="b" onclick="doReg()">Register</button></div>`}
+function doReg(){const e=v('re').trim();if(!v('rn')||!e||!v('rp'))return toast('Name, email, password required');if(db.users.some(u=>u.email==e))return toast('Email already registered');
+ db.users.push({id:nid(),role:'user',name:v('rn'),email:e,pw:v('rp'),phone:v('rph')});save();toast('Registered — please login');go('login')}
+function profile(){return `<div class="card" style="max-width:440px"><h2>My Profile</h2><div class="row"><div><label>Name</label><input id="pn" value="${esc(me.name)}"></div><div><label>Phone</label><input id="pp" value="${esc(me.phone)}"></div></div>
+ <div class="row"><div><label>Email</label><input value="${esc(me.email)}" disabled></div><div><label>New password (optional)</label><input id="pw" type="password"></div></div><button class="b" onclick="saveProf()">Save</button></div>`}
+function saveProf(){if(!v('pn'))return toast('Name required');me.name=v('pn');me.phone=v('pp');if(v('pw'))me.pw=v('pw');save();toast('Profile updated');render()}
+function book(){
+ const e=ed||{new:true,type:'Standard',in:addD(today(),7),out:addD(today(),9),guests:2};
+ return `<div class="card" style="max-width:520px"><h2>${e.new?'Book a Room':'Modify Booking #'+e.id}</h2><div class="row">
+ <div><label>Room type</label><select id="bt">${db.rooms.map(r=>`<option ${r.t==e.type?'selected':''}>${r.t}</option>`).join('')}</select></div>
+ <div><label>Guests</label><input type="number" id="bg" min="1" value="${e.guests}"></div>
+ <div><label>Check-in</label><input type="date" id="bi" value="${e.in}"></div><div><label>Check-out</label><input type="date" id="bo" value="${e.out}"></div></div>
+ ${adm()&&!e.new?`<div class="row"><div><label>Status</label><select id="bs"><option ${e.status=='Confirmed'?'selected':''}>Confirmed</option><option ${e.status=='Cancelled'?'selected':''}>Cancelled</option></select></div></div>`:''}
+ <button class="b" onclick="saveBook()">${e.new?'Confirm Booking':'Save Changes'}</button> ${e.new?'':'<button class="s" onclick="go(adm()?\'bookings\':\'mybookings\')">Back</button>'}
+ <p class="mut">Payment is simulated; the booking is confirmed on submit.</p></div>`}
+function saveBook(){
+ const e=ed||{new:true},t=v('bt'),i=v('bi'),o=v('bo'),g=+v('bg')||1;
+ if(!i||!o||o<=i)return toast('Choose valid dates');
+ if(!adm()&&i<today())return toast('Check-in cannot be in the past');
+ if(g>rm(t).cap)return toast(t+' fits max '+rm(t).cap+' guests');
+ if(!adm()&&!e.new&&!canChange(e))return toast('Changes allowed only 3+ days before arrival');
+ if(free(t,i,o,e.id)<1)return toast('No '+t+' room available for those dates');
+ if(e.new){db.bookings.push({id:nid(),uid:me.id,type:t,in:i,out:o,guests:g,status:'Confirmed'});toast('Booking confirmed')}
+ else{const b=db.bookings.find(b=>b.id==e.id);Object.assign(b,{type:t,in:i,out:o,guests:g});if(adm()&&v('bs'))b.status=v('bs');toast('Booking updated')}
+ save();ed=null;go(adm()?'bookings':'mybookings')}
+function tbl(list,isAdm){return `<div class="tw"><table><tr><th>#</th>${isAdm?'<th>Guest</th>':''}<th>Room</th><th>Check-in</th><th>Check-out</th><th>Guests</th><th>Total (₹)</th><th>Status</th><th></th></tr>
+ ${list.map(b=>`<tr><td>${b.id}</td>${isAdm?`<td>${esc(us(b.uid).name)}</td>`:''}<td>${b.type}</td><td>${b.in}</td><td>${b.out}</td><td>${b.guests}</td><td>${total(b)}</td>
+ <td class="${b.status=='Cancelled'?'bad':'ok'}">${b.status}</td><td>${b.status=='Cancelled'?'':(isAdm||canChange(b))?`<button class="s" onclick="modBook(${b.id})">Modify</button><button class="s d" onclick="cancelBook(${b.id})">Cancel</button>`:'<span class="mut">Locked (&lt;3 days)</span>'}</td></tr>`).join('')||'<tr><td colspan=9 class="mut">No bookings.</td></tr>'}</table></div>`}
+function mybookings(){return `<div class="card"><h2>My Booking History</h2>${tbl(db.bookings.filter(b=>b.uid==me.id).slice().reverse(),false)}<p class="mut">Change or cancel is allowed up to 3 days before arrival.</p></div>`}
+function bookings(){return `<div class="card"><h2>All Bookings</h2>${tbl(db.bookings.slice().reverse(),true)}</div>`}
+function modBook(id){ed={...db.bookings.find(b=>b.id==id)};tab='book';render()}
+function cancelBook(id){const b=db.bookings.find(b=>b.id==id);if(!adm()&&!canChange(b))return toast('Cannot cancel within 3 days');if(confirm('Cancel booking #'+id+'?')){b.status='Cancelled';save();render();toast('Booking cancelled')}}
+function rooms_admin(){return `<div class="card"><h2>Room Quantity &amp; Price</h2><div class="tw"><table><tr><th>Type</th><th>Quantity</th><th>Price/night (₹)</th><th></th></tr>
+ ${db.rooms.map((r,i)=>`<tr><td>${r.t}</td><td><input type="number" min="0" id="q${i}" value="${r.qty}"></td><td><input type="number" min="0" id="p${i}" value="${r.price}"></td><td><button class="s" onclick="saveRoom(${i})">Save</button></td></tr>`).join('')}</table></div></div>`}
+function saveRoom(i){const q=+v('q'+i),p=+v('p'+i);if(q<0||p<0||isNaN(q)||isNaN(p))return toast('Invalid values');db.rooms[i].qty=q;db.rooms[i].price=p;save();toast(db.rooms[i].t+' updated')}
+function page(k){
+ if(ed&&ed.page==k)return `<div class="card"><h2>Edit: ${titles[k]}</h2><textarea id="pg" rows="12">${esc(db.pages[k])}</textarea><br><br><button class="b" onclick="db.pages['${k}']=v('pg');save();ed=null;toast('Page saved');render()">Save</button> <button class="s" onclick="ed=null;render()">Cancel</button></div>`;
+ return `<div class="card"><h2>${titles[k]}</h2><pre>${esc(db.pages[k])}</pre>${adm()?`<br><button class="s" onclick="ed={page:'${k}'};render()">Edit page</button>`:''}</div>
+ ${k=='rooms'?`<div class="grid">${db.rooms.map(r=>`<div class="card"><b>${r.t}</b> — ₹${r.price}/night<br><span class="mut">${esc(r.d)} · up to ${r.cap} guests</span></div>`).join('')}</div>`:''}`}
+render();
+</script></body></html>
+
+</body></html>

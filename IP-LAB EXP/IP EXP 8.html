@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>MedCare Hospital – Book an Appointment</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:wght@400;500;700&display=swap">
+<style>
+:root{--bg:#f1f7f6;--card:#fff;--ink:#14292b;--mute:#5d7678;--line:#d6e5e3;--brand:#0f766e;--bi:#fff;--soft:#dcefed;--ok:#2f7d5b;--bad:#b3384e;--warn:#a86a10;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0f1b1c;--card:#172a2c;--ink:#e6f3f2;--mute:#9bb8ba;--line:#2a4547;--brand:#4fd1c5;--bi:#0b1f20;--soft:#1f3a3c;--ok:#6fd0a0;--bad:#f08aa0;--warn:#e8b45c}}
+:root[data-theme="dark"]{--bg:#0f1b1c;--card:#172a2c;--ink:#e6f3f2;--mute:#9bb8ba;--line:#2a4547;--brand:#4fd1c5;--bi:#0b1f20;--soft:#1f3a3c;--ok:#6fd0a0;--bad:#f08aa0;--warn:#e8b45c}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 "DM Sans",system-ui,sans-serif}
+h1,h2,h3{font-family:"DM Serif Display",Georgia,serif;margin:0;font-weight:400}
+h2{font-size:28px}h3{font-size:20px}
+header{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--card);border-bottom:1px solid var(--line);display:flex;flex-wrap:wrap;gap:8px;align-items:center;justify-content:space-between;padding:10px 16px}
+.logo{font:400 24px "DM Serif Display",Georgia,serif;color:var(--brand);cursor:pointer}
+nav{display:flex;flex-wrap:wrap;gap:6px}
+button,.btn{font:inherit;font-weight:700;border:1px solid var(--line);background:var(--card);color:var(--ink);padding:8px 14px;border-radius:10px;cursor:pointer;text-decoration:none;display:inline-block}
+button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible,.btn:focus-visible{outline:2px solid var(--brand);outline-offset:2px}
+button.p{background:var(--brand);color:var(--bi);border-color:var(--brand)}
+button.on{background:var(--soft);border-color:var(--brand)}
+button.sm,.btn.sm{padding:4px 10px;font-size:14px}
+button.bad{color:var(--bad)}button:disabled{opacity:.4;cursor:not-allowed}
+main{max-width:1000px;margin:0 auto;padding:20px 16px 60px}
+.hero{background:var(--soft);border-radius:16px;padding:24px;margin-bottom:20px}
+.hero h1{font-size:clamp(28px,5.5vw,42px)}.hero p{color:var(--mute);margin:6px 0 0}
+input,select,textarea{font:inherit;color:var(--ink);background:var(--card);border:1px solid var(--line);border-radius:10px;padding:9px 11px;max-width:100%}
+.bar{display:flex;flex-wrap:wrap;gap:8px;margin:14px 0}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:14px;margin:12px 0 24px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px}
+.ico{font-size:30px}.tag{font-size:13px;color:var(--mute)}.star{color:var(--warn);font-weight:700}
+.row{display:flex;gap:10px;align-items:center;justify-content:space-between;flex-wrap:wrap}
+.form{max-width:460px;display:grid;gap:10px}.form label{display:grid;gap:4px;font-weight:700}
+.tw{overflow-x:auto}table{border-collapse:collapse;width:100%;min-width:640px}
+th,td{text-align:left;padding:9px;border-bottom:1px solid var(--line);vertical-align:top}
+.st{display:inline-block;padding:2px 10px;border-radius:999px;background:var(--soft);font-size:13px;font-weight:700}
+.st.Completed{background:var(--ok);color:var(--bi)}.st.Cancelled{background:var(--bad);color:var(--bi)}
+.slots{display:flex;flex-wrap:wrap;gap:8px;margin:8px 0}.slots button.on{background:var(--brand);color:var(--bi)}
+.stat{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:10px;margin:12px 0}
+.stat div{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px}.stat b{font:400 28px "DM Serif Display",Georgia,serif;display:block;color:var(--brand)}
+.bars div{display:flex;align-items:center;gap:8px;margin:6px 0;font-size:14px}.bars i{display:block;height:12px;background:var(--brand);border-radius:6px}
+.empty{color:var(--mute);padding:26px;text-align:center}
+#toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:10px 18px;border-radius:12px;display:none;z-index:9;max-width:90%}
+.modal{position:fixed;inset:0;background:rgba(0,0,0,.5);display:grid;place-items:center;padding:16px;z-index:8}
+.modal .card{max-width:480px;width:100%;max-height:90vh;overflow:auto}
+iframe{width:100%;height:260px;border:0;border-radius:10px;background:var(--soft)}
+</style>
+</head>
+<body>
+<header><div class="logo" onclick="go('find')">✚ MedCare Hospital</div><nav id="nav"></nav></header>
+<main id="app"></main>
+<div id="toast" role="status"></div>
+<script>
+var HRS=[9,10,11,12,14,15,16,17];
+var H0=[{id:1,name:"MedCare Hospital Velachery",city:"Chennai",address:"100 Velachery Main Rd",phone:"044 2255 0101",lat:12.9815,lng:80.218,email:"med1@medcare.com",pass:"hospital123"},
+{id:2,name:"MedCare Hospital RS Puram",city:"Coimbatore",address:"22 DB Road, RS Puram",phone:"0422 255 0102",lat:11.0074,lng:76.9496,email:"med2@medcare.com",pass:"hospital123"},
+{id:3,name:"MedCare Hospital Anna Nagar",city:"Madurai",address:"5 Anna Nagar Main Rd",phone:"0452 255 0103",lat:9.9252,lng:78.1198,email:"med3@medcare.com",pass:"hospital123"}];
+var D0=[{id:1,hid:1,name:"Dr. Priya Raman",spec:"Cardiology",exp:14,fee:700,ico:"🩺"},{id:2,hid:1,name:"Dr. Arjun Nair",spec:"Orthopedics",exp:9,fee:600,ico:"🦴"},{id:3,hid:1,name:"Dr. Sana Iqbal",spec:"Dermatology",exp:7,fee:500,ico:"🧴"},
+{id:4,hid:2,name:"Dr. Karthik Subbu",spec:"Neurology",exp:18,fee:900,ico:"🧠"},{id:5,hid:2,name:"Dr. Lakshmi Devi",spec:"Pediatrics",exp:11,fee:450,ico:"🧒"},
+{id:6,hid:3,name:"Dr. Rahul Menon",spec:"General Medicine",exp:6,fee:350,ico:"💊"},{id:7,hid:3,name:"Dr. Fathima Beevi",spec:"Cardiology",exp:12,fee:650,ico:"🩺"}];
+var R0=[{id:1,did:1,aid:0,pname:"Sathya",rating:5,text:"Explained everything clearly."},{id:2,did:1,aid:0,pname:"Mohan",rating:4,text:"Short wait, very helpful."},{id:3,did:4,aid:0,pname:"Divya",rating:5,text:"Patient and thorough."},{id:4,did:5,aid:0,pname:"Ravi",rating:4,text:"Great with kids."}];
+function ld(k,d){try{var v=localStorage.getItem(k);return v?JSON.parse(v):d}catch(e){return d}}
+function sv(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}
+var hos=ld("mh",H0),docs=ld("md",D0),appts=ld("ma",[]),revs=ld("mr",R0),users=ld("mu",[]),me=ld("mme",null);
+var view="find",ft={q:"",spec:"All",city:"All",tab:"doc"},ptab="up",atab="stat",pk=0;
+function $(s){return document.querySelector(s)}
+function esc(s){return String(s==null?"":s).replace(/[&<>"]/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]})}
+function iso(d){return d.getFullYear()+"-"+("0"+(d.getMonth()+1)).slice(-2)+"-"+("0"+d.getDate()).slice(-2)}
+function toast(m){var t=$("#toast");t.textContent=m;t.style.display="block";clearTimeout(toast.t);toast.t=setTimeout(function(){t.style.display="none"},3400)}
+function by(a,id){return a.filter(function(x){return x.id===id})[0]||{}}
+function fmt(h){return(h>12?h-12:h)+":00 "+(h>=12?"PM":"AM")}
+function go(v){view=v;render()}
+function role(){return me?me.role:""}
+function staff(){return role()==="hospital"||role()==="admin"}
+function act(a){return a.status==="Booked"}
+function save(){sv("ma",appts);sv("md",docs);sv("mh",hos);sv("mr",revs)}
+function rate(did){var l=revs.filter(function(r){return r.did===did});if(!l.length)return{avg:0,n:0};return{avg:l.reduce(function(a,r){return a+r.rating},0)/l.length,n:l.length}}
+function stars(did){var r=rate(did);return r.n?'<span class="star">★ '+r.avg.toFixed(1)+'</span> <span class="tag">('+r.n+')</span>':'<span class="tag">No reviews yet</span>'}
+function taken(did,date,h,ig){return appts.some(function(a){return act(a)&&a.did===did&&a.date===date&&a.time===h&&a.id!==ig})}
+function past(date,h){var n=new Date();return date<iso(n)||(date===iso(n)&&h<=n.getHours())}
+
+function render(){
+  var h="";
+  if(staff())h+=nb("dash","Dashboard");else h+=nb("find","Find doctors")+(me?nb("acct","My appointments"):"");
+  h+=me?'<button onclick="logout()">Logout ('+esc(me.name)+")</button>":nb("login","Login")+nb("reg","Patient signup")+nb("hreg","Hospital signup");
+  $("#nav").innerHTML=h;
+  var fn={find:find,login:login,reg:reg,hreg:hreg,acct:acct,dash:dash}[view];
+  $("#app").innerHTML=fn();
+}
+function nb(v,t){return'<button class="'+(view===v?"on":"")+'" onclick="go(\''+v+'\')">'+t+"</button>"}
+function uniq(a,k){var o=[];a.forEach(function(x){if(o.indexOf(x[k])<0)o.push(x[k])});return o.sort()}
+function opt(v,c){return"<option"+(v===c?" selected":"")+">"+esc(v)+"</option>"}
+
+/* ---------- Search ---------- */
+function find(){
+  return'<div class="hero"><h1>Book a doctor near you</h1><p>Search by specialty and location, check reviews, and pick a time that suits you.</p></div>'+
+  '<div class="slots"><button class="'+(ft.tab==="doc"?"on":"")+'" onclick="ft.tab=\'doc\';render()">Doctors</button><button class="'+(ft.tab==="hos"?"on":"")+'" onclick="ft.tab=\'hos\';render()">Hospitals</button></div>'+
+  '<div class="bar"><input id="q" placeholder="Search doctor, specialty or hospital" value="'+esc(ft.q)+'" oninput="ft.q=this.value;keep()"><select onchange="ft.city=this.value;render()"><option>All</option>'+uniq(hos,"city").map(function(c){return opt(c,ft.city)}).join("")+'</select>'+
+  (ft.tab==="doc"?'<select onchange="ft.spec=this.value;render()"><option>All</option>'+uniq(docs,"spec").map(function(c){return opt(c,ft.spec)}).join("")+"</select>":"")+"</div><div id=\"res\">"+results()+"</div>";
+}
+function keep(){$("#res").innerHTML=results()}
+function results(){
+  var q=ft.q.toLowerCase();
+  if(ft.tab==="hos"){
+    var hl=hos.filter(function(h){return(ft.city==="All"||h.city===ft.city)&&(h.name+h.city+h.address).toLowerCase().indexOf(q)>-1});
+    if(!hl.length)return'<div class="empty">No hospitals match. Try another location.</div>';
+    return'<div class="grid">'+hl.map(function(h){var n=docs.filter(function(d){return d.hid===h.id}).length;return'<div class="card"><h3>'+esc(h.name)+'</h3><div class="tag">'+esc(h.address)+", "+esc(h.city)+"</div><div class=\"tag\">☎ "+esc(h.phone)+" · "+n+' doctors</div><div class="slots"><button class="sm p" onclick="ft.tab=\'doc\';ft.q=\''+esc(h.name)+"';render()\">View doctors</button><button class=\"sm\" onclick=\"map("+h.id+")\">View map</button></div></div>"}).join("")+"</div>";
+  }
+  var dl=docs.filter(function(d){var h=by(hos,d.hid);return(ft.city==="All"||h.city===ft.city)&&(ft.spec==="All"||d.spec===ft.spec)&&(d.name+d.spec+h.name).toLowerCase().indexOf(q)>-1}).sort(function(a,b){return rate(b.id).avg-rate(a.id).avg});
+  if(!dl.length)return'<div class="empty">No doctors match. Try a different specialty or location.</div>';
+  return'<div class="grid">'+dl.map(function(d){var h=by(hos,d.hid);return'<div class="card"><div class="row"><span class="ico">'+esc(d.ico)+"</span><span>"+stars(d.id)+"</span></div><h3>"+esc(d.name)+'</h3><div class="tag">'+esc(d.spec)+" · "+d.exp+' yrs</div><div class="tag">'+esc(h.name)+", "+esc(h.city)+'</div><div class="row" style="margin-top:8px"><b>₹'+d.fee+'</b><span><button class="sm" onclick="revList('+d.id+')">Reviews</button> <button class="sm p" onclick="book('+d.id+')">Book</button></span></div></div>'}).join("")+"</div>";
+}
+function modal(html){var m=document.createElement("div");m.className="modal";m.id="m";m.innerHTML='<div class="card">'+html+"</div>";m.onclick=function(e){if(e.target===m)m.remove()};document.body.appendChild(m)}
+function close_(){var m=$("#m");if(m)m.remove()}
+function map(id){var h=by(hos,id),u=h.lat+","+h.lng;modal("<h3>"+esc(h.name)+'</h3><p class="tag">'+esc(h.address)+", "+esc(h.city)+'</p><iframe title="Map" loading="lazy" src="https://maps.google.com/maps?q='+u+'&z=15&output=embed"></iframe><div class="row" style="margin-top:10px"><a class="btn sm p" target="_blank" rel="noopener" href="https://www.google.com/maps?q='+u+'">Open in Google Maps</a><button class="sm" onclick="close_()">Close</button></div>')}
+function revList(did){var d=by(docs,did),l=revs.filter(function(r){return r.did===did}).reverse();modal("<h3>"+esc(d.name)+"</h3><p>"+stars(did)+"</p>"+(l.length?l.map(function(r){return'<div style="margin:10px 0"><span class="star">'+"★".repeat(r.rating)+"</span> <b>"+esc(r.pname)+"</b><div>"+esc(r.text)+"</div></div>"}).join(""):'<div class="empty">No reviews yet.</div>')+'<button onclick="close_()">Close</button>')}
+
+/* ---------- Booking ---------- */
+function slotsFor(did,date,ig){
+  return HRS.map(function(h){var bad=!date||past(date,h)||taken(did,date,h,ig);return'<button class="'+(pk===h?"on":"")+'" '+(bad?"disabled":"")+' onclick="pk='+h+';drawSlots('+did+","+(ig||0)+')">'+fmt(h)+"</button>"}).join("")}
+function drawSlots(did,ig){$("#sl").innerHTML=slotsFor(did,$("#bd").value,ig)}
+function book(did){
+  if(role()!=="patient"){toast("Please log in as a patient to book");go("login");return}
+  var d=by(docs,did),h=by(hos,d.hid);pk=0;
+  modal("<h3>Book "+esc(d.name)+'</h3><p class="tag">'+esc(d.spec)+" · "+esc(h.name)+' · ₹'+d.fee+'</p><div class="form"><label>Date<input type="date" id="bd" min="'+iso(new Date())+'" onchange="pk=0;drawSlots('+did+')"></label><div><b>Time</b><div class="slots" id="sl">'+slotsFor(did,"")+'</div></div>'+checkinFields({})+'<div class="row"><button onclick="close_()">Cancel</button><button class="p" onclick="doBook('+did+')">Confirm booking</button></div></div>');
+}
+function checkinFields(c){return'<label>Reason for visit<input id="ck1" value="'+esc(c.reason||"")+'"></label><label>Symptoms<textarea id="ck2" rows="2">'+esc(c.symptoms||"")+'</textarea></label><label>Age<input id="ck3" type="number" min="0" max="120" value="'+esc(c.age||"")+'"></label><label>Existing conditions / allergies<input id="ck4" value="'+esc(c.cond||"")+'"></label><label>Emergency contact<input id="ck5" inputmode="tel" value="'+esc(c.emg||"")+'"></label>'}
+function readCk(){return{reason:$("#ck1").value.trim(),symptoms:$("#ck2").value.trim(),age:$("#ck3").value,cond:$("#ck4").value.trim(),emg:$("#ck5").value.trim()}}
+function doBook(did){
+  var date=$("#bd").value,c=readCk();
+  if(!date||!pk){toast("Pick a date and time");return}
+  if(!c.reason||!c.age){toast("Fill the check-in form: reason and age are required");return}
+  if(taken(did,date,pk)){toast("That slot was just taken");return}
+  var d=by(docs,did);appts.push({id:Date.now(),pid:me.email,pname:me.name,pphone:me.phone||"",did:did,hid:d.hid,date:date,time:pk,status:"Booked",ck:c});save();close_();
+  toast("Appointment booked. Reminders will be sent by email and SMS.");ptab="up";go("acct");
+}
+
+/* ---------- Patient account ---------- */
+function cmp(a,b){return(a.date+("0"+a.time).slice(-2))<(b.date+("0"+b.time).slice(-2))?-1:1}
+function acct(){
+  var mine=appts.filter(function(a){return a.pid===me.email}),t=iso(new Date());
+  var up=mine.filter(function(a){return act(a)&&a.date>=t}).sort(cmp),hi=mine.filter(function(a){return!(act(a)&&a.date>=t)}).sort(cmp).reverse();
+  var h="<h2>My appointments</h2><div class=\"slots\">"+[["up","Upcoming ("+up.length+")"],["hi","Past appointments"],["pr","Personal details"]].map(function(x){return'<button class="'+(ptab===x[0]?"on":"")+'" onclick="ptab=\''+x[0]+'\';render()">'+x[1]+"</button>"}).join("")+"</div>";
+  if(ptab==="pr")return h+'<div class="form"><label>Name<input id="pn" value="'+esc(me.name)+'"></label><label>Phone<input id="pp" inputmode="tel" value="'+esc(me.phone||"")+'"></label><label>Email<input value="'+esc(me.email)+'" disabled></label><button class="p" onclick="saveProf()">Save changes</button></div>';
+  var l=ptab==="up"?up:hi;
+  if(!l.length)return h+'<div class="empty">'+(ptab==="up"?"No upcoming appointments. Use Find doctors to book one.":"No past appointments yet.")+"</div>";
+  return h+'<div class="grid">'+l.map(function(a){var d=by(docs,a.did),hp=by(hos,a.hid),reviewed=revs.some(function(r){return r.aid===a.id});
+    return'<div class="card"><div class="row"><b>'+esc(d.name||"Doctor")+'</b><span class="st '+a.status+'">'+a.status+'</span></div><div class="tag">'+esc(d.spec||"")+" · "+esc(hp.name||"")+"</div><div>"+a.date+" · "+fmt(a.time)+'</div><div class="tag">Reason: '+esc(a.ck.reason)+"</div>"+
+    '<div class="slots">'+(ptab==="up"?'<button class="sm" onclick="editCk('+a.id+')">Check-in form</button><button class="sm" onclick="resched('+a.id+')">Reschedule</button><button class="sm bad" onclick="cancel('+a.id+')">Cancel</button>':
+    (a.status!=="Cancelled"&&!reviewed?'<button class="sm p" onclick="review('+a.id+')">Write review</button>':"")+'<button class="sm" onclick="viewCk('+a.id+')">Check-in details</button>')+"</div></div>"}).join("")+"</div>";
+}
+function saveProf(){var n=$("#pn").value.trim();if(!n){toast("Name can't be empty");return}me.name=n;me.phone=$("#pp").value.trim();sv("mme",me);users.forEach(function(u){if(u.email===me.email){u.name=me.name;u.phone=me.phone}});sv("mu",users);toast("Details updated");render()}
+function cancel(id){if(!confirm("Cancel this appointment?"))return;by(appts,id).status="Cancelled";save();toast("Appointment cancelled");render()}
+function editCk(id){var a=by(appts,id);modal("<h3>Check-in form</h3><div class=\"form\">"+checkinFields(a.ck)+'<div class="row"><button onclick="close_()">Close</button><button class="p" onclick="saveCk('+id+')">Submit</button></div></div>')}
+function saveCk(id){var c=readCk();if(!c.reason||!c.age){toast("Reason and age are required");return}by(appts,id).ck=c;save();close_();toast("Check-in form submitted");render()}
+function viewCk(id){var a=by(appts,id),c=a.ck||{};modal("<h3>Check-in details</h3><p><b>"+esc(a.pname)+"</b> · "+a.date+" "+fmt(a.time)+"</p><p>Reason: "+esc(c.reason)+"<br>Symptoms: "+esc(c.symptoms||"–")+"<br>Age: "+esc(c.age)+"<br>Conditions/allergies: "+esc(c.cond||"–")+"<br>Emergency contact: "+esc(c.emg||"–")+'</p><button onclick="close_()">Close</button>')}
+function resched(id){var a=by(appts,id);pk=0;modal("<h3>Reschedule</h3><div class=\"form\"><label>Date<input type=\"date\" id=\"bd\" min=\""+iso(new Date())+'" value="'+a.date+'" onchange="pk=0;drawSlots('+a.did+","+id+')"></label><div class="slots" id="sl">'+slotsFor(a.did,a.date,id)+'</div><div class="row"><button onclick="close_()">Close</button><button class="p" onclick="rsSave('+id+')">Save</button></div></div>')}
+function rsSave(id){if(!pk){toast("Pick a time");return}var a=by(appts,id);a.date=$("#bd").value;a.time=pk;save();close_();toast("Rescheduled. Updated reminder will be sent.");render()}
+function review(id){var a=by(appts,id);modal("<h3>Review "+esc(by(docs,a.did).name)+'</h3><div class="form"><label>Rating<select id="rr"><option value="5">5 ★</option><option value="4">4 ★</option><option value="3">3 ★</option><option value="2">2 ★</option><option value="1">1 ★</option></select></label><label>Your feedback<textarea id="rt" rows="3"></textarea></label><div class="row"><button onclick="close_()">Close</button><button class="p" onclick="saveRev('+id+')">Submit</button></div></div>')}
+function saveRev(id){var a=by(appts,id);revs.push({id:Date.now(),did:a.did,aid:id,pname:me.name,rating:+$("#rr").value,text:$("#rt").value.trim()});save();close_();toast("Thanks for your review");render()}
+
+/* ---------- Auth ---------- */
+function reg(){return'<h2>Patient signup</h2><div class="form" style="margin-top:12px"><label>Name<input id="rn"></label><label>Phone<input id="rph" inputmode="tel"></label><label>Email<input id="re" type="email"></label><label>Password (min 6)<input id="rp" type="password"></label><button class="p" onclick="doReg()">Create account</button></div>'}
+function doReg(){var n=$("#rn").value.trim(),e=$("#re").value.trim().toLowerCase(),p=$("#rp").value;
+  if(!n||!/^\S+@\S+\.\S+$/.test(e)||p.length<6){toast("Enter a name, valid email and 6+ character password");return}
+  if(users.some(function(u){return u.email===e})){toast("That email is already registered. Log in instead.");return}
+  var u={name:n,phone:$("#rph").value.trim(),email:e,pass:p};users.push(u);sv("mu",users);me={name:n,phone:u.phone,email:e,role:"patient"};sv("mme",me);toast("Welcome, "+n);go("find")}
+function login(){return'<h2>Log in</h2><div class="form" style="margin-top:12px"><label>Login as<select id="lr"><option value="patient">Patient</option><option value="hospital">Hospital</option><option value="admin">Admin</option></select></label><label>Email / username<input id="le"></label><label>Password<input id="lp" type="password"></label><p class="tag">Demo: admin / admin123 · hospital med1@medcare.com / hospital123</p><button class="p" onclick="doLogin()">Log in</button></div>'}
+function doLogin(){var r=$("#lr").value,e=$("#le").value.trim().toLowerCase(),p=$("#lp").value;
+  if(r==="admin"){if(e==="admin"&&p==="admin123"){me={name:"Admin",email:"admin",role:"admin"};sv("mme",me);atab="stat";go("dash")}else toast("Wrong admin credentials");return}
+  if(r==="hospital"){var h=hos.filter(function(x){return x.email===e&&x.pass===p})[0];if(!h){toast("Wrong hospital email or password");return}me={name:h.name,email:h.email,role:"hospital",hid:h.id};sv("mme",me);atab="stat";go("dash");return}
+  var u=users.filter(function(x){return x.email===e&&x.pass===p})[0];if(!u){toast("Email or password is incorrect");return}
+  me={name:u.name,phone:u.phone,email:u.email,role:"patient"};sv("mme",me);go("find")}
+function logout(){me=null;sv("mme",null);go("find")}
+function hreg(){return'<h2>Hospital registration</h2><div class="form" style="margin-top:12px"><label>Hospital name<input id="hn"></label><label>City<input id="hc"></label><label>Address<input id="ha"></label><label>Phone<input id="hp" inputmode="tel"></label><label>Latitude<input id="hla" type="number" step="any" placeholder="e.g. 13.0827"></label><label>Longitude<input id="hlo" type="number" step="any" placeholder="e.g. 80.2707"></label><label>Login email<input id="he" type="email"></label><label>Password (min 6)<input id="hw" type="password"></label><button class="p" onclick="doHreg()">Register hospital</button></div>'}
+function doHreg(){var h={id:Date.now(),name:$("#hn").value.trim(),city:$("#hc").value.trim(),address:$("#ha").value.trim(),phone:$("#hp").value.trim(),lat:+$("#hla").value,lng:+$("#hlo").value,email:$("#he").value.trim().toLowerCase(),pass:$("#hw").value};
+  if(!h.name||!h.city||!h.address||!$("#hla").value||!$("#hlo").value||!/^\S+@\S+\.\S+$/.test(h.email)||h.pass.length<6){toast("Fill all fields (password 6+ characters)");return}
+  if(hos.some(function(x){return x.email===h.email})){toast("That email is already registered");return}
+  hos.push(h);save();me={name:h.name,email:h.email,role:"hospital",hid:h.id};sv("mme",me);atab="det";toast("Hospital registered");go("dash")}
+
+/* ---------- Hospital / Admin dashboard ---------- */
+function scopeH(){return role()==="admin"?hos:hos.filter(function(h){return h.id===me.hid})}
+function scopeD(){return docs.filter(function(d){return role()==="admin"||d.hid===me.hid})}
+function scopeA(){return appts.filter(function(a){return role()==="admin"||a.hid===me.hid})}
+function dash(){
+  var T=[["stat","Statistics"],["apt","Appointments"],["doc","Doctors"],["det",role()==="admin"?"Hospitals":"Hospital details"],["rat","Ratings"]];
+  return"<h2>"+(role()==="admin"?"Admin dashboard":esc(me.name))+'</h2><div class="slots">'+T.map(function(t){return'<button class="'+(atab===t[0]?"on":"")+'" onclick="atab=\''+t[0]+'\';render()">'+t[1]+"</button>"}).join("")+"</div>"+({stat:dStat,apt:dApt,doc:dDoc,det:dDet,rat:dRat}[atab])();
+}
+function dStat(){
+  var a=scopeA(),t=iso(new Date()),c=function(s){return a.filter(function(x){return x.status===s}).length},ds=scopeD(),mx=1;
+  var per=ds.map(function(d){var n=a.filter(function(x){return x.did===d.id}).length;if(n>mx)mx=n;return{d:d,n:n}});
+  return'<div class="stat"><div><b>'+a.length+"</b>Total</div><div><b>"+a.filter(function(x){return x.date===t&&act(x)}).length+"</b>Today</div><div><b>"+c("Booked")+"</b>Booked</div><div><b>"+c("Completed")+"</b>Completed</div><div><b>"+c("Cancelled")+"</b>Cancelled</div><div><b>"+ds.length+"</b>Doctors</div></div>"+
+  "<h3>Appointments per doctor</h3>"+(per.length?'<div class="bars">'+per.map(function(p){return"<div><span style=\"min-width:140px\">"+esc(p.d.name)+'</span><i style="width:'+Math.max(4,p.n/mx*55)+'%"></i><b>'+p.n+"</b></div>"}).join("")+"</div>":'<div class="empty">No doctors added yet.</div>');
+}
+function dApt(){
+  var l=scopeA().sort(cmp).reverse();if(!l.length)return'<div class="empty">No appointments yet.</div>';
+  return'<div class="tw"><table><tr><th>When</th><th>Patient</th><th>Doctor</th><th>Status</th><th>Check-in</th></tr>'+l.map(function(a){var i=appts.indexOf(a);return"<tr><td>"+a.date+"<br>"+fmt(a.time)+"</td><td>"+esc(a.pname)+'<div class="tag">'+esc(a.pphone||a.pid)+"</div></td><td>"+esc(by(docs,a.did).name||"")+'</td><td><select onchange="setSt('+i+',this.value)">'+["Booked","Completed","Cancelled"].map(function(s){return opt(s,a.status)}).join("")+'</select></td><td><button class="sm" onclick="viewCk('+a.id+')">View</button></td></tr>'}).join("")+"</table></div>";
+}
+function setSt(i,v){appts[i].status=v;save();toast("Status updated to "+v)}
+function dDoc(){
+  var hsel=role()==="admin"?'<label>Hospital<select id="dh">'+hos.map(function(h){return'<option value="'+h.id+'">'+esc(h.name)+"</option>"}).join("")+"</select></label>":"";
+  return'<div class="form" style="margin:12px 0 20px">'+hsel+'<label>Doctor name<input id="dn"></label><label>Specialty<input id="ds" placeholder="Cardiology, Pediatrics…"></label><label>Experience (years)<input id="de" type="number" min="0"></label><label>Fee (₹)<input id="df" type="number" min="0"></label><button class="p" onclick="addDoc()">Add doctor</button></div>'+
+  '<div class="tw"><table><tr><th>Doctor</th><th>Specialty</th><th>Fee</th><th>Rating</th><th></th></tr>'+scopeD().map(function(d){return"<tr><td>"+esc(d.ico)+" "+esc(d.name)+"</td><td>"+esc(d.spec)+"</td><td>₹"+d.fee+"</td><td>"+stars(d.id)+'</td><td><button class="sm bad" onclick="delDoc('+d.id+')">Delete</button></td></tr>'}).join("")+"</table></div>";
+}
+function addDoc(){var d={id:Date.now(),hid:role()==="admin"?+$("#dh").value:me.hid,name:$("#dn").value.trim(),spec:$("#ds").value.trim(),exp:+$("#de").value,fee:+$("#df").value,ico:"👨‍⚕️"};
+  if(!d.name||!d.spec||!d.fee){toast("Enter name, specialty and fee");return}docs.push(d);save();toast("Doctor added");render()}
+function delDoc(id){if(!confirm("Delete this doctor?"))return;docs=docs.filter(function(d){return d.id!==id});save();render()}
+function dDet(){
+  if(role()==="admin")return'<div class="tw"><table><tr><th>Hospital</th><th>City</th><th>Phone</th><th>Doctors</th><th></th></tr>'+hos.map(function(h){return"<tr><td>"+esc(h.name)+'<div class="tag">'+esc(h.address)+"</div></td><td>"+esc(h.city)+"</td><td>"+esc(h.phone)+"</td><td>"+docs.filter(function(d){return d.hid===h.id}).length+'</td><td><button class="sm" onclick="map('+h.id+')">Map</button> <button class="sm bad" onclick="delHos('+h.id+')">Delete</button></td></tr>'}).join("")+"</table></div>";
+  var h=by(hos,me.hid);
+  return'<div class="form" style="margin-top:12px"><label>Hospital name<input id="hn" value="'+esc(h.name)+'"></label><label>City<input id="hc" value="'+esc(h.city)+'"></label><label>Address<input id="ha" value="'+esc(h.address)+'"></label><label>Phone<input id="hp" value="'+esc(h.phone)+'"></label><label>Latitude<input id="hla" type="number" step="any" value="'+h.lat+'"></label><label>Longitude<input id="hlo" type="number" step="any" value="'+h.lng+'"></label><div class="row"><button onclick="map('+h.id+')">Preview map</button><button class="p" onclick="updHos()">Update details</button></div></div>';
+}
+function updHos(){var h=by(hos,me.hid);h.name=$("#hn").value.trim();h.city=$("#hc").value.trim();h.address=$("#ha").value.trim();h.phone=$("#hp").value.trim();h.lat=+$("#hla").value;h.lng=+$("#hlo").value;if(!h.name||!h.city){toast("Name and city are required");return}me.name=h.name;sv("mme",me);save();toast("Hospital details and location updated");render()}
+function delHos(id){if(!confirm("Delete this hospital and its doctors?"))return;hos=hos.filter(function(h){return h.id!==id});docs=docs.filter(function(d){return d.hid!==id});appts=appts.filter(function(a){return a.hid!==id});save();render()}
+function dRat(){
+  var ds=scopeD();if(!ds.length)return'<div class="empty">No doctors yet.</div>';
+  return'<div class="grid">'+ds.map(function(d){var l=revs.filter(function(r){return r.did===d.id}).reverse();return'<div class="card"><b>'+esc(d.name)+"</b><div>"+stars(d.id)+"</div>"+(l.length?l.slice(0,3).map(function(r){return'<p class="tag"><span class="star">'+"★".repeat(r.rating)+"</span> "+esc(r.pname)+": "+esc(r.text)+"</p>"}).join(""):'<p class="tag">No reviews yet.</p>')+"</div>"}).join("")+"</div>";
+}
+render();
+</script>
+</body>
+</html>

@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>SouthLine Rail Reservations</title>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700&family=Barlow:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#eef1f4;--card:#fff;--ink:#14263f;--mute:#5d6b7e;--line:#d3dae3;--acc:#14263f;--sig:#f0a81c;--ok:#1d7a4a;--warn:#b86e00;--bad:#b3322b;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+:root:not([data-theme="light"]){color-scheme:light}
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]){color-scheme:dark;--bg:#0e1623;--card:#16233a;--ink:#e8edf5;--mute:#93a2b8;--line:#2a3b57;--acc:#f0a81c;--sig:#f0a81c;--ok:#4cc98a;--warn:#f0a81c;--bad:#ff7d73}}
+:root[data-theme="dark"]{color-scheme:dark;--bg:#0e1623;--card:#16233a;--ink:#e8edf5;--mute:#93a2b8;--line:#2a3b57;--acc:#f0a81c;--sig:#f0a81c;--ok:#4cc98a;--warn:#f0a81c;--bad:#ff7d73}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:400 16px/1.5 Barlow,system-ui,sans-serif}
+h1,h2,h3{font-family:'Barlow Condensed',Impact,sans-serif;margin:0 0 .5rem;letter-spacing:.01em}h2{font-size:1.7rem}h3{font-size:1.25rem}
+header{background:#14263f;color:#fff;border-bottom:4px solid var(--sig)}
+.top{max-width:1000px;margin:auto;padding:.7rem 1rem;display:flex;flex-wrap:wrap;gap:.6rem;align-items:center;justify-content:space-between}
+.logo{font:700 1.7rem 'Barlow Condensed',sans-serif}.logo b{color:var(--sig)}
+nav{display:flex;flex-wrap:wrap;gap:.3rem}
+nav button{background:none;border:0;color:#cfd8e6;padding:.4rem .7rem;font:600 .95rem Barlow,sans-serif;cursor:pointer;border-radius:6px}
+nav button.on,nav button:hover{background:#25406a;color:#fff}
+main{max-width:1000px;margin:auto;padding:1rem}
+.card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:1rem;margin-bottom:1rem}
+.row{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:.7rem;align-items:end}
+label{display:block;font-size:.85rem;color:var(--mute);font-weight:600}
+input,select{width:100%;padding:.55rem;border:1px solid var(--line);border-radius:6px;background:var(--bg);color:var(--ink);font:inherit}
+input:focus,select:focus,button:focus-visible{outline:2px solid var(--sig);outline-offset:1px}
+.btn{background:var(--acc);color:#fff;border:0;padding:.6rem 1.1rem;border-radius:6px;font:600 1rem Barlow,sans-serif;cursor:pointer}
+:root[data-theme="dark"] .btn,:root:not([data-theme="light"]) .btn{color:#14263f}
+@media(prefers-color-scheme:light){:root:not([data-theme="dark"]) .btn{color:#fff}}
+.btn.sec{background:none;border:1px solid var(--line);color:var(--ink)}.btn.sm{padding:.3rem .6rem;font-size:.85rem}.btn.bad{background:var(--bad);color:#fff}
+.tr{display:flex;flex-wrap:wrap;gap:1rem;justify-content:space-between;border-top:1px solid var(--line);padding:.8rem 0}.tr:first-of-type{border:0}
+.cls{display:inline-block;border:1px solid var(--line);border-radius:6px;padding:.3rem .6rem;margin:.2rem .3rem .2rem 0;font-size:.9rem;cursor:pointer;background:var(--bg);color:var(--ink)}
+.cls:hover{border-color:var(--sig)}
+.CNF,.paid{color:var(--ok)}.RAC,.pend{color:var(--warn)}.WL,.CAN{color:var(--bad)}b.s{font-weight:700}
+table{width:100%;border-collapse:collapse;font-size:.92rem}th,td{text-align:left;padding:.45rem;border-bottom:1px solid var(--line)}th{color:var(--mute)}
+.wrap{overflow-x:auto}.mute{color:var(--mute);font-size:.9rem}
+.ticket{display:grid;grid-template-columns:1fr auto;border:2px solid var(--ink);border-radius:12px;overflow:hidden;background:var(--card)}
+.ticket .main{padding:1rem}.ticket .stub{border-left:2px dashed var(--ink);padding:1rem;text-align:center;min-width:130px;background:var(--bg)}
+.pnr{font:700 1.6rem 'Barlow Condensed',sans-serif;letter-spacing:.08em}
+.msg{padding:.6rem .8rem;border-radius:6px;background:var(--bg);border-left:4px solid var(--sig);margin-bottom:1rem}
+.pax{display:grid;grid-template-columns:2fr 1fr 1fr;gap:.5rem;margin-bottom:.4rem}
+@media(max-width:560px){.ticket{grid-template-columns:1fr}.ticket .stub{border-left:0;border-top:2px dashed var(--ink)}}
+@media print{header,.noprint{display:none}body{background:#fff}.card{border:0}}
+</style></head><body>
+<header><div class="top"><div class="logo">South<b>Line</b> Rail</div><nav id="nav"></nav></div></header>
+<main id="app"></main>
+<script>
+const ST=['Chennai','Villupuram','Trichy','Dindigul','Madurai','Coimbatore','Erode','Salem','Bangalore'];
+const CL={SL:'Sleeper',"3A":'AC 3-tier',"2A":'AC 2-tier'};
+const RULES=[{d:7,p:90},{d:2,p:50},{d:0,p:25}]; // days before journey -> refundable %
+const RAC_MAX=6;
+const seed=()=>({users:[{id:'admin',name:'Admin',email:'admin@southline.in',pw:'admin123',role:'admin'}],
+trains:[
+{id:'12635',name:'Vaigai Express',zone:'SR',route:['Chennai','Villupuram','Trichy','Dindigul','Madurai'],dep:'06:30',dur:8.5,cls:{SL:{seats:8,fare:310},"3A":{seats:6,fare:820},"2A":{seats:4,fare:1190}}},
+{id:'12653',name:'Rockfort Superfast',zone:'SR',route:['Chennai','Villupuram','Trichy'],dep:'21:40',dur:6.5,cls:{SL:{seats:6,fare:270},"3A":{seats:6,fare:760},"2A":{seats:4,fare:1050}}},
+{id:'16021',name:'Kaveri Express',zone:'SWR',route:['Bangalore','Salem','Erode','Trichy'],dep:'22:15',dur:9,cls:{SL:{seats:8,fare:290},"3A":{seats:6,fare:790},"2A":{seats:4,fare:1100}}},
+{id:'12675',name:'Kovai Express',zone:'SR',route:['Chennai','Salem','Erode','Coimbatore'],dep:'06:15',dur:7.5,cls:{SL:{seats:8,fare:300},"3A":{seats:6,fare:800},"2A":{seats:4,fare:1120}}}],
+bookings:[]});
+let DB,me=null,view='search',ui={};
+try{DB=JSON.parse(localStorage.getItem('slr_db'))}catch(e){}
+DB=DB||seed();
+const save=()=>{try{localStorage.setItem('slr_db',JSON.stringify(DB))}catch(e){}};
+const $=s=>document.querySelector(s);
+const inr=n=>'₹'+Math.round(n).toLocaleString('en-IN');
+const today=()=>new Date().toISOString().slice(0,10);
+const days=(a,b)=>Math.round((new Date(b)-new Date(a))/864e5);
+const fareFor=(t,c,date,pax=1)=>{const wk=[0,6].includes(new Date(date).getDay());return Math.round(t.cls[c].fare*(wk?1.1:1))*pax}; // date-wise: +10% weekends
+const seg=(t,a,b)=>{const i=t.route.indexOf(a),j=t.route.indexOf(b);return i>-1&&j>i?(j-i)/(t.route.length-1):0};
+const price=(t,c,a,b,date,pax)=>Math.max(60,Math.round(fareFor(t,c,date)*seg(t,a,b)/10)*10)*pax;
+// seat allocation: bookings in order fill CNF, then RAC, then WL
+function realloc(tid,date,c){const t=DB.trains.find(x=>x.id===tid);let cn=0,rc=0,wl=0;
+ DB.bookings.filter(b=>b.tid===tid&&b.date===date&&b.cls===c&&b.state==='Booked').sort((a,b)=>a.at-b.at).forEach(b=>b.pax.forEach(p=>{
+  if(cn<t.cls[c].seats){p.st='CNF';p.seat=c+'-'+(++cn)}else if(rc<RAC_MAX){p.st='RAC';p.seat='RAC '+(++rc)}else{p.st='WL';p.seat='WL '+(++wl)}}))}
+function avail(t,date,c){let cn=0,rc=0,wl=0;DB.bookings.filter(b=>b.tid===t.id&&b.date===date&&b.cls===c&&b.state==='Booked').forEach(b=>b.pax.forEach(p=>p.st==='CNF'?cn++:p.st==='RAC'?rc++:wl++));
+ const f=t.cls[c].seats-cn;return f>0?{t:'Available '+f,k:'CNF',n:f}:rc<RAC_MAX?{t:'RAC '+(RAC_MAX-rc)+' left',k:'RAC',n:0}:{t:'WL '+(wl+1),k:'WL',n:0}}
+const pnr=()=>{let p;do p=''+(Math.floor(Math.random()*9e9)+1e9);while(DB.bookings.some(b=>b.pnr===p));return p};
+const refundOf=b=>{const d=days(today(),b.date);const r=RULES.find(r=>d>=r.d);return r?{pct:r.p,amt:Math.round(b.amount*r.p/100)}:{pct:0,amt:0}};
+const stat=b=>b.state==='Cancelled'?'CAN':b.pax.some(p=>p.st==='WL')?'WL':b.pax.some(p=>p.st==='RAC')?'RAC':'CNF';
+const statName={CNF:'Confirmed',RAC:'RAC',WL:'Waiting list',CAN:'Cancelled'};
+
+function nav(){const l=[['search','Search trains'],['pnr','PNR status']];
+ if(me&&me.role==='user')l.push(['dash','My bookings']);if(me&&me.role==='admin')l.push(['admin','Admin panel']);
+ l.push(me?['out','Log out ('+me.name.split(' ')[0]+')']:['login','Log in']);
+ $('#nav').innerHTML=l.map(([k,t])=>`<button class="${view===k?'on':''}" onclick="go('${k}')">${t}</button>`).join('')}
+function go(v){if(v==='out'){me=null;v='search'}view=v;ui.msg=ui.msg&&ui.keep?ui.msg:'';ui.keep=0;render()}
+function render(){nav();({search:vSearch,login:vLogin,book:vBook,ticket:vTicket,pnr:vPnr,dash:vDash,admin:vAdmin})[view]();window.scrollTo(0,0)}
+const msg=()=>ui.msg?`<div class="msg" role="status">${ui.msg}</div>`:'';
+const opts=(a,s)=>a.map(x=>`<option ${x===s?'selected':''}>${x}</option>`).join('');
+
+function vSearch(){const q=ui.q||{from:'Chennai',to:'Madurai',date:today(),cls:'ALL'};
+ let res='';
+ if(ui.run){const L=DB.trains.filter(t=>seg(t,q.from,q.to)>0);
+  res=`<h3>${q.from} to ${q.to} on ${q.date}</h3>`+(L.length?L.map(t=>{const i=t.route.indexOf(q.from),j=t.route.indexOf(q.to);
+   const h=t.dep.split(':').map(Number),st=h[0]+h[1]/60+t.dur*seg(t,t.route[0],q.from)*0,dep=t.dep;
+   return `<div class="tr"><div><h3>${t.name} <span class="mute">#${t.id} · ${t.zone}</span></h3>
+   <div class="mute">Departs ${dep} from ${t.route[0]} · Via ${t.route.slice(i+1,j).join(', ')||'direct'}</div>
+   <div class="mute">Route: ${t.route.join(' › ')}</div></div>
+   <div>${Object.keys(t.cls).filter(c=>q.cls==='ALL'||q.cls===c).map(c=>{const a=avail(t,q.date,c);
+    return `<span class="cls" tabindex="0" onclick="pick('${t.id}','${c}')"><b>${CL[c]}</b> ${inr(price(t,c,q.from,q.to,q.date,1))}<br><b class="s ${a.k}">${a.t}</b></span>`}).join('')}</div></div>`}).join(''):'<p class="mute">No trains run between these stations. Try another pair, such as Chennai and Trichy.</p>')}
+ $('#app').innerHTML=msg()+`<div class="card"><h2>Find a train</h2><div class="row">
+ <div><label>From</label><select id="f">${opts(ST,q.from)}</select></div><div><label>To</label><select id="t">${opts(ST,q.to)}</select></div>
+ <div><label>Journey date</label><input type="date" id="d" min="${today()}" value="${q.date}"></div>
+ <div><label>Class</label><select id="c"><option value="ALL">All classes</option>${Object.keys(CL).map(c=>`<option value="${c}" ${q.cls===c?'selected':''}>${CL[c]}</option>`)}</select></div>
+ <button class="btn" onclick="doSearch()">Search trains</button></div></div><div class="card">${ui.run?res:'<p class="mute">Choose stations and a date to see trains, fares and live seat availability.</p>'}</div>`}
+function doSearch(){ui.q={from:$('#f').value,to:$('#t').value,date:$('#d').value||today(),cls:$('#c').value};ui.run=1;ui.msg='';render()}
+function pick(tid,c){if(!me){ui.msg='Log in to book tickets. Your search is saved.';ui.keep=1;ui.after={tid,c};return go('login')}
+ ui.bk={tid,c,n:1};go('book')}
+
+function vLogin(){const reg=ui.reg;$('#app').innerHTML=msg()+`<div class="card" style="max-width:420px;margin:auto"><h2>${reg?'Create account':'Log in'}</h2>
+ ${reg?'<label>Full name</label><input id="n">':''}<label>${reg?'Email':'Email or admin ID'}</label><input id="e"><label>Password</label><input id="p" type="password"><br><br>
+ <button class="btn" onclick="${reg?'doReg()':'doLogin()'}">${reg?'Register':'Log in'}</button>
+ <button class="btn sec" onclick="ui.reg=!ui.reg;ui.msg='';render()">${reg?'I have an account':'New here? Register'}</button>
+ <p class="mute">Demo admin: <b>admin</b> / <b>admin123</b></p></div>`}
+function doReg(){const n=$('#n').value.trim(),e=$('#e').value.trim().toLowerCase(),p=$('#p').value;
+ if(!n||!/\S+@\S+\.\S+/.test(e)||p.length<6){ui.msg='Enter your name, a valid email and a password of at least 6 characters.';return render()}
+ if(DB.users.some(u=>u.email===e)){ui.msg='That email is already registered. Log in instead.';return render()}
+ me={id:e,name:n,email:e,pw:p,role:'user'};DB.users.push(me);save();ui.reg=0;afterLogin()}
+function doLogin(){const e=$('#e').value.trim().toLowerCase(),p=$('#p').value;const u=DB.users.find(u=>(u.email===e||u.id===e)&&u.pw===p);
+ if(!u){ui.msg='Email or password is incorrect.';return render()}me=u;afterLogin()}
+function afterLogin(){ui.msg='';if(me.role==='admin')return go('admin');if(ui.after){ui.bk={...ui.after,n:1};ui.after=0;return go('book')}go('dash')}
+
+function vBook(){const {tid,c,n}=ui.bk,q=ui.q,t=DB.trains.find(x=>x.id===tid),a=avail(t,q.date,c);
+ const p1=price(t,c,q.from,q.to,q.date,1);
+ $('#app').innerHTML=msg()+`<div class="card"><h2>Book: ${t.name}</h2><p class="mute">${q.from} to ${q.to} · ${q.date} · ${CL[c]} · ${inr(p1)} per passenger · <b class="${a.k}">${a.t}</b></p>
+ <label>Number of passengers (max 6)</label><select id="np" onchange="ui.bk.n=+this.value;keepPax();render()">${[1,2,3,4,5,6].map(i=>`<option ${i===n?'selected':''}>${i}</option>`)}</select><br>
+ <h3>Passenger details</h3>${Array.from({length:n},(_,i)=>`<div class="pax"><div><label>Name</label><input id="pn${i}" value="${(ui.px&&ui.px[i]&&ui.px[i].name)||''}"></div>
+ <div><label>Age</label><input id="pa${i}" type="number" min="1" max="110" value="${(ui.px&&ui.px[i]&&ui.px[i].age)||''}"></div>
+ <div><label>Gender</label><select id="pg${i}"><option>Female</option><option>Male</option><option>Other</option></select></div></div>`).join('')}
+ <h3>Payment</h3><div class="row"><div><label>Mode</label><select id="pm" onchange="$('#cardf').style.display=this.value==='Online'?'block':'none'"><option>Online</option><option>Offline (pay at counter)</option></select></div>
+ <div id="cardf"><label>Card number (demo, nothing is charged)</label><input id="cc" inputmode="numeric" placeholder="4111 1111 1111 1111" maxlength="19"></div></div>
+ <p><b>Total: ${inr(p1*n)}</b> <span class="mute">${a.n<n?'· Some seats will be RAC or waiting list.':''}</span></p>
+ <button class="btn" onclick="doBook()">Pay and book</button> <button class="btn sec" onclick="go('search')">Back</button></div>`}
+function keepPax(){ui.px=Array.from({length:6},(_,i)=>$('#pn'+i)?{name:$('#pn'+i).value,age:$('#pa'+i).value}:null)}
+function doBook(){const {tid,c,n}=ui.bk,q=ui.q,t=DB.trains.find(x=>x.id===tid),pax=[];
+ for(let i=0;i<n;i++){const nm=$('#pn'+i).value.trim(),ag=+$('#pa'+i).value;if(!nm||!(ag>0)){ui.msg='Enter a name and age for every passenger.';return render()}pax.push({name:nm,age:ag,gender:$('#pg'+i).value})}
+ const online=$('#pm').value==='Online';if(online&&$('#cc').value.replace(/\s/g,'').length<12){ui.msg='Enter a card number to pay online, or choose offline payment.';keepPax();return render()}
+ const b={pnr:pnr(),user:me.id,tid,date:q.date,from:q.from,to:q.to,cls:c,pax,amount:price(t,c,q.from,q.to,q.date,n),mode:online?'Online':'Offline',paid:online,state:'Booked',at:Date.now(),refund:null};
+ DB.bookings.push(b);realloc(tid,q.date,c);save();ui.px=0;ui.tk=b.pnr;
+ ui.msg=online?`Payment received. A confirmation email was sent to ${me.email} (simulated in this demo).`:'Booking held. Pay at the counter to release the ticket; the admin will confirm your payment.';ui.keep=1;go('ticket')}
+
+function ticketHtml(b){const t=DB.trains.find(x=>x.id===b.tid),s=stat(b);
+ return `<div class="ticket"><div class="main"><h3>${t.name} <span class="mute">#${t.id}</span></h3><b>${b.from} to ${b.to}</b> · ${b.date} · ${CL[b.cls]}
+ <table style="margin-top:.6rem"><tr><th>Passenger</th><th>Age</th><th>Status</th><th>Seat</th></tr>${b.pax.map(p=>`<tr><td>${p.name}</td><td>${p.age}</td><td class="${b.state==='Cancelled'?'CAN':p.st}">${b.state==='Cancelled'?'Cancelled':p.st}</td><td>${b.state==='Cancelled'?'-':p.seat}</td></tr>`).join('')}</table>
+ <div class="mute">Fare ${inr(b.amount)} · ${b.mode} · ${b.paid?'<span class="paid">Paid</span>':'<span class="pend">Payment pending</span>'}</div></div>
+ <div class="stub"><div class="mute">PNR</div><div class="pnr">${b.pnr}</div><b class="${s}">${statName[s]}</b></div></div>`}
+function vTicket(){const b=DB.bookings.find(x=>x.pnr===ui.tk);$('#app').innerHTML=msg()+`<div class="card"><h2>Your ticket</h2>${b.paid?ticketHtml(b):ticketHtml(b)+'<p class="mute">Printing unlocks once payment is confirmed.</p>'}<br>
+ <span class="noprint">${b.paid?'<button class="btn" onclick="window.print()">Print ticket</button> ':''}<button class="btn sec" onclick="go('dash')">My bookings</button></span></div>`}
+
+function vPnr(){const b=ui.pq&&DB.bookings.find(x=>x.pnr===ui.pq);
+ $('#app').innerHTML=msg()+`<div class="card"><h2>PNR status</h2><div class="row"><div><label>10-digit PNR</label><input id="q" inputmode="numeric" maxlength="10" value="${ui.pq||''}"></div><button class="btn" onclick="ui.pq=$('#q').value.trim();render()">Check status</button></div></div>`+
+ (ui.pq?`<div class="card">${b?ticketHtml(b):'<p>No booking found for that PNR. Check the number and try again.</p>'}</div>`:'')}
+
+function vDash(){const L=DB.bookings.filter(b=>b.user===me.id).sort((a,b)=>b.at-a.at);
+ $('#app').innerHTML=msg()+`<div class="card"><h2>Hello, ${me.name}</h2><p class="mute">${L.length} booking(s). Refund rule: ${RULES.map(r=>`${r.d>0?r.d+'+ days':'under 2 days'}: ${r.p}%`).join(' · ').replace('0+','')}</p></div>`+
+ (L.length?L.map(b=>{const s=stat(b),r=refundOf(b);return `<div class="card">${ticketHtml(b)}<p class="noprint">
+ ${b.paid&&b.state==='Booked'?`<button class="btn sm" onclick="ui.tk='${b.pnr}';go('ticket')">View / print</button> `:''}
+ ${b.state==='Booked'?`<button class="btn bad sm" onclick="cancel('${b.pnr}')">Cancel (refund ${inr(r.amt)} · ${r.pct}%)</button>`:''}
+ ${b.refund?`<span class="${b.refund.state==='Paid'?'paid':'pend'}">Refund ${inr(b.refund.amt)}: ${b.refund.state==='Paid'?'credited to you':'awaiting admin approval'}</span>`:''}</p></div>`}).join(''):'<div class="card"><p>No bookings yet. <a href="#" onclick="go(\'search\');return false">Search trains</a> to book your first ticket.</p></div>')}
+function cancel(p){const b=DB.bookings.find(x=>x.pnr===p);const r=refundOf(b);
+ if(!confirm(`Cancel PNR ${p}? You will get ${inr(r.amt)} (${r.pct}%) once the admin approves.`))return;
+ b.state='Cancelled';b.refund=b.paid?{amt:r.amt,state:'Pending'}:{amt:0,state:'Paid'};realloc(b.tid,b.date,b.cls);save();ui.msg='Ticket cancelled. Waiting-list passengers have been promoted.';ui.keep=1;go('dash')}
+
+function vAdmin(){const A=ui.tab||'trains';const tabs=['trains','payments','refunds','users'];
+ let body='';
+ if(A==='trains')body=`<div class="wrap"><table><tr><th>Train</th><th>Zone</th><th>Departs</th>${Object.keys(CL).map(c=>`<th>${c} seats / fare</th>`).join('')}<th></th></tr>
+ ${DB.trains.map(t=>`<tr><td>${t.id} ${t.name}<br><span class="mute">${t.route.join(' › ')}</span></td><td>${t.zone}</td><td><input value="${t.dep}" style="width:80px" onchange="upd('${t.id}',null,'dep',this.value)"></td>
+ ${Object.keys(CL).map(c=>`<td><input type="number" value="${t.cls[c].seats}" style="width:60px" onchange="upd('${t.id}','${c}','seats',+this.value)"> <input type="number" value="${t.cls[c].fare}" style="width:75px" onchange="upd('${t.id}','${c}','fare',+this.value)"></td>`).join('')}
+ <td><button class="btn bad sm" onclick="delTrain('${t.id}')">Remove</button></td></tr>`).join('')}</table></div>
+ <h3 style="margin-top:1rem">Add train</h3><div class="row"><div><label>Number</label><input id="an"></div><div><label>Name</label><input id="am"></div><div><label>Zone</label><input id="az" value="SR"></div>
+ <div><label>Route (comma separated stations)</label><input id="ar" placeholder="Chennai, Trichy, Madurai"></div><div><label>Departure</label><input id="ad" value="08:00"></div><div><label>Seats / fare per class</label><input id="af" value="8/300, 6/800, 4/1100"></div><button class="btn" onclick="addTrain()">Add train</button></div>
+ <p class="mute">Fares apply per full route; partial journeys are pro-rated and weekend dates cost 10% more. Stations must be from the list: ${ST.join(', ')}.</p>`;
+ if(A==='payments')body=`<div class="wrap"><table><tr><th>PNR</th><th>User</th><th>Amount</th><th>Mode</th><th>Status</th><th></th></tr>${DB.bookings.map(b=>`<tr><td>${b.pnr}</td><td>${b.user}</td><td>${inr(b.amount)}</td><td>${b.mode}</td><td class="${b.paid?'paid':'pend'}">${b.paid?'Paid':'Pending'}</td><td>${!b.paid&&b.state==='Booked'?`<button class="btn sm" onclick="markPaid('${b.pnr}')">Confirm payment</button>`:''}</td></tr>`).join('')||'<tr><td colspan=6>No payments yet.</td></tr>'}</table></div>
+ <p><b>Total collected: ${inr(DB.bookings.filter(b=>b.paid).reduce((s,b)=>s+b.amount,0))}</b></p>`;
+ if(A==='refunds'){const L=DB.bookings.filter(b=>b.refund&&b.refund.amt>0);body=`<div class="wrap"><table><tr><th>PNR</th><th>Fare</th><th>Refund</th><th>Status</th><th></th></tr>${L.map(b=>`<tr><td>${b.pnr}</td><td>${inr(b.amount)}</td><td>${inr(b.refund.amt)}</td><td class="${b.refund.state==='Paid'?'paid':'pend'}">${b.refund.state}</td><td>${b.refund.state==='Pending'?`<button class="btn sm" onclick="payRefund('${b.pnr}')">Approve refund</button>`:''}</td></tr>`).join('')||'<tr><td colspan=5>No refund requests.</td></tr>'}</table></div>`}
+ if(A==='users')body=`<div class="wrap"><table><tr><th>Name</th><th>Email</th><th>Role</th><th>Bookings</th><th></th></tr>${DB.users.map(u=>`<tr><td>${u.name}</td><td>${u.email}</td><td>${u.role}</td><td>${DB.bookings.filter(b=>b.user===u.id).length}</td><td>${u.role==='user'?`<button class="btn bad sm" onclick="delUser('${u.id}')">Delete</button>`:''}</td></tr>`).join('')}</table></div>`;
+ $('#app').innerHTML=msg()+`<div class="card"><h2>Admin panel</h2><nav style="margin-bottom:1rem">${tabs.map(t=>`<button style="color:var(--ink);${A===t?'background:var(--line)':''}" onclick="ui.tab='${t}';render()">${t[0].toUpperCase()+t.slice(1)}</button>`).join('')}</nav>${body}</div>`}
+function upd(id,c,k,v){const t=DB.trains.find(x=>x.id===id);(c?t.cls[c]:t)[k]=v;if(c&&k==='seats')DB.bookings.filter(b=>b.tid===id).forEach(b=>realloc(id,b.date,b.cls));save()}
+function delTrain(id){if(DB.bookings.some(b=>b.tid===id&&b.state==='Booked')){ui.msg='This train has active bookings. Cancel them before removing it.'}else{DB.trains=DB.trains.filter(t=>t.id!==id);save();ui.msg='Train removed.'}render()}
+function addTrain(){const id=$('#an').value.trim(),route=$('#ar').value.split(',').map(s=>s.trim()),f=$('#af').value.split(',').map(s=>s.trim().split('/').map(Number));
+ if(!id||!$('#am').value||route.length<2||route.some(s=>!ST.includes(s))||DB.trains.some(t=>t.id===id)||f.length<3||f.flat().some(isNaN)){ui.msg='Check the form: a unique number, a name, at least 2 stations from the list, and three seats/fare pairs.';return render()}
+ DB.trains.push({id,name:$('#am').value.trim(),zone:$('#az').value,route,dep:$('#ad').value,dur:6,cls:{SL:{seats:f[0][0],fare:f[0][1]},"3A":{seats:f[1][0],fare:f[1][1]},"2A":{seats:f[2][0],fare:f[2][1]}}});save();ui.msg='Train added.';render()}
+function markPaid(p){DB.bookings.find(b=>b.pnr===p).paid=true;save();ui.msg='Payment confirmed. The passenger can now print the ticket.';render()}
+function payRefund(p){DB.bookings.find(b=>b.pnr===p).refund.state='Paid';save();ui.msg='Refund approved and credited to the passenger.';render()}
+function delUser(id){DB.users=DB.users.filter(u=>u.id!==id);save();ui.msg='User deleted.';render()}
+render();
+</script></body></html>

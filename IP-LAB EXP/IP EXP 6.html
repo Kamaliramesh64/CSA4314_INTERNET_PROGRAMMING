@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Buy a Cake – Online Cake Ordering</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:wght@600;800&family=Nunito:wght@400;600;700&display=swap">
+<style>
+:root{--bg:#fff6f3;--card:#ffffff;--ink:#3b2224;--mute:#85676a;--line:#f0d9d4;--brand:#c2415d;--brand-ink:#fff;--soft:#fde3e6;--ok:#2f7d5b;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#1d1315;--card:#2a1b1e;--ink:#f8e9e7;--mute:#c4a3a6;--line:#46302f;--brand:#ef7d96;--brand-ink:#2a1015;--soft:#3d2429;--ok:#6fd0a0}}
+:root[data-theme="dark"]{--bg:#1d1315;--card:#2a1b1e;--ink:#f8e9e7;--mute:#c4a3a6;--line:#46302f;--brand:#ef7d96;--brand-ink:#2a1015;--soft:#3d2429;--ok:#6fd0a0}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 Nunito,system-ui,sans-serif}
+h1,h2,h3{font-family:Fraunces,Georgia,serif;margin:0}
+header{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--card);border-bottom:1px solid var(--line);display:flex;flex-wrap:wrap;gap:8px;align-items:center;justify-content:space-between;padding:10px 16px}
+.logo{font:800 22px Fraunces,Georgia,serif;color:var(--brand);cursor:pointer}
+nav{display:flex;flex-wrap:wrap;gap:6px}
+button,.btn{font:inherit;font-weight:700;border:1px solid var(--line);background:var(--card);color:var(--ink);padding:8px 14px;border-radius:999px;cursor:pointer}
+button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:2px solid var(--brand);outline-offset:2px}
+button.p{background:var(--brand);color:var(--brand-ink);border-color:var(--brand)}
+button.on{background:var(--soft);border-color:var(--brand)}
+main{max-width:1000px;margin:0 auto;padding:20px 16px 60px}
+.hero{background:var(--soft);border-radius:20px;padding:24px;margin-bottom:20px}
+.hero h1{font-size:clamp(26px,5vw,38px)}
+.hero p{color:var(--mute);margin:6px 0 0}
+.bar{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px}
+input,select,textarea{font:inherit;color:var(--ink);background:var(--card);border:1px solid var(--line);border-radius:10px;padding:9px 11px;max-width:100%}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:16px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:14px}
+.pic{height:120px;border-radius:12px;background:var(--soft);display:grid;place-items:center;font-size:64px;margin-bottom:10px}
+.price{font-weight:800;color:var(--brand)}
+.tag{font-size:13px;color:var(--mute)}
+.row{display:flex;gap:10px;align-items:center;justify-content:space-between;flex-wrap:wrap}
+.form{max-width:440px;display:grid;gap:10px}
+.form label{display:grid;gap:4px;font-weight:600}
+.tw{overflow-x:auto}
+table{border-collapse:collapse;width:100%;min-width:560px}
+th,td{text-align:left;padding:9px;border-bottom:1px solid var(--line);vertical-align:top}
+.st{display:inline-block;padding:2px 10px;border-radius:999px;background:var(--soft);font-size:13px;font-weight:700}
+.st.Delivered{background:var(--ok);color:var(--brand-ink)}
+.steps{display:flex;gap:4px;margin-top:6px}.steps i{flex:1;height:6px;border-radius:3px;background:var(--line)}.steps i.d{background:var(--brand)}
+#toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:10px 18px;border-radius:12px;display:none;z-index:9;max-width:90%}
+.modal{position:fixed;inset:0;background:rgba(0,0,0,.45);display:grid;place-items:center;padding:16px;z-index:8}
+.modal .card{max-width:420px;width:100%;max-height:90vh;overflow:auto}
+.empty{color:var(--mute);padding:30px;text-align:center}
+</style>
+</head>
+<body>
+<header>
+  <div class="logo" onclick="go('shop')">🎂 Buy a Cake</div>
+  <nav id="nav"></nav>
+</header>
+<main id="app"></main>
+<div id="toast" role="status"></div>
+<script>
+var SIZES={"0.5 kg":1,"1 kg":1.8,"2 kg":3.4};
+var SEED=[
+{id:1,name:"Classic Chocolate Truffle",cat:"Birthday",flavor:"Chocolate",price:650,emoji:"🍫",desc:"Rich dark chocolate sponge layered with truffle ganache."},
+{id:2,name:"Strawberry Cream Dream",cat:"Birthday",flavor:"Strawberry",price:600,emoji:"🍓",desc:"Soft vanilla sponge, fresh strawberries and whipped cream."},
+{id:3,name:"Royal Tier Vanilla",cat:"Wedding",flavor:"Vanilla",price:1800,emoji:"🎂",desc:"Elegant fondant-finished tiered cake for the big day."},
+{id:4,name:"Red Velvet Heart",cat:"Anniversary",flavor:"Red Velvet",price:850,emoji:"❤️",desc:"Heart-shaped red velvet with cream cheese frosting."},
+{id:5,name:"Butterscotch Crunch",cat:"Birthday",flavor:"Butterscotch",price:580,emoji:"🍯",desc:"Caramel crunch layers topped with praline."},
+{id:6,name:"Pineapple Delight",cat:"Festival",flavor:"Pineapple",price:520,emoji:"🍍",desc:"Light pineapple sponge with fresh fruit pieces."},
+{id:7,name:"Black Forest",cat:"Anniversary",flavor:"Chocolate",price:700,emoji:"🍒",desc:"Cherries, cream and chocolate shavings."},
+{id:8,name:"Rose Pistachio",cat:"Festival",flavor:"Pistachio",price:950,emoji:"🌹",desc:"Fragrant rose sponge with pistachio cream."}];
+var STEPS=["Placed","Baking","Out for delivery","Delivered"];
+function ld(k,d){try{var v=localStorage.getItem(k);return v?JSON.parse(v):d}catch(e){return d}}
+function sv(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}
+var cakes=ld("cakes",SEED),users=ld("users",[]),orders=ld("orders",[]),me=ld("me",null),cart=[],view="shop",f={q:"",cat:"All",max:5000,flavor:"All"};
+function $(s){return document.querySelector(s)}
+function esc(s){return String(s==null?"":s).replace(/[&<>"]/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]})}
+function toast(m){var t=$("#toast");t.textContent=m;t.style.display="block";clearTimeout(toast.t);toast.t=setTimeout(function(){t.style.display="none"},2800)}
+function go(v){view=v;render()}
+function isAdmin(){return me&&me.role==="admin"}
+function render(){
+  var n=cart.reduce(function(a,c){return a+c.qty},0),h="";
+  if(isAdmin()){h+=b("admin","Orders")+b("inv","Cakes")}
+  else{h+=b("shop","Shop")+b("cart","Cart ("+n+")")+(me?b("orders","My orders"):"")}
+  h+=me?'<button onclick="logout()">Logout ('+esc(me.name)+')</button>':b("login","Login")+b("reg","Register");
+  $("#nav").innerHTML=h;
+  var fn={shop:shop,cart:cartV,checkout:checkout,orders:myOrders,login:login,reg:reg,admin:adminOrders,inv:inventory,adminlogin:adminLogin}[view];
+  $("#app").innerHTML=fn();window.scrollTo(0,0);
+}
+function b(v,t){return '<button class="'+(view===v?"on":"")+'" onclick="go(\''+v+'\')">'+t+'</button>'}
+
+/* ---------- Shop ---------- */
+function shop(){
+  var cats=["All"].concat(uniq("cat")),fl=["All"].concat(uniq("flavor"));
+  var list=cakes.filter(function(c){return(f.cat==="All"||c.cat===f.cat)&&(f.flavor==="All"||c.flavor===f.flavor)&&c.price<=f.max&&(c.name+c.flavor+c.cat).toLowerCase().indexOf(f.q.toLowerCase())>-1});
+  return '<div class="hero"><h1>Fresh cakes, delivered near you</h1><p>Browse by occasion or flavor, customise, and order in minutes.</p></div>'+
+  '<div class="bar"><input id="q" placeholder="Search cakes" value="'+esc(f.q)+'" oninput="f.q=this.value;keep()">'+
+  '<select onchange="f.cat=this.value;render()">'+cats.map(function(c){return opt(c,f.cat)})+'</select>'+
+  '<select onchange="f.flavor=this.value;render()">'+fl.map(function(c){return opt(c,f.flavor)})+'</select>'+
+  '<select onchange="f.max=+this.value;render()">'+[[5000,"Any price"],[600,"Up to ₹600"],[900,"Up to ₹900"],[1500,"Up to ₹1,500"]].map(function(p){return '<option value="'+p[0]+'"'+(f.max===p[0]?" selected":"")+'>'+p[1]+'</option>'}).join("")+'</select></div>'+
+  (list.length?'<div class="grid">'+list.map(function(c){return '<div class="card"><div class="pic">'+esc(c.emoji)+'</div><h3 style="font-size:18px">'+esc(c.name)+'</h3><div class="tag">'+esc(c.cat)+' · '+esc(c.flavor)+'</div><div class="row" style="margin-top:8px"><span class="price">₹'+c.price+'</span><button class="p" onclick="detail('+c.id+')">View</button></div></div>'}).join("")+'</div>':'<div class="empty">No cakes match these filters. Clear a filter to see more.</div>');
+}
+function keep(){var q=$("#q"),p=q.selectionStart;var g=$(".grid"),e=$(".empty");var r=document.createElement("div");r.innerHTML=shop();var ng=r.querySelector(".grid")||r.querySelector(".empty");(g||e).replaceWith(ng)}
+function uniq(k){var o=[];cakes.forEach(function(c){if(o.indexOf(c[k])<0)o.push(c[k])});return o}
+function opt(v,cur){return '<option'+(v===cur?" selected":"")+'>'+esc(v)+'</option>'}
+function detail(id){
+  var c=cakes.filter(function(x){return x.id===id})[0];
+  var m=document.createElement("div");m.className="modal";m.id="m";
+  m.innerHTML='<div class="card"><div class="pic" style="height:140px">'+esc(c.emoji)+'</div><h2 style="font-size:22px">'+esc(c.name)+'</h2><p class="tag">'+esc(c.cat)+' · '+esc(c.flavor)+'</p><p>'+esc(c.desc)+'</p>'+
+  '<div class="form"><label>Size<select id="sz" onchange="pp('+c.price+')">'+Object.keys(SIZES).map(function(s){return '<option>'+s+'</option>'}).join("")+'</select></label>'+
+  '<label>Message on cake<input id="ms" maxlength="30" placeholder="e.g. Happy Birthday Priya"></label>'+
+  '<div class="row"><span class="price" id="pr">₹'+c.price+'</span><span><button onclick="$(\'#m\').remove()">Close</button> <button class="p" onclick="add('+c.id+')">Add to cart</button></span></div></div></div>';
+  m.onclick=function(e){if(e.target===m)m.remove()};document.body.appendChild(m);
+}
+function pp(base){$("#pr").textContent="₹"+Math.round(base*SIZES[$("#sz").value])}
+function add(id){var c=cakes.filter(function(x){return x.id===id})[0],s=$("#sz").value,m=$("#ms").value.trim();
+  var ex=cart.filter(function(i){return i.id===id&&i.size===s&&i.msg===m})[0];
+  if(ex)ex.qty++;else cart.push({id:id,name:c.name,size:s,msg:m,qty:1,unit:Math.round(c.price*SIZES[s])});
+  $("#m").remove();toast("Added to cart");render()}
+
+/* ---------- Cart & checkout ---------- */
+function total(){return cart.reduce(function(a,c){return a+c.unit*c.qty},0)}
+function cartV(){
+  if(!cart.length)return '<div class="empty">Your cart is empty. Pick a cake from the shop.</div>';
+  return '<h2>Your cart</h2><div class="tw"><table><tr><th>Cake</th><th>Size</th><th>Message</th><th>Qty</th><th>Price</th><th></th></tr>'+
+  cart.map(function(c,i){return '<tr><td>'+esc(c.name)+'</td><td>'+c.size+'</td><td>'+esc(c.msg||"–")+'</td><td><button onclick="qty('+i+',-1)">−</button> '+c.qty+' <button onclick="qty('+i+',1)">+</button></td><td>₹'+c.unit*c.qty+'</td><td><button onclick="cart.splice('+i+',1);render()">Remove</button></td></tr>'}).join("")+
+  '</table></div><div class="row" style="margin-top:14px"><h3>Total ₹'+total()+'</h3><button class="p" onclick="me?go(\'checkout\'):(toast(\'Please log in to place an order\'),go(\'login\'))">Checkout</button></div>';
+}
+function qty(i,d){cart[i].qty+=d;if(cart[i].qty<1)cart.splice(i,1);render()}
+function checkout(){
+  var a=me.addr||{};
+  return '<h2>Delivery &amp; payment</h2><div class="form" style="margin-top:12px">'+
+  '<label>Full name<input id="an" value="'+esc(a.name||me.name)+'"></label>'+
+  '<label>Phone<input id="ap" inputmode="tel" value="'+esc(a.phone||"")+'"></label>'+
+  '<label>Delivery address<textarea id="aa" rows="3">'+esc(a.addr||"")+'</textarea></label>'+
+  '<label>Delivery date<input id="ad" type="date" value="'+(a.date||"")+'"></label>'+
+  '<label>Payment method<select id="pm"><option>UPI</option><option>Card</option><option>Cash on delivery</option></select></label>'+
+  '<p class="tag">Demo only: no real payment is taken.</p>'+
+  '<div class="row"><b>Total ₹'+total()+'</b><button class="p" onclick="pay()">Pay &amp; place order</button></div></div>';
+}
+function pay(){
+  var a={name:$("#an").value.trim(),phone:$("#ap").value.trim(),addr:$("#aa").value.trim(),date:$("#ad").value};
+  if(!a.name||!/^\d{10}$/.test(a.phone)||a.addr.length<8||!a.date){toast("Enter name, 10-digit phone, full address and date");return}
+  me.addr=a;sv("me",me);users.forEach(function(u){if(u.email===me.email)u.addr=a});sv("users",users);
+  var o={id:"CK"+(1000+orders.length+1),user:me.email,uname:me.name,items:cart.slice(),total:total(),addr:a,pay:$("#pm").value,status:"Placed",date:new Date().toLocaleDateString()};
+  orders.push(o);sv("orders",orders);cart=[];
+  toast("Order "+o.id+" placed. Confirmation email sent to "+me.email);go("orders");
+}
+function bar(s){var i=STEPS.indexOf(s);return '<div class="steps">'+STEPS.map(function(_,k){return '<i class="'+(k<=i?"d":"")+'"></i>'}).join("")+'</div>'}
+function myOrders(){
+  var l=orders.filter(function(o){return o.user===me.email}).reverse();
+  if(!l.length)return '<div class="empty">No orders yet. Your orders and delivery status will show here.</div>';
+  return '<h2>My orders</h2><div class="grid" style="grid-template-columns:repeat(auto-fill,minmax(280px,1fr));margin-top:12px">'+l.map(function(o){
+    return '<div class="card"><div class="row"><b>'+o.id+'</b><span class="st '+o.status.replace(/ /g,"")+'">'+o.status+'</span></div>'+bar(o.status)+
+    '<p class="tag">'+o.date+' · '+esc(o.pay)+'</p>'+o.items.map(function(i){return '<div>'+esc(i.name)+' ('+i.size+') ×'+i.qty+'</div>'}).join("")+
+    '<p class="tag">Deliver to: '+esc(o.addr.addr)+' on '+esc(o.addr.date)+'</p><b>₹'+o.total+'</b></div>'}).join("")+'</div>';
+}
+
+/* ---------- Auth ---------- */
+function reg(){return '<h2>Create account</h2><div class="form" style="margin-top:12px"><label>Name<input id="rn"></label><label>Email<input id="re" type="email"></label><label>Password (min 6)<input id="rp" type="password"></label><button class="p" onclick="doReg()">Register</button></div>'}
+function doReg(){var n=$("#rn").value.trim(),e=$("#re").value.trim().toLowerCase(),p=$("#rp").value;
+  if(!n||!/^\S+@\S+\.\S+$/.test(e)||p.length<6){toast("Enter a name, valid email and 6+ character password");return}
+  if(users.some(function(u){return u.email===e})){toast("That email is already registered. Log in instead.");return}
+  users.push({name:n,email:e,pass:p});sv("users",users);me={name:n,email:e,role:"user"};sv("me",me);toast("Welcome, "+n);go("shop")}
+function login(){return '<h2>Log in</h2><div class="form" style="margin-top:12px"><label>Email<input id="le" type="email"></label><label>Password<input id="lp" type="password"></label><button class="p" onclick="doLogin()">Log in</button><button onclick="go(\'adminlogin\')">Admin login</button></div>'}
+function doLogin(){var e=$("#le").value.trim().toLowerCase(),p=$("#lp").value,u=users.filter(function(x){return x.email===e&&x.pass===p})[0];
+  if(!u){toast("Email or password is incorrect");return}
+  me={name:u.name,email:u.email,role:"user",addr:u.addr};sv("me",me);go("shop")}
+function adminLogin(){return '<h2>Admin login</h2><div class="form" style="margin-top:12px"><label>Username<input id="au" value="admin"></label><label>Password<input id="ap2" type="password"></label><p class="tag">Demo credentials: admin / admin123</p><button class="p" onclick="doAdmin()">Log in</button></div>'}
+function doAdmin(){if($("#au").value==="admin"&&$("#ap2").value==="admin123"){me={name:"Admin",email:"admin",role:"admin"};sv("me",me);go("admin")}else toast("Wrong admin credentials")}
+function logout(){me=null;sv("me",null);cart=[];go("shop")}
+
+/* ---------- Admin ---------- */
+function adminOrders(){
+  if(!orders.length)return '<div class="empty">No orders yet.</div>';
+  return '<h2>Manage orders</h2><div class="tw"><table><tr><th>Order</th><th>Customer</th><th>Items</th><th>Ship to</th><th>Total</th><th>Status</th></tr>'+
+  orders.slice().reverse().map(function(o){var i=orders.indexOf(o);return '<tr><td>'+o.id+'<div class="tag">'+o.date+'</div></td><td>'+esc(o.uname)+'<div class="tag">'+esc(o.user)+'</div></td><td>'+o.items.map(function(x){return esc(x.name)+' ×'+x.qty}).join("<br>")+'</td><td>'+esc(o.addr.addr)+'</td><td>₹'+o.total+'</td><td><select onchange="setSt('+i+',this.value)">'+STEPS.map(function(s){return opt(s,o.status)}).join("")+'</select></td></tr>'}).join("")+'</table></div>';
+}
+function setSt(i,v){orders[i].status=v;sv("orders",orders);toast("Status updated to "+v)}
+function inventory(){
+  return '<h2>Manage cakes</h2><div class="form" style="margin:12px 0 20px"><label>Name<input id="cn"></label><label>Category<input id="cc" placeholder="Birthday, Wedding…"></label><label>Flavor<input id="cf"></label><label>Price for 0.5 kg (₹)<input id="cp" type="number" min="1"></label><label>Emoji picture<input id="ce" value="🎂" maxlength="4"></label><label>Description<textarea id="cd" rows="2"></textarea></label><button class="p" onclick="addCake()">Post cake</button></div>'+
+  '<div class="tw"><table><tr><th>Cake</th><th>Category</th><th>Price</th><th></th></tr>'+cakes.map(function(c){return '<tr><td>'+esc(c.emoji)+' '+esc(c.name)+'</td><td>'+esc(c.cat)+'</td><td>₹'+c.price+'</td><td><button onclick="delCake('+c.id+')">Delete</button></td></tr>'}).join("")+'</table></div>';
+}
+function addCake(){var c={id:Date.now(),name:$("#cn").value.trim(),cat:$("#cc").value.trim(),flavor:$("#cf").value.trim(),price:+$("#cp").value,emoji:$("#ce").value||"🎂",desc:$("#cd").value.trim()};
+  if(!c.name||!c.cat||!c.flavor||!(c.price>0)){toast("Fill name, category, flavor and a price above 0");return}
+  cakes.push(c);sv("cakes",cakes);toast("Cake posted");render()}
+function delCake(id){cakes=cakes.filter(function(c){return c.id!==id});sv("cakes",cakes);render()}
+render();
+</script>
+</body>
+</html>

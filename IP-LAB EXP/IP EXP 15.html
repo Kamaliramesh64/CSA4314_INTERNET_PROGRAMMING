@@ -1,0 +1,2396 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>EasyToll - Online Toll Payment System</title>
+
+<style>
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: Arial, sans-serif;
+}
+
+body {
+    background: #f3f6fb;
+    color: #1e293b;
+}
+
+header {
+    background: linear-gradient(135deg, #123c69, #0077b6);
+    color: white;
+    padding: 20px 5%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 15px;
+}
+
+header h1 {
+    font-size: 30px;
+}
+
+header p {
+    margin-top: 5px;
+    font-size: 13px;
+}
+
+nav {
+    background: white;
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    padding: 12px;
+    gap: 8px;
+    box-shadow: 0 3px 8px #00000010;
+}
+
+nav button {
+    border: none;
+    background: transparent;
+    color: #123c69;
+    font-weight: bold;
+    cursor: pointer;
+    padding: 10px;
+}
+
+nav button:hover {
+    background: #e0f2fe;
+    border-radius: 5px;
+}
+
+.hero {
+    background: linear-gradient(120deg, #dbeafe, #eff6ff);
+    text-align: center;
+    padding: 55px 8%;
+}
+
+.hero h2 {
+    font-size: 35px;
+    color: #123c69;
+    margin-bottom: 15px;
+}
+
+.hero p {
+    line-height: 1.8;
+    margin-bottom: 20px;
+}
+
+.btn {
+    background: #0877bd;
+    color: white;
+    border: none;
+    padding: 11px 16px;
+    margin: 4px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.btn:hover {
+    background: #075985;
+}
+
+.btn-danger {
+    background: #dc3545;
+}
+
+.btn-danger:hover {
+    background: #b02a37;
+}
+
+.btn-success {
+    background: #15803d;
+}
+
+.btn-secondary {
+    background: #64748b;
+}
+
+.container {
+    width: 92%;
+    max-width: 1200px;
+    margin: 30px auto;
+}
+
+.section-title {
+    color: #123c69;
+    margin-bottom: 20px;
+    font-size: 25px;
+}
+
+.hidden {
+    display: none !important;
+}
+
+.panel {
+    background: white;
+    padding: 25px;
+    margin-bottom: 22px;
+    border-radius: 10px;
+    box-shadow: 0 3px 12px #00000010;
+}
+
+.form-box {
+    max-width: 520px;
+    margin: 30px auto;
+}
+
+input, select, textarea {
+    width: 100%;
+    padding: 11px;
+    border: 1px solid #cbd5e1;
+    border-radius: 5px;
+    margin: 8px 0 15px;
+    font-size: 14px;
+}
+
+label {
+    font-weight: bold;
+    color: #334155;
+}
+
+.cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+    gap: 20px;
+    margin-bottom: 30px;
+}
+
+.card {
+    background: white;
+    padding: 24px;
+    border-radius: 10px;
+    box-shadow: 0 3px 12px #00000010;
+    border-left: 5px solid #0877bd;
+}
+
+.card h3 {
+    color: #475569;
+    font-size: 15px;
+}
+
+.card .number {
+    font-size: 27px;
+    color: #123c69;
+    font-weight: bold;
+    margin-top: 12px;
+}
+
+.features {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 18px;
+}
+
+.feature {
+    background: white;
+    padding: 25px;
+    border-radius: 10px;
+    text-align: center;
+    border: 1px solid #dbeafe;
+}
+
+.feature h3 {
+    color: #123c69;
+    margin: 12px 0;
+}
+
+.feature .icon {
+    font-size: 38px;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 15px;
+    background: white;
+    min-width: 650px;
+}
+
+th, td {
+    padding: 12px;
+    border: 1px solid #e2e8f0;
+    text-align: left;
+}
+
+th {
+    background: #dbeafe;
+    color: #123c69;
+}
+
+.table-wrapper {
+    overflow-x: auto;
+}
+
+.message {
+    background: #dcfce7;
+    color: #166534;
+    padding: 12px;
+    border-radius: 5px;
+    margin: 12px 0;
+}
+
+.error {
+    background: #fee2e2;
+    color: #991b1b;
+}
+
+.badge {
+    background: #dbeafe;
+    color: #123c69;
+    padding: 5px 9px;
+    border-radius: 5px;
+    font-size: 12px;
+}
+
+footer {
+    margin-top: 40px;
+    background: #123c69;
+    color: white;
+    text-align: center;
+    padding: 25px;
+}
+
+.small-text {
+    font-size: 13px;
+    color: #64748b;
+    line-height: 1.6;
+}
+
+.qr-box {
+    background: white;
+    border: 2px dashed #0877bd;
+    border-radius: 10px;
+    padding: 20px;
+    text-align: center;
+    max-width: 350px;
+    margin: 20px auto;
+}
+
+.qr-box img {
+    width: 180px;
+    height: 180px;
+    margin: 15px;
+}
+
+@media(max-width: 600px) {
+    .hero h2 {
+        font-size: 27px;
+    }
+
+    header {
+        justify-content: center;
+        text-align: center;
+    }
+
+    .container {
+        width: 95%;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<header>
+    <div>
+        <h1>🚘 EasyToll</h1>
+        <p>Pay in Advance. Travel Without Toll Queues.</p>
+    </div>
+    <div id="welcomeUser">Welcome, Guest!</div>
+</header>
+
+<nav>
+    <button onclick="showPage('home')">Home</button>
+    <button onclick="showPage('login')">Login</button>
+    <button onclick="showPage('register')">Register</button>
+    <button onclick="showPage('dashboard')">My Dashboard</button>
+    <button onclick="showPage('vehicles')">Vehicles</button>
+    <button onclick="showPage('wallet')">eWallet</button>
+    <button onclick="showPage('tickets')">Buy Toll eTicket</button>
+    <button onclick="showPage('passes')">Toll Pass</button>
+    <button onclick="showPage('transactions')">Transactions</button>
+    <button onclick="showPage('qr')">My QR Code</button>
+    <button onclick="showPage('gateLogin')">Toll Gate</button>
+    <button onclick="showPage('adminLogin')">Admin</button>
+    <button onclick="logout()">Logout</button>
+</nav>
+
+<!-- HOME -->
+<section id="homePage">
+
+    <div class="hero">
+        <h2>Skip the Queue with EasyToll!</h2>
+        <p>
+            Register your vehicle, recharge your eWallet, purchase toll tickets
+            and passes, and travel through toll gates with advance payment.
+        </p>
+        <button class="btn" onclick="showPage('register')">Get Started</button>
+        <button class="btn" onclick="showPage('tickets')">Buy Toll Ticket</button>
+    </div>
+
+    <div class="container">
+        <h2 class="section-title">Our Services</h2>
+
+        <div class="features">
+            <div class="feature">
+                <div class="icon">💳</div>
+                <h3>Online Toll Payment</h3>
+                <p>Pay toll charges in advance using your wallet.</p>
+            </div>
+
+            <div class="feature">
+                <div class="icon">🚗</div>
+                <h3>Vehicle Management</h3>
+                <p>Add and manage your registered vehicles.</p>
+            </div>
+
+            <div class="feature">
+                <div class="icon">🎫</div>
+                <h3>Toll eTickets</h3>
+                <p>Purchase tickets for your planned journeys.</p>
+            </div>
+
+            <div class="feature">
+                <div class="icon">🪪</div>
+                <h3>Toll Pass</h3>
+                <p>Apply for a pass and track its approval status.</p>
+            </div>
+
+            <div class="feature">
+                <div class="icon">📱</div>
+                <h3>QR Verification</h3>
+                <p>Display your QR code for toll gate verification.</p>
+            </div>
+
+            <div class="feature">
+                <div class="icon">📊</div>
+                <h3>Transaction History</h3>
+                <p>Review payments, ticket purchases and wallet activity.</p>
+            </div>
+        </div>
+
+        <div class="panel" style="margin-top:30px">
+            <h2 class="section-title">Available Toll Gates</h2>
+            <div id="homeTollList"></div>
+        </div>
+    </div>
+</section>
+
+<!-- REGISTER -->
+<section id="registerPage" class="hidden container">
+    <div class="panel form-box">
+        <h2 class="section-title">Create Your EasyToll Account</h2>
+
+        <form onsubmit="registerUser(event)">
+            <label>Full Name</label>
+            <input id="regName" required>
+
+            <label>Email Address</label>
+            <input type="email" id="regEmail" required>
+
+            <label>Mobile Number</label>
+            <input type="tel" id="regPhone" required>
+
+            <label>Password</label>
+            <input type="password" id="regPassword" minlength="6" required>
+
+            <label>Initial Wallet Deposit (₹)</label>
+            <input type="number" id="regBalance" min="0" value="0" required>
+
+            <button class="btn" type="submit">Register Account</button>
+        </form>
+
+        <div id="registerMessage"></div>
+    </div>
+</section>
+
+<!-- LOGIN -->
+<section id="loginPage" class="hidden container">
+    <div class="panel form-box">
+        <h2 class="section-title">User Login</h2>
+
+        <form onsubmit="loginUser(event)">
+            <label>Email Address</label>
+            <input type="email" id="loginEmail" required>
+
+            <label>Password</label>
+            <input type="password" id="loginPassword" required>
+
+            <button class="btn" type="submit">Login</button>
+        </form>
+
+        <div id="loginMessage"></div>
+        <p class="small-text">New user? Select Register in the navigation menu.</p>
+    </div>
+</section>
+
+<!-- USER DASHBOARD -->
+<section id="dashboardPage" class="hidden container">
+    <h2 class="section-title">My EasyToll Dashboard</h2>
+
+    <div class="cards">
+        <div class="card">
+            <h3>Wallet Balance</h3>
+            <div class="number" id="dashBalance">₹0</div>
+        </div>
+
+        <div class="card">
+            <h3>Registered Vehicles</h3>
+            <div class="number" id="dashVehicles">0</div>
+        </div>
+
+        <div class="card">
+            <h3>Active Toll Passes</h3>
+            <div class="number" id="dashPasses">0</div>
+        </div>
+
+        <div class="card">
+            <h3>Purchased Tickets</h3>
+            <div class="number" id="dashTickets">0</div>
+        </div>
+    </div>
+
+    <div class="panel">
+        <h3 class="section-title">Quick Actions</h3>
+        <button class="btn" onclick="showPage('wallet')">Add Money</button>
+        <button class="btn" onclick="showPage('vehicles')">Manage Vehicles</button>
+        <button class="btn" onclick="showPage('tickets')">Buy eTicket</button>
+        <button class="btn" onclick="showPage('passes')">Apply Toll Pass</button>
+        <button class="btn" onclick="showPage('transactions')">View Transactions</button>
+        <button class="btn" onclick="showPage('profile')">Edit Profile</button>
+    </div>
+
+    <div class="panel">
+        <h3 class="section-title">My Notifications</h3>
+        <div id="notificationsList"></div>
+    </div>
+</section>
+
+<!-- PROFILE -->
+<section id="profilePage" class="hidden container">
+    <div class="panel form-box">
+        <h2 class="section-title">Manage Account</h2>
+
+        <form onsubmit="updateProfile(event)">
+            <label>Full Name</label>
+            <input id="profileName" required>
+
+            <label>Email Address</label>
+            <input type="email" id="profileEmail" required>
+
+            <label>Mobile Number</label>
+            <input id="profilePhone" required>
+
+            <button class="btn" type="submit">Update Profile</button>
+            <button class="btn btn-danger" type="button" onclick="deleteAccount()">Delete Account</button>
+        </form>
+
+        <div id="profileMessage"></div>
+    </div>
+</section>
+
+<!-- VEHICLES -->
+<section id="vehiclesPage" class="hidden container">
+    <div class="panel">
+        <h2 class="section-title">My Vehicles</h2>
+
+        <form onsubmit="addVehicle(event)">
+            <label>Vehicle Registration Number</label>
+            <input id="vehicleNumber" placeholder="e.g. TN01AB1234" required>
+
+            <label>Vehicle Type</label>
+            <select id="vehicleType">
+                <option>Car</option>
+                <option>Motorcycle</option>
+                <option>Bus</option>
+                <option>Truck</option>
+                <option>Van</option>
+                <option>Other</option>
+            </select>
+
+            <label>Vehicle Model</label>
+            <input id="vehicleModel" required>
+
+            <button class="btn" type="submit">Add Vehicle</button>
+        </form>
+    </div>
+
+    <div class="panel">
+        <h3 class="section-title">Registered Vehicles</h3>
+        <div id="vehicleList"></div>
+    </div>
+</section>
+
+<!-- WALLET -->
+<section id="walletPage" class="hidden container">
+    <div class="panel form-box">
+        <h2 class="section-title">EasyToll eWallet</h2>
+        <h3>Current Balance: <span id="walletBalance">₹0</span></h3>
+
+        <form onsubmit="addMoney(event)">
+            <label>Amount to Add (₹)</label>
+            <input type="number" id="walletAmount" min="1" max="100000" required>
+
+            <label>Payment Method</label>
+            <select id="walletPayment">
+                <option>UPI (Demo)</option>
+                <option>Debit Card (Demo)</option>
+                <option>Credit Card (Demo)</option>
+                <option>Net Banking (Demo)</option>
+            </select>
+
+            <button class="btn" type="submit">Add Money</button>
+        </form>
+
+        <p class="small-text">
+            Demonstration only. No real payment is processed.
+        </p>
+        <div id="walletMessage"></div>
+    </div>
+</section>
+
+<!-- BUY TOLL TICKET -->
+<section id="ticketsPage" class="hidden container">
+    <div class="panel form-box">
+        <h2 class="section-title">Buy Toll eTicket</h2>
+
+        <form onsubmit="buyTicket(event)">
+            <label>Select Vehicle</label>
+            <select id="ticketVehicle" required></select>
+
+            <label>Starting Location</label>
+            <input id="ticketFrom" required>
+
+            <label>Destination</label>
+            <input id="ticketTo" required>
+
+            <label>Select Toll Gate</label>
+            <select id="ticketToll" required></select>
+
+            <label>Travel Date</label>
+            <input type="date" id="ticketDate" required>
+
+            <label>Number of Crossings</label>
+            <select id="ticketCrossings">
+                <option value="1">One Crossing</option>
+                <option value="2">Two Crossings</option>
+            </select>
+
+            <button class="btn" type="submit">Pay & Buy eTicket</button>
+        </form>
+
+        <div id="ticketMessage"></div>
+    </div>
+
+    <div class="panel">
+        <h2 class="section-title">My Toll eTickets</h2>
+        <div id="ticketList"></div>
+    </div>
+</section>
+
+<!-- TOLL PASSES -->
+<section id="passesPage" class="hidden container">
+    <div class="panel form-box">
+        <h2 class="section-title">Apply / Renew Toll Pass</h2>
+
+        <form onsubmit="applyPass(event)">
+            <label>Select Vehicle</label>
+            <select id="passVehicle" required></select>
+
+            <label>Select Toll Gate</label>
+            <select id="passToll" required></select>
+
+            <label>Pass Type</label>
+            <select id="passType">
+                <option value="Daily">Daily Pass - ₹100</option>
+                <option value="Weekly">Weekly Pass - ₹500</option>
+                <option value="Monthly">Monthly Pass - ₹1500</option>
+            </select>
+
+            <label>Application Type</label>
+            <select id="passApplicationType">
+                <option value="New">New Toll Pass</option>
+                <option value="Renewal">Renewal Toll Pass</option>
+            </select>
+
+            <button class="btn" type="submit">Submit Application</button>
+        </form>
+
+        <div id="passMessage"></div>
+    </div>
+
+    <div class="panel">
+        <h2 class="section-title">My Toll Passes</h2>
+        <div id="passList"></div>
+    </div>
+</section>
+
+<!-- QR CODE -->
+<section id="qrPage" class="hidden container">
+    <div class="panel">
+        <h2 class="section-title">My Toll QR Codes</h2>
+        <p class="small-text">
+            Approved passes and valid tickets can display a QR code for demonstration
+            and verification. Actual toll-gate use requires an integrated verification system.
+        </p>
+        <div id="qrList"></div>
+    </div>
+</section>
+
+<!-- TRANSACTIONS -->
+<section id="transactionsPage" class="hidden container">
+    <div class="panel">
+        <h2 class="section-title">Transaction History</h2>
+        <div id="transactionList"></div>
+    </div>
+</section>
+
+<!-- TOLL GATE LOGIN -->
+<section id="gateLoginPage" class="hidden container">
+    <div class="panel form-box">
+        <h2 class="section-title">Toll Gate Staff Login</h2>
+
+        <form onsubmit="gateLogin(event)">
+            <label>Username</label>
+            <input id="gateUsername" required>
+
+            <label>Password</label>
+            <input type="password" id="gatePassword" required>
+
+            <button class="btn" type="submit">Login to Toll Gate</button>
+        </form>
+
+        <p class="small-text">Demo credentials: gate / Gate@123</p>
+        <div id="gateLoginMessage"></div>
+    </div>
+</section>
+
+<!-- TOLL GATE DASHBOARD -->
+<section id="gatePage" class="hidden container">
+    <h2 class="section-title">Toll Gate Control Panel</h2>
+
+    <div class="panel">
+        <h3>Current Toll Gate Location</h3>
+        <div id="currentGateLocation"></div>
+
+        <form onsubmit="updateGateLocation(event)">
+            <label>Update Location / Toll Gate Name</label>
+            <input id="newGateLocation" required>
+            <button class="btn" type="submit">Update Location</button>
+        </form>
+    </div>
+
+    <div class="panel form-box">
+        <h3 class="section-title">Verify Toll Pass / Ticket</h3>
+
+        <label>Enter Pass ID or Ticket ID</label>
+        <input id="verifyId" placeholder="Enter EasyToll ID">
+
+        <button class="btn" onclick="verifyToll()">Verify ID</button>
+
+        <div id="verifyResult"></div>
+    </div>
+
+    <div class="panel form-box">
+        <h3 class="section-title">Scan QR Code</h3>
+        <p class="small-text">
+            Allow camera access to scan a QR code. If camera access is unavailable,
+            enter the ID manually above.
+        </p>
+
+        <button class="btn" onclick="startQRScanner()">Start QR Scanner</button>
+        <button class="btn btn-secondary" onclick="stopQRScanner()">Stop Scanner</button>
+
+        <div id="scannerArea"></div>
+    </div>
+
+    <div class="panel">
+        <h3 class="section-title">Recent Toll Verifications</h3>
+        <div id="gateVerificationList"></div>
+    </div>
+
+    <button class="btn btn-danger" onclick="gateLogout()">Toll Gate Logout</button>
+</section>
+
+<!-- ADMIN LOGIN -->
+<section id="adminLoginPage" class="hidden container">
+    <div class="panel form-box">
+        <h2 class="section-title">Administrator Login</h2>
+
+        <form onsubmit="adminLogin(event)">
+            <label>Username</label>
+            <input id="adminUsername" required>
+
+            <label>Password</label>
+            <input type="password" id="adminPassword" required>
+
+            <button class="btn" type="submit">Admin Login</button>
+        </form>
+
+        <p class="small-text">Demo credentials: admin / Admin@123</p>
+        <div id="adminLoginMessage"></div>
+    </div>
+</section>
+
+<!-- ADMIN DASHBOARD -->
+<section id="adminPage" class="hidden container">
+    <h2 class="section-title">EasyToll Administration</h2>
+
+    <div class="cards">
+        <div class="card">
+            <h3>Registered Users</h3>
+            <div class="number" id="adminUsersCount">0</div>
+        </div>
+        <div class="card">
+            <h3>Vehicles</h3>
+            <div class="number" id="adminVehiclesCount">0</div>
+        </div>
+        <div class="card">
+            <h3>Toll Pass Applications</h3>
+            <div class="number" id="adminPassCount">0</div>
+        </div>
+        <div class="card">
+            <h3>Toll Tickets</h3>
+            <div class="number" id="adminTicketsCount">0</div>
+        </div>
+    </div>
+
+    <div class="panel">
+        <h3 class="section-title">Administrator Functions</h3>
+
+        <button class="btn" onclick="showAdminSection('users')">Manage Users</button>
+        <button class="btn" onclick="showAdminSection('passes')">Manage Toll Passes</button>
+        <button class="btn" onclick="showAdminSection('tolls')">Manage Toll Gates</button>
+        <button class="btn" onclick="showAdminSection('tickets')">Manage Tickets</button>
+        <button class="btn" onclick="showAdminSection('transactions')">Transactions</button>
+
+        <button class="btn btn-danger" onclick="adminLogout()">Admin Logout</button>
+    </div>
+
+    <div id="adminUsersSection" class="panel admin-section">
+        <h3 class="section-title">User Management</h3>
+        <div id="adminUsersTable"></div>
+    </div>
+
+    <div id="adminPassesSection" class="panel admin-section hidden">
+        <h3 class="section-title">Manage and Approve Toll Passes</h3>
+        <div id="adminPassesTable"></div>
+    </div>
+
+    <div id="adminTollsSection" class="panel admin-section hidden">
+        <h3 class="section-title">Create Toll Details</h3>
+
+        <form onsubmit="addToll(event)">
+            <label>Toll Gate Name</label>
+            <input id="newTollName" required>
+
+            <label>Location</label>
+            <input id="newTollLocation" required>
+
+            <label>Car Toll Fee (₹)</label>
+            <input type="number" id="newTollCarFee" min="0" required>
+
+            <label>Motorcycle Toll Fee (₹)</label>
+            <input type="number" id="newTollBikeFee" min="0" required>
+
+            <label>Bus / Truck Toll Fee (₹)</label>
+            <input type="number" id="newTollHeavyFee" min="0" required>
+
+            <button class="btn" type="submit">Create Toll Gate</button>
+        </form>
+
+        <div id="adminTollsTable"></div>
+    </div>
+
+    <div id="adminTicketsSection" class="panel admin-section hidden">
+        <h3 class="section-title">Manage Toll Tickets</h3>
+        <div id="adminTicketsTable"></div>
+    </div>
+
+    <div id="adminTransactionsSection" class="panel admin-section hidden">
+        <h3 class="section-title">Transaction Summary</h3>
+        <div id="adminTransactionsTable"></div>
+    </div>
+</section>
+
+<footer>
+    <h3>🚘 EasyToll</h3>
+    <p style="margin-top:10px">Pay in Advance. Travel with Ease.</p>
+    <p style="margin-top:10px;font-size:12px">
+        © 2026 EasyToll | Online Toll Payment System
+    </p>
+</footer>
+
+<script>
+/* =========================================
+   DATA STORAGE
+========================================= */
+
+function loadData(key, fallback) {
+    try {
+        const value = localStorage.getItem(key);
+        return value ? JSON.parse(value) : fallback;
+    } catch (e) {
+        return fallback;
+    }
+}
+
+function saveData(key, value) {
+    localStorage.setItem(key, JSON.stringify(value));
+}
+
+function newId(prefix) {
+    return prefix + Date.now() + Math.floor(Math.random() * 1000);
+}
+
+function escapeHTML(value) {
+    return String(value ?? "").replace(/[&<>"']/g, c => ({
+        "&": "&amp;",
+        "<": "&lt;",
+        ">": "&gt;",
+        '"': "&quot;",
+        "'": "&#39;"
+    })[c]);
+}
+
+function money(amount) {
+    return "₹" + Number(amount || 0).toLocaleString("en-IN");
+}
+
+let users = loadData("easy_users", []);
+let vehicles = loadData("easy_vehicles", []);
+let tolls = loadData("easy_tolls", [
+    {
+        id: "TOLL101",
+        name: "Chennai Bypass Toll Gate",
+        location: "Chennai",
+        carFee: 100,
+        bikeFee: 30,
+        heavyFee: 200
+    },
+    {
+        id: "TOLL102",
+        name: "Chengalpattu Toll Gate",
+        location: "Chengalpattu",
+        carFee: 80,
+        bikeFee: 25,
+        heavyFee: 180
+    },
+    {
+        id: "TOLL103",
+        name: "Vellore Highway Toll",
+        location: "Vellore",
+        carFee: 120,
+        bikeFee: 35,
+        heavyFee: 250
+    }
+]);
+
+let passes = loadData("easy_passes", []);
+let tickets = loadData("easy_tickets", []);
+let transactions = loadData("easy_transactions", []);
+let notifications = loadData("easy_notifications", []);
+let gateVerifications = loadData("easy_gate_verifications", []);
+let currentUser = loadData("easy_current_user", null);
+let isAdmin = false;
+let isGateStaff = false;
+let currentGateLocation = loadData("easy_gate_location", "Chennai Bypass Toll Gate");
+let qrStream = null;
+
+function persistAll() {
+    saveData("easy_users", users);
+    saveData("easy_vehicles", vehicles);
+    saveData("easy_tolls", tolls);
+    saveData("easy_passes", passes);
+    saveData("easy_tickets", tickets);
+    saveData("easy_transactions", transactions);
+    saveData("easy_notifications", notifications);
+    saveData("easy_gate_verifications", gateVerifications);
+    saveData("easy_current_user", currentUser);
+    saveData("easy_gate_location", currentGateLocation);
+}
+
+/* =========================================
+   NAVIGATION
+========================================= */
+
+const pages = [
+    "home", "register", "login", "dashboard", "profile", "vehicles",
+    "wallet", "tickets", "passes", "qr", "transactions",
+    "gateLogin", "gate", "adminLogin", "admin"
+];
+
+function showPage(name) {
+    if ([
+        "dashboard", "profile", "vehicles", "wallet", "tickets",
+        "passes", "qr", "transactions"
+    ].includes(name) && !currentUser) {
+        alert("Please log in to access this feature.");
+        name = "login";
+    }
+
+    if (name === "admin" && !isAdmin) name = "adminLogin";
+    if (name === "gate" && !isGateStaff) name = "gateLogin";
+
+    pages.forEach(page => {
+        const element = document.getElementById(page + "Page");
+        if (element) element.classList.add("hidden");
+    });
+
+    document.getElementById(name + "Page").classList.remove("hidden");
+
+    if (name === "dashboard") renderDashboard();
+    if (name === "profile") renderProfile();
+    if (name === "vehicles") renderVehicles();
+    if (name === "wallet") renderWallet();
+    if (name === "tickets") renderTickets();
+    if (name === "passes") renderPasses();
+    if (name === "qr") renderQR();
+    if (name === "transactions") renderTransactions();
+    if (name === "admin") renderAdmin();
+    if (name === "gate") renderGate();
+
+    window.scrollTo({ top: 0, behavior: "smooth" });
+}
+
+function updateHeader() {
+    document.getElementById("welcomeUser").textContent =
+        currentUser ? "Welcome, " + currentUser.name : "Welcome, Guest!";
+}
+
+function notifyUser(userId, message) {
+    notifications.push({
+        id: newId("NOT"),
+        userId,
+        message,
+        date: new Date().toLocaleString(),
+        read: false
+    });
+}
+
+/* =========================================
+   REGISTRATION AND LOGIN
+========================================= */
+
+function registerUser(event) {
+    event.preventDefault();
+
+    const name = document.getElementById("regName").value.trim();
+    const email = document.getElementById("regEmail").value.trim().toLowerCase();
+    const phone = document.getElementById("regPhone").value.trim();
+    const password = document.getElementById("regPassword").value;
+    const balance = Number(document.getElementById("regBalance").value);
+
+    if (users.some(user => user.email === email)) {
+        document.getElementById("registerMessage").innerHTML =
+            '<div class="message error">This email is already registered.</div>';
+        return;
+    }
+
+    if (balance < 0) {
+        alert("Initial balance cannot be negative.");
+        return;
+    }
+
+    const user = {
+        id: newId("USR"),
+        name,
+        email,
+        phone,
+        password,
+        balance,
+        recurring: false
+    };
+
+    users.push(user);
+    currentUser = {
+        id: user.id,
+        name: user.name,
+        email: user.email
+    };
+
+    if (balance > 0) {
+        transactions.push({
+            id: newId("TXN"),
+            userId: user.id,
+            type: "Initial Wallet Deposit",
+            amount: balance,
+            date: new Date().toLocaleString(),
+            status: "Successful"
+        });
+    }
+
+    persistAll();
+    updateHeader();
+
+    document.getElementById("registerMessage").innerHTML =
+        '<div class="message">Registration successful! Welcome to EasyToll.</div>';
+
+    event.target.reset();
+    setTimeout(() => showPage("dashboard"), 700);
+}
+
+function loginUser(event) {
+    event.preventDefault();
+
+    const email = document.getElementById("loginEmail").value.trim().toLowerCase();
+    const password = document.getElementById("loginPassword").value;
+
+    const user = users.find(
+        item => item.email === email && item.password === password
+    );
+
+    if (!user) {
+        document.getElementById("loginMessage").innerHTML =
+            '<div class="message error">Invalid email or password.</div>';
+        return;
+    }
+
+    currentUser = {
+        id: user.id,
+        name: user.name,
+        email: user.email
+    };
+
+    persistAll();
+    updateHeader();
+
+    document.getElementById("loginMessage").innerHTML =
+        '<div class="message">Login successful.</div>';
+
+    event.target.reset();
+    setTimeout(() => showPage("dashboard"), 500);
+}
+
+function logout() {
+    if (!currentUser) {
+        alert("You are not logged in.");
+        return;
+    }
+
+    currentUser = null;
+    persistAll();
+    updateHeader();
+    showPage("home");
+    alert("You have logged out.");
+}
+
+/* =========================================
+   USER PROFILE
+========================================= */
+
+function renderProfile() {
+    const user = users.find(item => item.id === currentUser.id);
+    if (!user) return;
+
+    document.getElementById("profileName").value = user.name;
+    document.getElementById("profileEmail").value = user.email;
+    document.getElementById("profilePhone").value = user.phone;
+}
+
+function updateProfile(event) {
+    event.preventDefault();
+
+    const user = users.find(item => item.id === currentUser.id);
+    if (!user) return;
+
+    const email = document.getElementById("profileEmail").value.trim().toLowerCase();
+
+    if (users.some(item => item.email === email && item.id !== user.id)) {
+        document.getElementById("profileMessage").innerHTML =
+            '<div class="message error">Email is already in use.</div>';
+        return;
+    }
+
+    user.name = document.getElementById("profileName").value.trim();
+    user.email = email;
+    user.phone = document.getElementById("profilePhone").value.trim();
+
+    currentUser = {
+        id: user.id,
+        name: user.name,
+        email: user.email
+    };
+
+    persistAll();
+    updateHeader();
+
+    document.getElementById("profileMessage").innerHTML =
+        '<div class="message">Profile updated successfully.</div>';
+}
+
+function deleteAccount() {
+    if (!confirm("Delete your account? This action cannot be undone.")) return;
+
+    const userId = currentUser.id;
+
+    users = users.filter(user => user.id !== userId);
+    vehicles = vehicles.filter(vehicle => vehicle.userId !== userId);
+    passes = passes.filter(pass => pass.userId !== userId);
+    tickets = tickets.filter(ticket => ticket.userId !== userId);
+    transactions = transactions.filter(txn => txn.userId !== userId);
+    notifications = notifications.filter(note => note.userId !== userId);
+
+    currentUser = null;
+
+    persistAll();
+    updateHeader();
+    showPage("home");
+    alert("Your account has been deleted.");
+}
+
+/* =========================================
+   DASHBOARD
+========================================= */
+
+function renderDashboard() {
+    const user = users.find(item => item.id === currentUser.id);
+    if (!user) return;
+
+    document.getElementById("dashBalance").textContent = money(user.balance);
+
+    document.getElementById("dashVehicles").textContent =
+        vehicles.filter(item => item.userId === user.id).length;
+
+    document.getElementById("dashPasses").textContent =
+        passes.filter(item => item.userId === user.id && item.status === "Approved").length;
+
+    document.getElementById("dashTickets").textContent =
+        tickets.filter(item => item.userId === user.id).length;
+
+    const userNotes = notifications.filter(item => item.userId === user.id);
+
+    document.getElementById("notificationsList").innerHTML =
+        userNotes.length
+        ? userNotes.slice().reverse().map(note => `
+            <div class="panel">
+                <p>${escapeHTML(note.message)}</p>
+                <p class="small-text">${escapeHTML(note.date)}</p>
+            </div>
+        `).join("")
+        : "<p>No notifications yet.</p>";
+}
+
+/* =========================================
+   VEHICLE MANAGEMENT
+========================================= */
+
+function addVehicle(event) {
+    event.preventDefault();
+
+    const number = document.getElementById("vehicleNumber").value.trim().toUpperCase();
+
+    if (vehicles.some(item => item.number === number)) {
+        alert("This vehicle registration number is already registered.");
+        return;
+    }
+
+    vehicles.push({
+        id: newId("VEH"),
+        userId: currentUser.id,
+        number,
+        type: document.getElementById("vehicleType").value,
+        model: document.getElementById("vehicleModel").value.trim()
+    });
+
+    persistAll();
+    event.target.reset();
+    renderVehicles();
+    alert("Vehicle added successfully.");
+}
+
+function renderVehicles() {
+    const userVehicles = vehicles.filter(item => item.userId === currentUser.id);
+
+    document.getElementById("vehicleList").innerHTML = userVehicles.length
+        ? `<div class="table-wrapper"><table>
+            <tr><th>Registration</th><th>Type</th><th>Model</th><th>Action</th></tr>
+            ${userVehicles.map(vehicle => `
+                <tr>
+                    <td>${escapeHTML(vehicle.number)}</td>
+                    <td>${escapeHTML(vehicle.type)}</td>
+                    <td>${escapeHTML(vehicle.model)}</td>
+                    <td>
+                        <button class="btn" onclick="editVehicle('${vehicle.id}')">Edit</button>
+                        <button class="btn btn-danger" onclick="deleteVehicle('${vehicle.id}')">Delete</button>
+                    </td>
+                </tr>
+            `).join("")}
+        </table></div>`
+        : "<p>No vehicles registered yet.</p>";
+
+    populateVehicleSelects();
+}
+
+function editVehicle(vehicleId) {
+    const vehicle = vehicles.find(item =>
+        item.id === vehicleId && item.userId === currentUser.id
+    );
+
+    if (!vehicle) return;
+
+    const number = prompt("Registration number:", vehicle.number);
+    if (number === null || !number.trim()) return;
+
+    const normalized = number.trim().toUpperCase();
+
+    if (vehicles.some(item => item.number === normalized && item.id !== vehicle.id)) {
+        alert("This registration number is already in use.");
+        return;
+    }
+
+    const model = prompt("Vehicle model:", vehicle.model);
+    if (model === null) return;
+
+    vehicle.number = normalized;
+    vehicle.model = model.trim();
+
+    persistAll();
+    renderVehicles();
+}
+
+function deleteVehicle(vehicleId) {
+    if (!confirm("Delete this vehicle?")) return;
+
+    vehicles = vehicles.filter(item =>
+        !(item.id === vehicleId && item.userId === currentUser.id)
+    );
+
+    persistAll();
+    renderVehicles();
+}
+
+function populateVehicleSelects() {
+    if (!currentUser) return;
+
+    const userVehicles = vehicles.filter(item => item.userId === currentUser.id);
+
+    ["ticketVehicle", "passVehicle"].forEach(id => {
+        const select = document.getElementById(id);
+
+        select.innerHTML = userVehicles.length
+            ? userVehicles.map(vehicle => `
+                <option value="${vehicle.id}">
+                    ${escapeHTML(vehicle.number)} - ${escapeHTML(vehicle.type)}
+                </option>
+            `).join("")
+            : '<option value="">Add a vehicle first</option>';
+    });
+}
+
+/* =========================================
+   WALLET
+========================================= */
+
+function renderWallet() {
+    const user = users.find(item => item.id === currentUser.id);
+    document.getElementById("walletBalance").textContent = money(user.balance);
+}
+
+function addMoney(event) {
+    event.preventDefault();
+
+    const user = users.find(item => item.id === currentUser.id);
+    const amount = Number(document.getElementById("walletAmount").value);
+
+    if (!Number.isFinite(amount) || amount <= 0 || amount > 100000) {
+        alert("Enter a valid amount between ₹1 and ₹100,000.");
+        return;
+    }
+
+    user.balance += amount;
+
+    transactions.push({
+        id: newId("TXN"),
+        userId: user.id,
+        type: "Wallet Recharge",
+        amount,
+        date: new Date().toLocaleString(),
+        status: "Successful"
+    });
+
+    notifyUser(user.id, "Your wallet was recharged with " + money(amount) + ".");
+
+    persistAll();
+    renderWallet();
+
+    document.getElementById("walletMessage").innerHTML =
+        '<div class="message">Wallet recharged successfully! Demo payment only.</div>';
+
+    event.target.reset();
+}
+
+/* =========================================
+   TOLL DETAILS
+========================================= */
+
+function renderTollsHome() {
+    document.getElementById("homeTollList").innerHTML = `
+        <div class="table-wrapper">
+        <table>
+            <tr>
+                <th>Toll Gate</th>
+                <th>Location</th>
+                <th>Car</th>
+                <th>Motorcycle</th>
+                <th>Bus / Truck</th>
+            </tr>
+            ${tolls.map(toll => `
+                <tr>
+                    <td>${escapeHTML(toll.name)}</td>
+                    <td>${escapeHTML(toll.location)}</td>
+                    <td>${money(toll.carFee)}</td>
+                    <td>${money(toll.bikeFee)}</td>
+                    <td>${money(toll.heavyFee)}</td>
+                </tr>
+            `).join("")}
+        </table>
+        </div>
+    `;
+
+    ["ticketToll", "passToll"].forEach(id => {
+        const select = document.getElementById(id);
+
+        select.innerHTML = tolls.map(toll => `
+            <option value="${toll.id}">
+                ${escapeHTML(toll.name)} - ${escapeHTML(toll.location)}
+            </option>
+        `).join("");
+    });
+}
+
+function getTollFee(toll, vehicle) {
+    if (!toll || !vehicle) return 0;
+
+    if (vehicle.type === "Motorcycle") return Number(toll.bikeFee);
+    if (["Bus", "Truck"].includes(vehicle.type)) return Number(toll.heavyFee);
+
+    return Number(toll.carFee);
+}
+
+/* =========================================
+   TOLL TICKET PURCHASE
+========================================= */
+
+function buyTicket(event) {
+    event.preventDefault();
+
+    const user = users.find(item => item.id === currentUser.id);
+    const vehicle = vehicles.find(item =>
+        item.id === document.getElementById("ticketVehicle").value &&
+        item.userId === currentUser.id
+    );
+
+    const toll = tolls.find(item =>
+        item.id === document.getElementById("ticketToll").value
+    );
+
+    if (!vehicle || !toll) {
+        alert("Please register a vehicle and select a valid toll gate.");
+        return;
+    }
+
+    const travelDate = document.getElementById("ticketDate").value;
+
+    if (!travelDate || travelDate < new Date().toISOString().split("T")[0]) {
+        alert("Please choose today or a future travel date.");
+        return;
+    }
+
+    const crossings = Number(document.getElementById("ticketCrossings").value);
+    const amount = getTollFee(toll, vehicle) * crossings;
+
+    if (user.balance < amount) {
+        alert("Insufficient wallet balance. Please add money first.");
+        showPage("wallet");
+        return;
+    }
+
+    user.balance -= amount;
+
+    const ticket = {
+        id: newId("ETK"),
+        userId: user.id,
+        vehicleId: vehicle.id,
+        vehicleNumber: vehicle.number,
+        tollId: toll.id,
+        tollName: toll.name,
+        from: document.getElementById("ticketFrom").value.trim(),
+        to: document.getElementById("ticketTo").value.trim(),
+        date: travelDate,
+        crossings,
+        amount,
+        status: "Valid",
+        created: new Date().toLocaleString()
+    };
+
+    tickets.push(ticket);
+
+    transactions.push({
+        id: newId("TXN"),
+        userId: user.id,
+        type: "Toll eTicket Purchase",
+        amount: -amount,
+        date: new Date().toLocaleString(),
+        status: "Successful",
+        reference: ticket.id
+    });
+
+    notifyUser(user.id, "Toll ticket " + ticket.id + " purchased for " + money(amount) + ".");
+
+    persistAll();
+
+    document.getElementById("ticketMessage").innerHTML =
+        `<div class="message">
+            Ticket purchased successfully!<br>
+            Ticket ID: <strong>${escapeHTML(ticket.id)}</strong><br>
+            Amount Paid: <strong>${money(amount)}</strong>
+            <br><button class="btn" onclick="showPage('qr')">View QR Code</button>
+        </div>`;
+
+    renderTickets();
+    event.target.reset();
+    populateVehicleSelects();
+}
+
+function renderTickets() {
+    const userTickets = tickets.filter(item => item.userId === currentUser.id);
+
+    document.getElementById("ticketList").innerHTML = userTickets.length
+        ? `<div class="table-wrapper"><table>
+            <tr><th>Ticket ID</th><th>Vehicle</th><th>Toll Gate</th><th>Date</th><th>Amount</th><th>Status</th><th>QR</th></tr>
+            ${userTickets.map(ticket => `
+                <tr>
+                    <td>${escapeHTML(ticket.id)}</td>
+                    <td>${escapeHTML(ticket.vehicleNumber)}</td>
+                    <td>${escapeHTML(ticket.tollName)}</td>
+                    <td>${escapeHTML(ticket.date)}</td>
+                    <td>${money(ticket.amount)}</td>
+                    <td>${escapeHTML(ticket.status)}</td>
+                    <td><button class="btn" onclick="showPage('qr')">View</button></td>
+                </tr>
+            `).join("")}
+        </table></div>`
+        : "<p>No toll tickets purchased yet.</p>";
+
+    populateVehicleSelects();
+}
+
+/* =========================================
+   TOLL PASS APPLICATION AND RENEWAL
+========================================= */
+
+function applyPass(event) {
+    event.preventDefault();
+
+    const user = users.find(item => item.id === currentUser.id);
+
+    const vehicle = vehicles.find(item =>
+        item.id === document.getElementById("passVehicle").value &&
+        item.userId === currentUser.id
+    );
+
+    const toll = tolls.find(item =>
+        item.id === document.getElementById("passToll").value
+    );
+
+    if (!vehicle || !toll) {
+        alert("Please register a vehicle and select a toll gate.");
+        return;
+    }
+
+    const type = document.getElementById("passType").value;
+    const applicationType = document.getElementById("passApplicationType").value;
+
+    const prices = {
+        Daily: 100,
+        Weekly: 500,
+        Monthly: 1500
+    };
+
+    const amount = prices[type];
+
+    const existingPass = passes.find(item =>
+        item.userId === user.id &&
+        item.vehicleId === vehicle.id &&
+        item.tollId === toll.id &&
+        item.status === "Approved"
+    );
+
+    if (applicationType === "Renewal" && !existingPass) {
+        alert("No approved pass found for this vehicle and toll gate. Apply for a new pass first.");
+        return;
+    }
+
+    if (user.balance < amount) {
+        alert("Insufficient wallet balance. Add money before applying.");
+        showPage("wallet");
+        return;
+    }
+
+    user.balance -= amount;
+
+    const pass = {
+        id: newId("PASS"),
+        userId: user.id,
+        vehicleId: vehicle.id,
+        vehicleNumber: vehicle.number,
+        tollId: toll.id,
+        tollName: toll.name,
+        type,
+        applicationType,
+        amount,
+        status: "Pending",
+        created: new Date().toLocaleString(),
+        expires: null
+    };
+
+    passes.push(pass);
+
+    transactions.push({
+        id: newId("TXN"),
+        userId: user.id,
+        type: applicationType + " Toll Pass Application",
+        amount: -amount,
+        date: new Date().toLocaleString(),
+        status: "Successful",
+        reference: pass.id
+    });
+
+    notifyUser(user.id, "Toll pass application " + pass.id + " submitted for approval.");
+
+    persistAll();
+
+    document.getElementById("passMessage").innerHTML =
+        `<div class="message">
+            Toll pass application submitted successfully.<br>
+            Application ID: <strong>${escapeHTML(pass.id)}</strong><br>
+            Status: Pending Admin Approval.
+        </div>`;
+
+    renderPasses();
+    event.target.reset();
+    populateVehicleSelects();
+}
+
+function renderPasses() {
+    const userPasses = passes.filter(item => item.userId === currentUser.id);
+
+    document.getElementById("passList").innerHTML = userPasses.length
+        ? `<div class="table-wrapper"><table>
+            <tr><th>Pass ID</th><th>Vehicle</th><th>Toll Gate</th><th>Type</th><th>Amount</th><th>Status</th><th>QR</th></tr>
+            ${userPasses.map(pass => `
+                <tr>
+                    <td>${escapeHTML(pass.id)}</td>
+                    <td>${escapeHTML(pass.vehicleNumber)}</td>
+                    <td>${escapeHTML(pass.tollName)}</td>
+                    <td>${escapeHTML(pass.type)}</td>
+                    <td>${money(pass.amount)}</td>
+                    <td>${escapeHTML(pass.status)}</td>
+                    <td>
+                        ${pass.status === "Approved"
+                            ? `<button class="btn" onclick="showPage('qr')">View QR</button>`
+                            : "Unavailable"}
+                    </td>
+                </tr>
+            `).join("")}
+        </table></div>`
+        : "<p>No toll pass applications found.</p>";
+
+    populateVehicleSelects();
+}
+
+/* =========================================
+   QR CODE GENERATION
+========================================= */
+
+function qrImageUrl(text) {
+    return "https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=" +
+        encodeURIComponent(text);
+}
+
+function renderQR() {
+    const userTickets = tickets.filter(
+        item => item.userId === currentUser.id && item.status === "Valid"
+    );
+
+    const userPasses = passes.filter(
+        item => item.userId === currentUser.id && item.status === "Approved"
+    );
+
+    const entries = [
+        ...userTickets.map(item => ({
+            id: item.id,
+            type: "Toll eTicket",
+            name: item.tollName,
+            vehicle: item.vehicleNumber
+        })),
+        ...userPasses.map(item => ({
+            id: item.id,
+            type: "Toll Pass",
+            name: item.tollName,
+            vehicle: item.vehicleNumber
+        }))
+    ];
+
+    document.getElementById("qrList").innerHTML = entries.length
+        ? entries.map(item => `
+            <div class="qr-box">
+                <h3>${escapeHTML(item.type)}</h3>
+                <p><strong>ID:</strong> ${escapeHTML(item.id)}</p>
+                <p>${escapeHTML(item.name)}</p>
+                <p>Vehicle: ${escapeHTML(item.vehicle)}</p>
+                <img src="${qrImageUrl(item.id)}"
+                     alt="QR code for ${escapeHTML(item.id)}"
+                     onerror="this.style.display='none';this.nextElementSibling.style.display='block'">
+                <p class="hidden small-text">QR image unavailable. Use the ID for manual verification.</p>
+                <p class="small-text">Show this code to authorized toll gate staff.</p>
+                <button class="btn" onclick="printQRCode('${escapeHTML(item.id)}')">Print QR</button>
+            </div>
+        `).join("")
+        : "<p>No valid tickets or approved passes available for QR generation.</p>";
+}
+
+function printQRCode(id) {
+    const entry = [...tickets, ...passes].find(item => item.id === id);
+    if (!entry) return;
+
+    const image = qrImageUrl(id);
+    const popup = window.open("", "_blank");
+
+    if (!popup) {
+        alert("Allow pop-ups to print the QR code.");
+        return;
+    }
+
+    popup.document.write(`
+        <html><head><title>EasyToll QR</title></head>
+        <body style="font-family:Arial;text-align:center;padding:30px">
+        <h2>EasyToll Verification</h2>
+        <p>ID: ${escapeHTML(id)}</p>
+        <img src="${image}" alt="QR Code" style="width:200px;height:200px">
+        <script>window.onload=function(){window.print()}<\/script>
+        </body></html>
+    `);
+
+    popup.document.close();
+}
+
+/* =========================================
+   TRANSACTION HISTORY
+========================================= */
+
+function renderTransactions() {
+    const userTransactions = transactions.filter(
+        item => item.userId === currentUser.id
+    );
+
+    document.getElementById("transactionList").innerHTML =
+        userTransactions.length
+        ? `<div class="table-wrapper"><table>
+            <tr><th>Transaction ID</th><th>Type</th><th>Amount</th><th>Date</th><th>Status</th></tr>
+            ${userTransactions.slice().reverse().map(txn => `
+                <tr>
+                    <td>${escapeHTML(txn.id)}</td>
+                    <td>${escapeHTML(txn.type)}</td>
+                    <td style="color:${txn.amount < 0 ? '#dc3545' : '#15803d'}">
+                        ${txn.amount < 0 ? "-" : "+"}${money(Math.abs(txn.amount))}
+                    </td>
+                    <td>${escapeHTML(txn.date)}</td>
+                    <td>${escapeHTML(txn.status)}</td>
+                </tr>
+            `).join("")}
+        </table></div>`
+        : "<p>No transactions found.</p>";
+}
+
+/* =========================================
+   ADMIN LOGIN
+========================================= */
+
+function adminLogin(event) {
+    event.preventDefault();
+
+    const username = document.getElementById("adminUsername").value;
+    const password = document.getElementById("adminPassword").value;
+
+    if (username === "admin" && password === "Admin@123") {
+        isAdmin = true;
+        showPage("admin");
+    } else {
+        document.getElementById("adminLoginMessage").innerHTML =
+            '<div class="message error">Invalid administrator credentials.</div>';
+    }
+}
+
+function adminLogout() {
+    isAdmin = false;
+    showPage("home");
+    alert("Administrator logged out.");
+}
+
+function showAdminSection(name) {
+    if (!isAdmin) return;
+
+    document.querySelectorAll(".admin-section").forEach(section => {
+        section.classList.add("hidden");
+    });
+
+    document.getElementById("admin" + capitalize(name) + "Section").classList.remove("hidden");
+
+    if (name === "users") renderAdminUsers();
+    if (name === "passes") renderAdminPasses();
+    if (name === "tolls") renderAdminTolls();
+    if (name === "tickets") renderAdminTickets();
+    if (name === "transactions") renderAdminTransactions();
+}
+
+function capitalize(value) {
+    return value.charAt(0).toUpperCase() + value.slice(1);
+}
+
+function renderAdmin() {
+    if (!isAdmin) return;
+
+    document.getElementById("adminUsersCount").textContent = users.length;
+    document.getElementById("adminVehiclesCount").textContent = vehicles.length;
+    document.getElementById("adminPassCount").textContent = passes.length;
+    document.getElementById("adminTicketsCount").textContent = tickets.length;
+
+    renderAdminUsers();
+    renderAdminPasses();
+    renderAdminTolls();
+    renderAdminTickets();
+    renderAdminTransactions();
+}
+
+/* =========================================
+   ADMIN USER MANAGEMENT
+========================================= */
+
+function renderAdminUsers() {
+    document.getElementById("adminUsersTable").innerHTML = users.length
+        ? `<div class="table-wrapper"><table>
+            <tr><th>Name</th><th>Email</th><th>Phone</th><th>Wallet</th><th>Action</th></tr>
+            ${users.map(user => `
+                <tr>
+                    <td>${escapeHTML(user.name)}</td>
+                    <td>${escapeHTML(user.email)}</td>
+                    <td>${escapeHTML(user.phone)}</td>
+                    <td>${money(user.balance)}</td>
+                    <td>
+                        <button class="btn" onclick="adminEditUser('${user.id}')">Edit</button>
+                        <button class="btn btn-danger" onclick="adminDeleteUser('${user.id}')">Delete</button>
+                    </td>
+                </tr>
+            `).join("")}
+        </table></div>`
+        : "<p>No registered users.</p>";
+}
+
+function adminEditUser(userId) {
+    if (!isAdmin) return;
+
+    const user = users.find(item => item.id === userId);
+    if (!user) return;
+
+    const name = prompt("User name:", user.name);
+    if (name === null || !name.trim()) return;
+
+    const phone = prompt("Phone number:", user.phone);
+    if (phone === null) return;
+
+    user.name = name.trim();
+    user.phone = phone.trim();
+
+    if (currentUser && currentUser.id === user.id) {
+        currentUser.name = user.name;
+        updateHeader();
+    }
+
+    persistAll();
+    renderAdminUsers();
+}
+
+function adminDeleteUser(userId) {
+    if (!isAdmin) return;
+
+    if (!confirm("Delete this user and their account records?")) return;
+
+    const user = users.find(item => item.id === userId);
+    if (!user) return;
+
+    users = users.filter(item => item.id !== userId);
+    vehicles = vehicles.filter(item => item.userId !== userId);
+    passes = passes.filter(item => item.userId !== userId);
+    tickets = tickets.filter(item => item.userId !== userId);
+    transactions = transactions.filter(item => item.userId !== userId);
+    notifications = notifications.filter(item => item.userId !== userId);
+
+    if (currentUser && currentUser.id === userId) {
+        currentUser = null;
+        updateHeader();
+    }
+
+    persistAll();
+    renderAdmin();
+}
+
+/* =========================================
+   ADMIN PASS APPROVAL
+========================================= */
+
+function renderAdminPasses() {
+    document.getElementById("adminPassesTable").innerHTML = passes.length
+        ? `<div class="table-wrapper"><table>
+            <tr><th>Pass ID</th><th>User</th><th>Vehicle</th><th>Toll</th><th>Type</th><th>Amount</th><th>Status</th><th>Action</th></tr>
+            ${passes.map(pass => {
+                const user = users.find(item => item.id === pass.userId);
+
+                return `
+                    <tr>
+                        <td>${escapeHTML(pass.id)}</td>
+                        <td>${escapeHTML(user?.name || "Deleted User")}</td>
+                        <td>${escapeHTML(pass.vehicleNumber)}</td>
+                        <td>${escapeHTML(pass.tollName)}</td>
+                        <td>${escapeHTML(pass.type)}</td>
+                        <td>${money(pass.amount)}</td>
+                        <td>${escapeHTML(pass.status)}</td>
+                        <td>
+                            ${pass.status === "Pending" ? `
+                                <button class="btn btn-success" onclick="approvePass('${pass.id}')">Approve</button>
+                                <button class="btn btn-danger" onclick="rejectPass('${pass.id}')">Reject</button>
+                            ` : `
+                                <button class="btn btn-danger" onclick="deletePass('${pass.id}')">Delete</button>
+                            `}
+                        </td>
+                    </tr>
+                `;
+            }).join("")}
+        </table></div>`
+        : "<p>No toll pass applications.</p>";
+}
+
+function approvePass(passId) {
+    if (!isAdmin) return;
+
+    const pass = passes.find(item => item.id === passId);
+    if (!pass) return;
+
+    pass.status = "Approved";
+
+    const duration = {
+        Daily: 1,
+        Weekly: 7,
+        Monthly: 30
+    }[pass.type] || 1;
+
+    const expiry = new Date();
+    expiry.setDate(expiry.getDate() + duration);
+    pass.expires = expiry.toLocaleDateString();
+
+    notifyUser(pass.userId,
+        "Your toll pass " + pass.id + " has been approved. Expiry: " + pass.expires);
+
+    persistAll();
+    renderAdminPasses();
+
+    alert("Toll pass approved. QR code is now available to the user.");
+}
+
+function rejectPass(passId) {
+    if (!isAdmin) return;
+
+    const pass = passes.find(item => item.id === passId);
+    if (!pass || pass.status !== "Pending") return;
+
+    if (!confirm("Reject this toll pass application and refund the application fee?")) return;
+
+    pass.status = "Rejected";
+
+    const user = users.find(item => item.id === pass.userId);
+    if (user) {
+        user.balance += pass.amount;
+
+        transactions.push({
+            id: newId("TXN"),
+            userId: user.id,
+            type: "Toll Pass Refund",
+            amount: pass.amount,
+            date: new Date().toLocaleString(),
+            status: "Successful",
+            reference: pass.id
+        });
+
+        notifyUser(user.id, "Your toll pass application was rejected. " +
+            money(pass.amount) + " has been refunded to your wallet.");
+    }
+
+    persistAll();
+    renderAdminPasses();
+}
+
+function deletePass(passId) {
+    if (!isAdmin) return;
+
+    if (!confirm("Delete this toll pass record?")) return;
+
+    passes = passes.filter(item => item.id !== passId);
+    persistAll();
+    renderAdminPasses();
+}
+
+/* =========================================
+   ADMIN TOLL GATE MANAGEMENT
+========================================= */
+
+function addToll(event) {
+    event.preventDefault();
+
+    if (!isAdmin) return;
+
+    const toll = {
+        id: newId("TOLL"),
+        name: document.getElementById("newTollName").value.trim(),
+        location: document.getElementById("newTollLocation").value.trim(),
+        carFee: Number(document.getElementById("newTollCarFee").value),
+        bikeFee: Number(document.getElementById("newTollBikeFee").value),
+        heavyFee: Number(document.getElementById("newTollHeavyFee").value)
+    };
+
+    if ([toll.carFee, toll.bikeFee, toll.heavyFee].some(value =>
+        !Number.isFinite(value) || value < 0
+    )) {
+        alert("Enter valid toll fees.");
+        return;
+    }
+
+    tolls.push(toll);
+
+    persistAll();
+    renderAdminTolls();
+    renderTollsHome();
+
+    event.target.reset();
+    alert("Toll gate created successfully.");
+}
+
+function renderAdminTolls() {
+    document.getElementById("adminTollsTable").innerHTML = tolls.length
+        ? `<div class="table-wrapper"><table>
+            <tr><th>Toll ID</th><th>Name</th><th>Location</th><th>Car Fee</th><th>Bike Fee</th><th>Heavy Fee</th><th>Action</th></tr>
+            ${tolls.map(toll => `
+                <tr>
+                    <td>${escapeHTML(toll.id)}</td>
+                    <td>${escapeHTML(toll.name)}</td>
+                    <td>${escapeHTML(toll.location)}</td>
+                    <td>${money(toll.carFee)}</td>
+                    <td>${money(toll.bikeFee)}</td>
+                    <td>${money(toll.heavyFee)}</td>
+                    <td>
+                        <button class="btn" onclick="editToll('${toll.id}')">Edit</button>
+                        <button class="btn btn-danger" onclick="deleteToll('${toll.id}')">Delete</button>
+                    </td>
+                </tr>
+            `).join("")}
+        </table></div>`
+        : "<p>No toll gates created.</p>";
+}
+
+function editToll(tollId) {
+    if (!isAdmin) return;
+
+    const toll = tolls.find(item => item.id === tollId);
+    if (!toll) return;
+
+    const name = prompt("Toll gate name:", toll.name);
+    if (name === null || !name.trim()) return;
+
+    const location = prompt("Location:", toll.location);
+    if (location === null || !location.trim()) return;
+
+    const carFee = prompt("Car fee:", toll.carFee);
+    if (carFee === null) return;
+
+    const bikeFee = prompt("Motorcycle fee:", toll.bikeFee);
+    if (bikeFee === null) return;
+
+    const heavyFee = prompt("Bus / truck fee:", toll.heavyFee);
+    if (heavyFee === null) return;
+
+    const fees = [Number(carFee), Number(bikeFee), Number(heavyFee)];
+
+    if (fees.some(value => !Number.isFinite(value) || value < 0)) {
+        alert("Invalid fee.");
+        return;
+    }
+
+    toll.name = name.trim();
+    toll.location = location.trim();
+    toll.carFee = fees[0];
+    toll.bikeFee = fees[1];
+    toll.heavyFee = fees[2];
+
+    persistAll();
+    renderAdminTolls();
+    renderTollsHome();
+}
+
+function deleteToll(tollId) {
+    if (!isAdmin) return;
+
+    const hasRecords = passes.some(item => item.tollId === tollId) ||
+                       tickets.some(item => item.tollId === tollId);
+
+    if (hasRecords) {
+        alert("This toll gate has ticket or pass records. Keep it to preserve transaction history.");
+        return;
+    }
+
+    if (!confirm("Delete this toll gate?")) return;
+
+    tolls = tolls.filter(item => item.id !== tollId);
+
+    persistAll();
+    renderAdminTolls();
+    renderTollsHome();
+}
+
+/* =========================================
+   ADMIN TICKET MANAGEMENT
+========================================= */
+
+function renderAdminTickets() {
+    document.getElementById("adminTicketsTable").innerHTML = tickets.length
+        ? `<div class="table-wrapper"><table>
+            <tr><th>Ticket ID</th><th>User</th><th>Vehicle</th><th>Toll Gate</th><th>Date</th><th>Amount</th><th>Status</th><th>Action</th></tr>
+            ${tickets.map(ticket => {
+                const user = users.find(item => item.id === ticket.userId);
+
+                return `
+                    <tr>
+                        <td>${escapeHTML(ticket.id)}</td>
+                        <td>${escapeHTML(user?.name || "Deleted User")}</td>
+                        <td>${escapeHTML(ticket.vehicleNumber)}</td>
+                        <td>${escapeHTML(ticket.tollName)}</td>
+                        <td>${escapeHTML(ticket.date)}</td>
+                        <td>${money(ticket.amount)}</td>
+                        <td>${escapeHTML(ticket.status)}</td>
+                        <td>
+                            <button class="btn" onclick="adminTicketStatus('${ticket.id}')">Change Status</button>
+                        </td>
+                    </tr>
+                `;
+            }).join("")}
+        </table></div>`
+        : "<p>No tickets purchased.</p>";
+}
+
+function adminTicketStatus(ticketId) {
+    if (!isAdmin) return;
+
+    const ticket = tickets.find(item => item.id === ticketId);
+    if (!ticket) return;
+
+    const next = prompt("Enter status: Valid, Used, Cancelled", ticket.status);
+    if (next === null) return;
+
+    const allowed = ["Valid", "Used", "Cancelled"];
+
+    if (!allowed.includes(next)) {
+        alert("Invalid status.");
+        return;
+    }
+
+    if (next === "Cancelled" && ticket.status !== "Cancelled") {
+        const user = users.find(item => item.id === ticket.userId);
+
+        if (user) {
+            user.balance += ticket.amount;
+
+            transactions.push({
+                id: newId("TXN"),
+                userId: user.id,
+                type: "Toll Ticket Refund",
+                amount: ticket.amount,
+                date: new Date().toLocaleString(),
+                status: "Successful",
+                reference: ticket.id
+            });
+
+            notifyUser(user.id, "Ticket " + ticket.id +
+                " was cancelled and " + money(ticket.amount) + " was refunded.");
+        }
+    }
+
+    ticket.status = next;
+
+    persistAll();
+    renderAdminTickets();
+}
+
+/* =========================================
+   ADMIN TRANSACTION SUMMARY
+========================================= */
+
+function renderAdminTransactions() {
+    const totalCollected = transactions
+        .filter(item => item.amount < 0)
+        .reduce((sum, item) => sum + Math.abs(item.amount), 0);
+
+    const totalRecharged = transactions
+        .filter(item => item.amount > 0)
+        .reduce((sum, item) => sum + item.amount, 0);
+
+    document.getElementById("adminTransactionsTable").innerHTML = `
+        <div class="cards">
+            <div class="card">
+                <h3>Total Transaction Records</h3>
+                <div class="number">${transactions.length}</div>
+            </div>
+            <div class="card">
+                <h3>Total Wallet Credits / Refunds</h3>
+                <div class="number">${money(totalRecharged)}</div>
+            </div>
+            <div class="card">
+                <h3>Total Payments / Purchases</h3>
+                <div class="number">${money(totalCollected)}</div>
+            </div>
+        </div>
+
+        ${transactions.length ? `
+            <div class="table-wrapper"><table>
+                <tr><th>Transaction ID</th><th>User</th><th>Type</th><th>Amount</th><th>Date</th><th>Status</th></tr>
+                ${transactions.slice().reverse().map(txn => {
+                    const user = users.find(item => item.id === txn.userId);
+
+                    return `
+                        <tr>
+                            <td>${escapeHTML(txn.id)}</td>
+                            <td>${escapeHTML(user?.name || "Deleted User")}</td>
+                            <td>${escapeHTML(txn.type)}</td>
+                            <td>${txn.amount < 0 ? "-" : "+"}${money(Math.abs(txn.amount))}</td>
+                            <td>${escapeHTML(txn.date)}</td>
+                            <td>${escapeHTML(txn.status)}</td>
+                        </tr>
+                    `;
+                }).join("")}
+            </table></div>
+        ` : "<p>No transactions recorded.</p>"}
+    `;
+}
+
+/* =========================================
+   TOLL GATE STAFF LOGIN
+========================================= */
+
+function gateLogin(event) {
+    event.preventDefault();
+
+    const username = document.getElementById("gateUsername").value;
+    const password = document.getElementById("gatePassword").value;
+
+    if (username === "gate" && password === "Gate@123") {
+        isGateStaff = true;
+        showPage("gate");
+    } else {
+        document.getElementById("gateLoginMessage").innerHTML =
+            '<div class="message error">Invalid toll gate credentials.</div>';
+    }
+}
+
+function gateLogout() {
+    stopQRScanner();
+    isGateStaff = false;
+    showPage("home");
+    alert("Toll gate staff logged out.");
+}
+
+function renderGate() {
+    document.getElementById("currentGateLocation").innerHTML =
+        "<strong>" + escapeHTML(currentGateLocation) + "</strong>";
+
+    document.getElementById("gateVerificationList").innerHTML =
+        gateVerifications.length
+        ? `<div class="table-wrapper"><table>
+            <tr><th>Date</th><th>Entered ID</th><th>Result</th><th>Gate</th></tr>
+            ${gateVerifications.slice().reverse().map(item => `
+                <tr>
+                    <td>${escapeHTML(item.date)}</td>
+                    <td>${escapeHTML(item.id)}</td>
+                    <td>${escapeHTML(item.result)}</td>
+                    <td>${escapeHTML(item.gate)}</td>
+                </tr>
+            `).join("")}
+        </table></div>`
+        : "<p>No verification records yet.</p>";
+}
+
+function updateGateLocation(event) {
+    event.preventDefault();
+
+    if (!isGateStaff) return;
+
+    currentGateLocation = document.getElementById("newGateLocation").value.trim();
+
+    persistAll();
+    renderGate();
+
+    alert("Toll gate location updated.");
+}
+
+function verifyToll() {
+    if (!isGateStaff) return;
+
+    const id = document.getElementById("verifyId").value.trim();
+
+    if (!id) {
+        alert("Enter a toll pass or ticket ID.");
+        return;
+    }
+
+    const pass = passes.find(item => item.id.toLowerCase() === id.toLowerCase());
+    const ticket = tickets.find(item => item.id.toLowerCase() === id.toLowerCase());
+
+    let result = "Invalid ID";
+    let details = "";
+
+    if (pass) {
+        if (pass.status !== "Approved") {
+            result = "Pass Not Approved";
+        } else if (pass.expires && new Date(pass.expires) < new Date(new Date().toDateString())) {
+            result = "Pass Expired";
+        } else {
+            result = "Valid Toll Pass";
+        }
+
+        details = `
+            <p>Vehicle: ${escapeHTML(pass.vehicleNumber)}</p>
+            <p>Toll Gate: ${escapeHTML(pass.tollName)}</p>
+            <p>Pass Type: ${escapeHTML(pass.type)}</p>
+            <p>Status: ${escapeHTML(pass.status)}</p>
+            <p>Expiry: ${escapeHTML(pass.expires || "Not available")}</p>
+        `;
+    } else if (ticket) {
+        if (ticket.status !== "Valid") {
+            result = "Ticket Not Valid";
+        } else if (ticket.date !== new Date().toISOString().split("T")[0]) {
+            result = "Ticket Date Does Not Match Today";
+        } else if (ticket.tollId !== (tolls.find(t => t.name === currentGateLocation)?.id || ticket.tollId)) {
+            result = "Ticket Toll Gate Mismatch";
+        } else {
+            result = "Valid Toll Ticket";
+        }
+
+        details = `
+            <p>Vehicle: ${escapeHTML(ticket.vehicleNumber)}</p>
+            <p>Toll Gate: ${escapeHTML(ticket.tollName)}</p>
+            <p>Travel Date: ${escapeHTML(ticket.date)}</p>
+            <p>Amount Paid: ${money(ticket.amount)}</p>
+        `;
+
+        if (result === "Valid Toll Ticket") {
+            ticket.status = "Used";
+        }
+    }
+
+    gateVerifications.push({
+        id,
+        result,
+        date: new Date().toLocaleString(),
+        gate: currentGateLocation
+    });
+
+    persistAll();
+
+    document.getElementById("verifyResult").innerHTML = `
+        <div class="panel">
+            <h3>${escapeHTML(result)}</h3>
+            ${details}
+        </div>
+    `;
+
+    document.getElementById("verifyId").value = "";
+    renderGate();
+}
+
+/* =========================================
+   QR SCANNER
+   Requires internet access for the library.
+========================================= */
+
+let scannerInstance = null;
+
+async function startQRScanner() {
+    if (!isGateStaff) return;
+
+    const area = document.getElementById("scannerArea");
+
+    if (!window.Html5Qrcode) {
+        area.innerHTML = `
+            <div class="message error">
+                QR scanner library is unavailable. Connect to the internet and
+                reopen this page, or enter the ID manually.
+            </div>
+        `;
+        return;
+    }
+
+    area.innerHTML = '<div id="reader" style="width:100%;max-width:400px"></div>';
+
+    try {
+        scannerInstance = new Html5Qrcode("reader");
+
+        await scannerInstance.start(
+            { facingMode: "environment" },
+            { fps: 10, qrbox: { width: 220, height: 220 } },
+            async decodedText => {
+                document.getElementById("verifyId").value = decodedText.trim();
+                await stopQRScanner();
+                verifyToll();
+            },
+            () => {}
+        );
+    } catch (error) {
+        area.innerHTML =
+            '<div class="message error">Could not start camera. Check browser permissions or enter the ID manually.</div>';
+    }
+}
+
+async function stopQRScanner() {
+    if (scannerInstance) {
+        try {
+            if (scannerInstance.isScanning) {
+                await scannerInstance.stop();
+            }
+            await scannerInstance.clear();
+        } catch (error) {
+            // Scanner may already be stopped.
+        }
+
+        scannerInstance = null;
+    }
+}
+
+/* =========================================
+   INITIALIZATION
+========================================= */
+
+function initialize() {
+    updateHeader();
+    renderTollsHome();
+    populateVehicleSelects();
+}
+
+initialize();
+</script>
+
+<!-- External library for toll-gate QR scanning -->
+<script src="https://unpkg.com/html5-qrcode"></script>
+
+</body>
+</html>

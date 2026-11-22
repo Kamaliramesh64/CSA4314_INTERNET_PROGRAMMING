@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Bloom Beauty Parlour – Book an Appointment</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600;700&family=Karla:wght@400;600;700&display=swap">
+<style>
+:root{--bg:#f6f2f8;--card:#fff;--ink:#2d2033;--mute:#7a6a84;--line:#e4d9ea;--brand:#6b3f7b;--bi:#fff;--soft:#eadcf0;--ok:#2f7d5b;--bad:#b3384e;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#1a131f;--card:#271d2e;--ink:#f3eaf7;--mute:#b8a5c4;--line:#43344c;--brand:#c79ad8;--bi:#1f1226;--soft:#3a2a45;--ok:#6fd0a0;--bad:#f08aa0}}
+:root[data-theme="dark"]{--bg:#1a131f;--card:#271d2e;--ink:#f3eaf7;--mute:#b8a5c4;--line:#43344c;--brand:#c79ad8;--bi:#1f1226;--soft:#3a2a45;--ok:#6fd0a0;--bad:#f08aa0}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 Karla,system-ui,sans-serif}
+h1,h2,h3{font-family:"Cormorant Garamond",Georgia,serif;margin:0;font-weight:700}
+h2{font-size:28px}h3{font-size:21px}
+header{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--card);border-bottom:1px solid var(--line);display:flex;flex-wrap:wrap;gap:8px;align-items:center;justify-content:space-between;padding:10px 16px}
+.logo{font:700 26px "Cormorant Garamond",Georgia,serif;color:var(--brand);cursor:pointer}
+nav{display:flex;flex-wrap:wrap;gap:6px}
+button,.btn{font:inherit;font-weight:700;border:1px solid var(--line);background:var(--card);color:var(--ink);padding:8px 14px;border-radius:10px;cursor:pointer;text-decoration:none;display:inline-block}
+button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible,.btn:focus-visible{outline:2px solid var(--brand);outline-offset:2px}
+button.p{background:var(--brand);color:var(--bi);border-color:var(--brand)}
+button.on{background:var(--soft);border-color:var(--brand)}
+button.sm,.btn.sm{padding:4px 10px;font-size:14px}
+button.bad{color:var(--bad)}
+button:disabled{opacity:.4;cursor:not-allowed}
+main{max-width:1000px;margin:0 auto;padding:20px 16px 60px}
+.hero{background:var(--soft);border-radius:16px;padding:24px;margin-bottom:22px}
+.hero h1{font-size:clamp(30px,6vw,44px)}.hero p{color:var(--mute);margin:6px 0 14px}
+input,select,textarea{font:inherit;color:var(--ink);background:var(--card);border:1px solid var(--line);border-radius:10px;padding:9px 11px;max-width:100%}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px;margin:12px 0 24px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px}
+.card.sel{border-color:var(--brand);box-shadow:0 0 0 2px var(--brand)}
+.card.pick{cursor:pointer;text-align:left}
+.ico{font-size:34px}.tag{font-size:13px;color:var(--mute)}.price{font-weight:700;color:var(--brand)}
+.row{display:flex;gap:10px;align-items:center;justify-content:space-between;flex-wrap:wrap}
+.form{max-width:440px;display:grid;gap:10px}.form label{display:grid;gap:4px;font-weight:600}
+.tw{overflow-x:auto}table{border-collapse:collapse;width:100%;min-width:620px}
+th,td{text-align:left;padding:9px;border-bottom:1px solid var(--line);vertical-align:top}
+.st{display:inline-block;padding:2px 10px;border-radius:999px;background:var(--soft);font-size:13px;font-weight:700}
+.st.Confirmed,.st.Completed{background:var(--ok);color:var(--bi)}.st.Cancelled,.st.Auto{background:var(--bad);color:var(--bi)}
+.cal{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px;max-width:380px}
+.cg{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;text-align:center}
+.cg b{font-size:12px;color:var(--mute)}
+.cg button{padding:6px 0;border-radius:8px;position:relative;border-color:transparent;background:none}
+.cg button.on{background:var(--brand);color:var(--bi)}
+.cg button.dot::after{content:"";position:absolute;bottom:2px;left:50%;width:5px;height:5px;margin-left:-2.5px;border-radius:50%;background:var(--bad)}
+.cg button.on.dot::after{background:var(--bi)}
+.slots{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0}
+.slots button.on{background:var(--brand);color:var(--bi)}
+.info{background:var(--soft);border-radius:10px;padding:10px 12px;margin-top:10px;font-size:14px}
+.empty{color:var(--mute);padding:26px;text-align:center}
+.step{margin:22px 0 6px;font-size:22px}
+#toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:10px 18px;border-radius:12px;display:none;z-index:9;max-width:90%}
+.modal{position:fixed;inset:0;background:rgba(0,0,0,.45);display:grid;place-items:center;padding:16px;z-index:8}
+.modal .card{max-width:420px;width:100%;max-height:90vh;overflow:auto}
+</style>
+</head>
+<body>
+<header><div class="logo" onclick="go('home')">✿ Bloom Beauty Parlour</div><nav id="nav"></nav></header>
+<main id="app"></main>
+<div id="toast" role="status"></div>
+<script>
+var HRS=[10,11,12,13,14,15,16,17],DEP=0.3,HOLD=15*60*1000;
+var SV0=[{id:1,name:"Haircut & Styling",price:600,mins:45,ico:"💇"},{id:2,name:"Facial (Glow)",price:1200,mins:60,ico:"🧖"},{id:3,name:"Manicure & Pedicure",price:900,mins:60,ico:"💅"},{id:4,name:"Bridal Makeup",price:5000,mins:120,ico:"👰"},{id:5,name:"Hair Colour",price:2200,mins:90,ico:"🎨"},{id:6,name:"Threading & Waxing",price:400,mins:30,ico:"✨"}];
+var ST0=[{id:1,name:"Ananya",role:"Senior hair stylist",ico:"👩‍🎤"},{id:2,name:"Meera",role:"Skin & makeup artist",ico:"👩‍🎨"},{id:3,name:"Farah",role:"Nail & beauty specialist",ico:"👩"}];
+function ld(k,d){try{var v=localStorage.getItem(k);return v?JSON.parse(v):d}catch(e){return d}}
+function sv(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}
+var svc=ld("bsv",SV0),sty=ld("bst",ST0),appts=ld("bap",[]),blocks=ld("bbl",[]),users=ld("bus",[]),me=ld("bme",null);
+var view="home",tab="up",atab="up",bk={sid:0,stid:0,date:"",time:"",mode:"full",method:"Stripe"},adm={date:iso(new Date())},cm={y:new Date().getFullYear(),m:new Date().getMonth()};
+function $(s){return document.querySelector(s)}
+function esc(s){return String(s==null?"":s).replace(/[&<>"]/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]})}
+function iso(d){return d.getFullYear()+"-"+("0"+(d.getMonth()+1)).slice(-2)+"-"+("0"+d.getDate()).slice(-2)}
+function toast(m){var t=$("#toast");t.textContent=m;t.style.display="block";clearTimeout(toast.t);toast.t=setTimeout(function(){t.style.display="none"},3200)}
+function by(a,id){return a.filter(function(x){return x.id===id})[0]||{}}
+function fmt(h){return(h>12?h-12:h)+":00 "+(h>=12?"PM":"AM")}
+function save(){sv("bap",appts)}
+function isAdmin(){return me&&me.role==="admin"}
+function go(v){view=v;render()}
+function active(a){return a.status==="Pending"||a.status==="Confirmed"}
+/* auto-cancel unpaid holds */
+function sweep(){var ch=false;appts.forEach(function(a){if(a.status==="Pending"&&a.exp<Date.now()){a.status="Cancelled";a.note="Auto-cancelled: unpaid";ch=true}});if(ch)save();return ch}
+setInterval(function(){if(sweep()&&!$(".modal"))render()},30000);
+/* slot logic */
+function slotState(date,h,stid,ignore){
+  var d=new Date(date+"T00:00:00"),now=new Date();
+  if(d.getDay()===0)return"Closed (Sunday)";
+  if(date<iso(now)||(date===iso(now)&&h<=now.getHours()))return"Past";
+  if(blocks.some(function(b){return b.date===date&&b.time===h}))return"Blocked by salon";
+  if(appts.some(function(a){return active(a)&&a.date===date&&a.time===h&&a.stid===stid&&a.id!==ignore}))return"Booked";
+  return"";
+}
+function dayInfo(date){
+  var d=new Date(date+"T00:00:00");
+  if(d.getDay()===0)return"Salon closed on Sundays.";
+  var n=appts.filter(function(a){return active(a)&&a.date===date}).length,bl=blocks.filter(function(b){return b.date===date}).length;
+  var free=0;sty.forEach(function(s){HRS.forEach(function(h){if(!slotState(date,h,s.id))free++})});
+  return n+" booking"+(n===1?"":"s")+" · "+free+" open slot"+(free===1?"":"s")+" across "+sty.length+" stylists · "+bl+" hour"+(bl===1?"":"s")+" blocked · open 10 AM–6 PM";
+}
+function cal(sel,admin){
+  var y=cm.y,m=cm.m,f=new Date(y,m,1).getDay(),n=new Date(y,m+1,0).getDate(),h="",today=iso(new Date());
+  var nm=new Date(y,m,1).toLocaleString("en",{month:"long",year:"numeric"});
+  h='<div class="cal"><div class="row" style="margin-bottom:8px"><button class="sm" onclick="mv(-1)" aria-label="Previous month">‹</button><b>'+nm+'</b><button class="sm" onclick="mv(1)" aria-label="Next month">›</button></div><div class="cg">'+"SMTWTFS".split("").map(function(d){return"<b>"+d+"</b>"}).join("");
+  for(var i=0;i<f;i++)h+="<span></span>";
+  for(var d=1;d<=n;d++){var ds=iso(new Date(y,m,d)),has=appts.some(function(a){return active(a)&&a.date===ds}),dis=!admin&&(ds<today||new Date(y,m,d).getDay()===0);
+    h+='<button class="'+(ds===sel?"on ":"")+(has?"dot":"")+'" '+(dis?"disabled ":"")+'onclick="pick(\''+ds+'\')">'+d+"</button>"}
+  return h+'</div></div><div class="info">'+(sel?"<b>"+sel+"</b><br>"+dayInfo(sel):"Pick a date to see availability.")+"</div>";
+}
+function mv(d){cm.m+=d;if(cm.m<0){cm.m=11;cm.y--}if(cm.m>11){cm.m=0;cm.y++}render()}
+function pick(ds){if(view==="book"){bk.date=ds;bk.time=""}else adm.date=ds;render()}
+
+function render(){
+  sweep();var h="";
+  if(isAdmin())h+=nb("admin","Dashboard");
+  else{h+=nb("home","Services")+nb("book","Book now")+(me?nb("acct","My account"):"")}
+  h+=me?'<button onclick="logout()">Logout ('+esc(me.name)+')</button>':nb("login","Login")+nb("reg","Register");
+  $("#nav").innerHTML=h;
+  var fn={home:home,book:book,acct:acct,login:login,reg:reg,admin:admin,adminlogin:adminLogin}[view];
+  $("#app").innerHTML=fn();
+}
+function nb(v,t){return'<button class="'+(view===v?"on":"")+'" onclick="go(\''+v+'\')">'+t+"</button>"}
+
+/* ---------- Home ---------- */
+function home(){
+  return'<div class="hero"><h1>Your next appointment, booked in a minute</h1><p>Choose a service, pick your stylist and grab a slot that suits you.</p><button class="p" onclick="go(\'book\')">Book an appointment</button></div>'+
+  "<h2>Services</h2><div class=\"grid\">"+svc.map(function(s){return'<div class="card"><div class="ico">'+esc(s.ico)+"</div><h3>"+esc(s.name)+'</h3><div class="tag">'+s.mins+' min</div><div class="price">₹'+s.price+"</div></div>"}).join("")+"</div>"+
+  "<h2>Our stylists</h2><div class=\"grid\">"+sty.map(function(s){return'<div class="card"><div class="ico">'+esc(s.ico)+"</div><h3>"+esc(s.name)+'</h3><div class="tag">'+esc(s.role)+"</div></div>"}).join("")+"</div>"+
+  "<h2>What customers say</h2>"+reviews();
+}
+function reviews(){
+  var l=appts.filter(function(a){return a.rating}).slice(-4).reverse();
+  if(!l.length)return'<div class="empty">No reviews yet. Be the first to share your experience after your visit.</div>';
+  return'<div class="grid">'+l.map(function(a){return'<div class="card"><div class="price">'+"★".repeat(a.rating)+'</div><p>'+esc(a.review||"")+'</p><div class="tag">'+esc(a.uname)+" · "+esc(by(svc,a.sid).name||"")+"</div></div>"}).join("")+"</div>";
+}
+
+/* ---------- Booking ---------- */
+function book(){
+  var h="<h2>Book an appointment</h2><div class=\"step\">1. Choose a service</div><div class=\"grid\">"+svc.map(function(s){return'<button class="card pick '+(bk.sid===s.id?"sel":"")+'" onclick="bk.sid='+s.id+';render()"><span class="ico">'+esc(s.ico)+"</span><br><b>"+esc(s.name)+'</b><div class="tag">'+s.mins+' min · ₹'+s.price+"</div></button>"}).join("")+"</div>";
+  h+='<div class="step">2. Choose a stylist</div><div class="grid">'+sty.map(function(s){return'<button class="card pick '+(bk.stid===s.id?"sel":"")+'" onclick="bk.stid='+s.id+';bk.time=\'\';render()"><span class="ico">'+esc(s.ico)+"</span><br><b>"+esc(s.name)+'</b><div class="tag">'+esc(s.role)+"</div></button>"}).join("")+"</div>";
+  h+='<div class="step">3. Pick a date</div>'+cal(bk.date,false);
+  if(bk.date&&bk.stid){
+    h+='<div class="step">4. Pick a time</div><div class="slots">'+HRS.map(function(t){var s=slotState(bk.date,t,bk.stid);return'<button class="'+(bk.time===t?"on":"")+'" '+(s?"disabled title=\""+s+"\"":"")+' onclick="bk.time='+t+';render()">'+fmt(t)+(s?" ("+s.split(" ")[0].toLowerCase()+")":"")+"</button>"}).join("")+"</div>";
+  }else if(bk.date)h+='<p class="tag">Choose a stylist to see their open times.</p>';
+  if(bk.sid&&bk.stid&&bk.date&&bk.time){
+    var s=by(svc,bk.sid),tot=s.price,due=bk.mode==="deposit"?Math.round(tot*DEP):tot;
+    h+='<div class="step">5. Payment</div><div class="form"><label>Pay<select onchange="bk.mode=this.value;render()"><option value="full"'+(bk.mode==="full"?" selected":"")+'>Full amount (₹'+tot+')</option><option value="deposit"'+(bk.mode==="deposit"?" selected":"")+'>30% deposit (₹'+Math.round(tot*DEP)+")</option></select></label>"+
+    '<label>Method<select onchange="bk.method=this.value">'+["Stripe","PayPal","UPI"].map(function(m){return"<option"+(bk.method===m?" selected":"")+">"+m+"</option>"}).join("")+"</select></label>"+
+    '<div class="info"><b>'+esc(s.name)+"</b> with "+esc(by(sty,bk.stid).name)+"<br>"+bk.date+" at "+fmt(bk.time)+"<br>Due now: <b>₹"+due+'</b></div><p class="tag">Demo only: no real payment is taken. Unpaid holds are cancelled after 15 minutes.</p>'+
+    '<button class="p" onclick="confirmBk(true)">Pay ₹'+due+' &amp; confirm</button><button onclick="confirmBk(false)">Hold slot for 15 min, pay later</button></div>';
+  }
+  return h;
+}
+function confirmBk(paid){
+  if(!me||me.role!=="user"){toast("Please log in to complete your booking");go("login");return}
+  if(slotState(bk.date,bk.time,bk.stid)){toast("That slot was just taken. Pick another time.");return}
+  var s=by(svc,bk.sid),due=bk.mode==="deposit"?Math.round(s.price*DEP):s.price;
+  var a={id:Date.now(),user:me.email,uname:me.name,phone:me.phone||"",sid:bk.sid,stid:bk.stid,date:bk.date,time:bk.time,total:s.price,paid:paid?due:0,method:paid?bk.method:"",status:paid?"Confirmed":"Pending",exp:Date.now()+HOLD};
+  appts.push(a);save();bk={sid:0,stid:0,date:"",time:"",mode:"full",method:"Stripe"};
+  toast(paid?"Booked! Confirmation email sent to "+me.email+". A reminder will follow the day before.":"Slot held for 15 minutes. Pay from My account to confirm.");tab="up";go("acct");
+}
+
+/* ---------- Account ---------- */
+function acct(){
+  var mine=appts.filter(function(a){return a.user===me.email}),today=iso(new Date());
+  var up=mine.filter(function(a){return active(a)&&a.date>=today}).sort(cmp),hist=mine.filter(function(a){return!(active(a)&&a.date>=today)}).sort(cmp).reverse();
+  var h="<h2>My account</h2><div class=\"slots\">"+[["up","Upcoming ("+up.length+")"],["hist","History"],["prof","Personal data"]].map(function(t){return'<button class="'+(tab===t[0]?"on":"")+'" onclick="tab=\''+t[0]+'\';render()">'+t[1]+"</button>"}).join("")+"</div>";
+  if(tab==="prof")return h+'<div class="form"><label>Name<input id="pn" value="'+esc(me.name)+'"></label><label>Phone<input id="pp" inputmode="tel" value="'+esc(me.phone||"")+'"></label><label>Email<input value="'+esc(me.email)+'" disabled></label><button class="p" onclick="saveProf()">Save changes</button></div>';
+  var l=tab==="up"?up:hist;
+  if(!l.length)return h+'<div class="empty">'+(tab==="up"?"No upcoming appointments. Book one from the Book now tab.":"No past appointments yet.")+"</div>";
+  return h+'<div class="grid" style="grid-template-columns:repeat(auto-fill,minmax(280px,1fr))">'+l.map(function(a){return card(a,tab==="up")}).join("")+"</div>";
+}
+function cmp(a,b){return(a.date+("0"+a.time).slice(-2))<(b.date+("0"+b.time).slice(-2))?-1:1}
+function card(a,upc){
+  var h='<div class="card"><div class="row"><b>'+esc(by(svc,a.sid).name||"Service")+'</b><span class="st '+a.status+'">'+a.status+"</span></div><div>"+a.date+" · "+fmt(a.time)+'</div><div class="tag">with '+esc(by(sty,a.stid).name||"")+" · Paid ₹"+a.paid+" of ₹"+a.total+"</div>"+(a.note?'<div class="tag">'+esc(a.note)+"</div>":"");
+  if(upc){
+    if(a.status==="Pending")h+='<div class="tag">Pay within '+Math.max(1,Math.ceil((a.exp-Date.now())/60000))+" min or it will be cancelled.</div>";
+    h+='<div class="slots">'+(a.status==="Pending"?'<button class="p sm" onclick="payNow('+a.id+')">Pay now</button>':"")+'<button class="sm" onclick="rs('+a.id+')">Reschedule</button><button class="sm bad" onclick="cancel('+a.id+')">Cancel</button></div>';
+  }else if(a.status==="Confirmed"||a.status==="Completed"){
+    h+=a.rating?'<div class="price">'+"★".repeat(a.rating)+"</div><div class=\"tag\">"+esc(a.review||"")+"</div>":'<div class="slots"><select id="r'+a.id+'"><option value="5">5 ★</option><option value="4">4 ★</option><option value="3">3 ★</option><option value="2">2 ★</option><option value="1">1 ★</option></select><input id="t'+a.id+'" placeholder="Your feedback"><button class="sm p" onclick="fb('+a.id+')">Send</button></div>';
+  }
+  return h+"</div>";
+}
+function saveProf(){var n=$("#pn").value.trim(),p=$("#pp").value.trim();if(!n){toast("Name can't be empty");return}me.name=n;me.phone=p;sv("bme",me);users.forEach(function(u){if(u.email===me.email){u.name=n;u.phone=p}});sv("bus",users);toast("Details saved");render()}
+function payNow(id){var a=by(appts,id);if(a.exp<Date.now()){sweep();toast("This hold expired and was cancelled");render();return}a.paid=Math.round(a.total*DEP)>a.paid?a.total:a.paid;a.status="Confirmed";a.method="Stripe";save();toast("Payment received. Confirmation email sent.");render()}
+function cancel(id){if(!confirm("Cancel this appointment?"))return;var a=by(appts,id);a.status="Cancelled";a.note="Cancelled";save();toast("Appointment cancelled");render()}
+function fb(id){var a=by(appts,id);a.rating=+$("#r"+id).value;a.review=$("#t"+id).value.trim();save();toast("Thanks for your feedback");render()}
+
+/* reschedule / edit (customer + admin) */
+function rs(id){
+  var a=by(appts,id),m=document.createElement("div");m.className="modal";m.id="m";
+  m.innerHTML='<div class="card"><h3>'+(isAdmin()?"Edit reservation":"Reschedule")+'</h3><div class="form" style="margin-top:10px"><label>Stylist<select id="es" onchange="rt('+id+')">'+sty.map(function(s){return'<option value="'+s.id+'"'+(s.id===a.stid?" selected":"")+">"+esc(s.name)+"</option>"}).join("")+'</select></label><label>Date<input type="date" id="ed" min="'+iso(new Date())+'" value="'+a.date+'" onchange="rt('+id+')"></label><label>Time<select id="et"></select></label><div class="row"><button onclick="$(\'#m\').remove()">Close</button><button class="p" onclick="rsSave('+id+')">Save</button></div></div></div>';
+  m.onclick=function(e){if(e.target===m)m.remove()};document.body.appendChild(m);rt(id);
+}
+function rt(id){var a=by(appts,id),st=+$("#es").value,d=$("#ed").value,o="";
+  HRS.forEach(function(h){var s=d?slotState(d,h,st,id):"x";if(!s)o+='<option value="'+h+'"'+(h===a.time&&d===a.date&&st===a.stid?" selected":"")+">"+fmt(h)+"</option>"});
+  $("#et").innerHTML=o||"<option value=\"\">No open times that day</option>"}
+function rsSave(id){var t=$("#et").value;if(!t){toast("Pick a date with an open time");return}var a=by(appts,id);a.stid=+$("#es").value;a.date=$("#ed").value;a.time=+t;save();$("#m").remove();toast("Appointment updated. Customer notified by email.");render()}
+
+/* ---------- Auth ---------- */
+function reg(){return'<h2>Create account</h2><div class="form" style="margin-top:12px"><label>Name<input id="rn"></label><label>Phone<input id="rph" inputmode="tel"></label><label>Email<input id="re" type="email"></label><label>Password (min 6)<input id="rp" type="password"></label><button class="p" onclick="doReg()">Register</button></div>'}
+function doReg(){var n=$("#rn").value.trim(),p=$("#rph").value.trim(),e=$("#re").value.trim().toLowerCase(),pw=$("#rp").value;
+  if(!n||!/^\S+@\S+\.\S+$/.test(e)||pw.length<6){toast("Enter a name, valid email and 6+ character password");return}
+  if(users.some(function(u){return u.email===e})){toast("That email is already registered. Log in instead.");return}
+  users.push({name:n,phone:p,email:e,pass:pw});sv("bus",users);me={name:n,phone:p,email:e,role:"user"};sv("bme",me);toast("Welcome, "+n);go("book")}
+function login(){return'<h2>Log in</h2><div class="form" style="margin-top:12px"><label>Email<input id="le" type="email"></label><label>Password<input id="lp" type="password"></label><button class="p" onclick="doLogin()">Log in</button><button onclick="go(\'adminlogin\')">Salon staff login</button></div>'}
+function doLogin(){var e=$("#le").value.trim().toLowerCase(),p=$("#lp").value,u=users.filter(function(x){return x.email===e&&x.pass===p})[0];
+  if(!u){toast("Email or password is incorrect");return}me={name:u.name,phone:u.phone,email:u.email,role:"user"};sv("bme",me);go(bk.time?"book":"acct")}
+function adminLogin(){return'<h2>Salon staff login</h2><div class="form" style="margin-top:12px"><label>Username<input id="au" value="admin"></label><label>Password<input id="ap" type="password"></label><p class="tag">Demo credentials: admin / admin123</p><button class="p" onclick="doAdmin()">Log in</button></div>'}
+function doAdmin(){if($("#au").value==="admin"&&$("#ap").value==="admin123"){me={name:"Manager",email:"admin",role:"admin"};sv("bme",me);go("admin")}else toast("Wrong staff credentials")}
+function logout(){me=null;sv("bme",null);go("home")}
+
+/* ---------- Admin ---------- */
+function admin(){
+  var T=[["up","Upcoming"],["cal","Calendar"],["add","Add reservation"],["cat","Services & stylists"],["fb","Feedback"]];
+  var h="<h2>Salon dashboard</h2><div class=\"slots\">"+T.map(function(t){return'<button class="'+(atab===t[0]?"on":"")+'" onclick="atab=\''+t[0]+'\';render()">'+t[1]+"</button>"}).join("")+"</div>";
+  return h+({up:aUp,cal:aCal,add:aAdd,cat:aCat,fb:aFb}[atab])();
+}
+function aRows(l){
+  if(!l.length)return'<div class="empty">No reservations to show.</div>';
+  return'<div class="tw"><table><tr><th>When</th><th>Customer</th><th>Service</th><th>Payment</th><th>Status</th><th>Actions</th></tr>'+l.map(function(a){
+    var ph=esc(a.phone||"");return"<tr><td>"+a.date+"<br>"+fmt(a.time)+"<div class=\"tag\">"+esc(by(sty,a.stid).name||"")+"</div></td><td>"+esc(a.uname)+'<div class="tag">'+(ph||"No phone")+"</div></td><td>"+esc(by(svc,a.sid).name||"")+"</td><td>₹"+a.paid+" / ₹"+a.total+'<div class="tag">'+esc(a.method||"")+'</div></td><td><span class="st '+a.status+'">'+a.status+"</span></td><td>"+
+    (active(a)?'<button class="sm" onclick="rs('+a.id+')">Edit</button> <button class="sm bad" onclick="cancel('+a.id+')">Cancel</button> ':"")+(ph?'<a class="btn sm" href="tel:'+ph+'">Call</a> <a class="btn sm" href="sms:'+ph+'">SMS</a>':"")+"</td></tr>"}).join("")+"</table></div>";
+}
+function aUp(){var t=iso(new Date());return aRows(appts.filter(function(a){return active(a)&&a.date>=t}).sort(cmp))}
+function aCal(){
+  var d=adm.date,l=appts.filter(function(a){return a.date===d}).sort(cmp);
+  var h='<div class="row" style="align-items:flex-start;gap:20px"><div>'+cal(d,true)+"</div><div style=\"flex:1;min-width:260px\"><h3>Block hours on "+d+"</h3><p class=\"tag\">Blocked hours are unavailable to every customer.</p><div class=\"slots\">"+HRS.map(function(t){var b=blocks.some(function(x){return x.date===d&&x.time===t});return'<button class="'+(b?"on":"")+'" onclick="blk(\''+d+"',"+t+')">'+fmt(t)+(b?" (blocked)":"")+"</button>"}).join("")+"</div></div></div><h3 style=\"margin-top:16px\">Reservations on "+d+"</h3>"+aRows(l);
+  return h;
+}
+function blk(d,t){var i=-1;blocks.forEach(function(b,k){if(b.date===d&&b.time===t)i=k});if(i>-1)blocks.splice(i,1);else blocks.push({date:d,time:t});sv("bbl",blocks);render()}
+function aAdd(){
+  return'<div class="form"><label>Customer name<input id="nn"></label><label>Phone<input id="np" inputmode="tel"></label><label>Service<select id="ns">'+svc.map(function(s){return'<option value="'+s.id+'">'+esc(s.name)+" (₹"+s.price+")</option>"}).join("")+'</select></label><label>Stylist<select id="nst" onchange="nt()">'+sty.map(function(s){return'<option value="'+s.id+'">'+esc(s.name)+"</option>"}).join("")+'</select></label><label>Date<input type="date" id="nd" min="'+iso(new Date())+'" onchange="nt()"></label><label>Time<select id="nti"><option value="">Pick a date first</option></select></label><button class="p" onclick="addRes()">Add reservation</button></div>';
+}
+function nt(){var d=$("#nd").value,st=+$("#nst").value,o="";HRS.forEach(function(h){if(d&&!slotState(d,h,st))o+='<option value="'+h+'">'+fmt(h)+"</option>"});$("#nti").innerHTML=o||'<option value="">No open times that day</option>'}
+function addRes(){var n=$("#nn").value.trim(),t=$("#nti").value;if(!n||!$("#nd").value||!t){toast("Enter a name, date and an open time");return}
+  var s=by(svc,+$("#ns").value);appts.push({id:Date.now(),user:"walkin",uname:n,phone:$("#np").value.trim(),sid:s.id,stid:+$("#nst").value,date:$("#nd").value,time:+t,total:s.price,paid:0,method:"At salon",status:"Confirmed",exp:0});save();toast("Reservation added");atab="up";render()}
+function aCat(){
+  return"<h3>Services</h3>"+'<div class="slots"><input id="sn" placeholder="Service name"><input id="sp" type="number" min="1" placeholder="Price ₹" style="width:110px"><input id="sm" type="number" min="5" placeholder="Minutes" style="width:110px"><button class="p" onclick="addSv()">Add service</button></div><div class="tw"><table><tr><th>Service</th><th>Price</th><th>Time</th><th></th></tr>'+svc.map(function(s){return"<tr><td>"+esc(s.ico)+" "+esc(s.name)+"</td><td>₹"+s.price+"</td><td>"+s.mins+' min</td><td><button class="sm bad" onclick="svc=svc.filter(function(x){return x.id!=='+s.id+'});sv(\'bsv\',svc);render()">Delete</button></td></tr>'}).join("")+"</table></div>"+
+  '<h3 style="margin-top:20px">Stylists &amp; schedules</h3><div class="slots"><input id="tn" placeholder="Stylist name"><input id="tr" placeholder="Role"><button class="p" onclick="addSt()">Add stylist</button></div><div class="tw"><table><tr><th>Stylist</th><th>Role</th><th></th></tr>'+sty.map(function(s){return"<tr><td>"+esc(s.ico)+" "+esc(s.name)+"</td><td>"+esc(s.role)+'</td><td><button class="sm bad" onclick="sty=sty.filter(function(x){return x.id!=='+s.id+'});sv(\'bst\',sty);render()">Delete</button></td></tr>'}).join("")+'</table></div><p class="tag">Use the Calendar tab to lock out hours for a given day.</p>';
+}
+function addSv(){var n=$("#sn").value.trim(),p=+$("#sp").value,m=+$("#sm").value;if(!n||!(p>0)||!(m>0)){toast("Enter a name, price and minutes");return}svc.push({id:Date.now(),name:n,price:p,mins:m,ico:"💆"});sv("bsv",svc);render()}
+function addSt(){var n=$("#tn").value.trim();if(!n){toast("Enter a stylist name");return}sty.push({id:Date.now(),name:n,role:$("#tr").value.trim()||"Stylist",ico:"🧑"});sv("bst",sty);render()}
+function aFb(){var l=appts.filter(function(a){return a.rating});if(!l.length)return'<div class="empty">No customer feedback yet.</div>';return'<div class="grid">'+l.map(function(a){return'<div class="card"><div class="price">'+"★".repeat(a.rating)+"</div><p>"+esc(a.review||"")+'</p><div class="tag">'+esc(a.uname)+" · "+esc(by(svc,a.sid).name||"")+" · "+a.date+"</div></div>"}).join("")+"</div>"}
+render();
+</script>
+</body>
+</html>

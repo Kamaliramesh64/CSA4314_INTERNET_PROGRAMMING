@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"><title>GoBus – Online Bus Ticket Booking</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<style>
+:root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);--bg:#f5f6fa;--card:#fff;--tx:#1b1f2a;--mu:#6b7280;--pr:#d93f3f;--bd:#e3e5ec;--ok:#1f9d55;--seat:#e9ecf3}
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#13151b;--card:#1c1f28;--tx:#eceef4;--mu:#9aa1b2;--pr:#ef5b5b;--bd:#2d3140;--ok:#3ecf7e;--seat:#2b2f3d;color-scheme:dark}}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*,*:before{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--tx);font:15px/1.5 system-ui,-apple-system,"Segoe UI",sans-serif}
+header{background:var(--card);border-bottom:1px solid var(--bd);padding:10px 16px;display:flex;flex-wrap:wrap;gap:8px;align-items:center;position:sticky;top:env(safe-area-inset-top,0px);z-index:5}
+header b{font-size:19px;color:var(--pr);margin-right:auto;cursor:pointer}
+nav{display:flex;flex-wrap:wrap;gap:6px}
+button,.btn{font:inherit;border:1px solid var(--bd);background:var(--card);color:var(--tx);padding:7px 13px;border-radius:8px;cursor:pointer}
+button.p{background:var(--pr);border-color:var(--pr);color:#fff}
+button.s{padding:4px 9px;font-size:13px}
+main{max-width:920px;margin:0 auto;padding:16px}
+.card{background:var(--card);border:1px solid var(--bd);border-radius:12px;padding:16px;margin-bottom:14px}
+.row{display:flex;flex-wrap:wrap;gap:10px;align-items:end}.row>*{flex:1 1 140px}
+label{display:block;font-size:13px;color:var(--mu);margin-bottom:3px}
+input,select,textarea{width:100%;font:inherit;padding:8px 10px;border:1px solid var(--bd);border-radius:8px;background:var(--bg);color:var(--tx)}
+h2,h3{margin:0 0 10px}.mu{color:var(--mu);font-size:13px}
+.tag{display:inline-block;background:var(--seat);border-radius:99px;padding:1px 10px;font-size:12px}
+.bus{display:flex;flex-wrap:wrap;gap:10px;justify-content:space-between;align-items:center}
+.ok{color:var(--ok)}.bad{color:var(--pr)}
+.seats{display:grid;grid-template-columns:repeat(5,44px);gap:8px;justify-content:center;margin:12px 0}
+.seat{height:40px;padding:0;background:var(--seat);border-radius:8px 8px 4px 4px}
+.seat.t{background:var(--ok);color:#fff;border-color:var(--ok)}.seat.x{opacity:.35;cursor:not-allowed}.gap{visibility:hidden}
+.wrap{overflow-x:auto}table{border-collapse:collapse;width:100%}td,th{padding:7px 9px;border-bottom:1px solid var(--bd);text-align:left;font-size:14px;white-space:nowrap}
+.toast{position:fixed;left:12px;right:12px;bottom:calc(12px + env(safe-area-inset-bottom,0px));max-width:520px;margin:auto;background:var(--tx);color:var(--bg);padding:12px 16px;border-radius:10px;z-index:9;font-size:14px}
+</style></head><body>
+<header><b onclick="go('home')">🚌 GoBus</b><nav id="nav"></nav></header>
+<main id="app"></main><div id="toast"></div>
+<script>
+const $=s=>document.querySelector(s),esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const today=new Date().toISOString().slice(0,10);
+const seed=()=>({cats:['Volvo','Sleeper Coach','Coach'],
+buses:[{id:1,name:'Cauvery Express',cat:'Volvo',from:'Trichy',to:'Chennai',time:'06:30',price:550,seats:20,desc:'AC multi-axle, charging points'},
+{id:2,name:'Night Rider',cat:'Sleeper Coach',from:'Trichy',to:'Bangalore',time:'21:00',price:850,seats:20,desc:'AC sleeper, blankets provided'},
+{id:3,name:'City Link',cat:'Coach',from:'Trichy',to:'Madurai',time:'14:15',price:220,seats:20,desc:'Non-AC semi-luxury coach'},
+{id:4,name:'Marina Star',cat:'Volvo',from:'Chennai',to:'Trichy',time:'18:45',price:560,seats:20,desc:'AC multi-axle, evening service'}],
+users:[{id:1,name:'Admin',email:'admin@gobus.com',pw:'admin123',role:'admin'}],bookings:[],comments:[],news:['Welcome to GoBus – book in under a minute!'],nid:10});
+let db,me=null,v={name:'home'},hold=null;
+try{db=JSON.parse(localStorage.getItem('gobus'))}catch(e){}if(!db)db=seed();
+try{me=JSON.parse(sessionStorage.getItem('gobusme'))}catch(e){}
+const save=()=>{try{localStorage.setItem('gobus',JSON.stringify(db));sessionStorage.setItem('gobusme',JSON.stringify(me))}catch(e){}};
+const toast=m=>{$('#toast').innerHTML='<div class="toast">'+m+'</div>';setTimeout(()=>$('#toast').innerHTML='',6000)};
+const go=(n,x={})=>{v={name:n,...x};render();scrollTo(0,0)};
+const booked=(bid,d)=>db.bookings.filter(b=>b.bus==bid&&b.date==d&&b.status=='Confirmed').flatMap(b=>b.seats.map(s=>s));
+const busOf=id=>db.buses.find(b=>b.id==id)||{name:'(removed)'};
+const val=id=>document.getElementById(id).value.trim();
+function nav(){let h='<button onclick="go(\'home\')">Home</button>';
+if(!me)h+='<button onclick="go(\'login\')">Login</button><button class="p" onclick="go(\'reg\')">Register</button>';
+else{h+=me.role=='admin'?'<button onclick="go(\'admin\')">Admin panel</button>':'<button onclick="go(\'dash\')">My dashboard</button>';h+='<button onclick="out()">Logout ('+esc(me.name.split(' ')[0])+')</button>'}
+$('#nav').innerHTML=h}
+function out(){me=null;save();go('home')}
+function render(){nav();const f={home,login,reg,dash,book,admin,forgot}[v.name];$('#app').innerHTML=f();}
+function home(){const q=v.q||{};
+return `<div class="card"><h2>Find your bus</h2><div class="row"><div><label>From</label><input id="f" value="${esc(q.f||'')}" list="locs" placeholder="e.g. Trichy"></div><div><label>To</label><input id="t" value="${esc(q.t||'')}" list="locs" placeholder="e.g. Chennai"></div><div><label>Date</label><input type="date" id="d" min="${today}" value="${q.d||today}"></div><div><label>Time</label><select id="tm"><option value="">Any</option><option ${q.tm=='m'?'selected':''} value="m">Morning (before 12)</option><option ${q.tm=='a'?'selected':''} value="a">Afternoon (12–17)</option><option ${q.tm=='e'?'selected':''} value="e">Evening/Night (17+)</option></select></div><button class="p" onclick="search()">Search</button></div>
+<datalist id="locs">${[...new Set(db.buses.flatMap(b=>[b.from,b.to]))].map(l=>`<option value="${esc(l)}">`).join('')}</datalist></div>
+${db.news.length?`<p class="mu">📰 ${esc(db.news[db.news.length-1])}</p>`:''}
+${v.q?results(q):'<p class="mu">Search by route, date and time to see available buses and seats.</p>'}`}
+function search(){go('home',{q:{f:val('f'),t:val('t'),d:val('d')||today,tm:val('tm')}})}
+function results(q){const L=db.buses.filter(b=>(!q.f||b.from.toLowerCase().includes(q.f.toLowerCase()))&&(!q.t||b.to.toLowerCase().includes(q.t.toLowerCase()))&&(!q.tm||(h=>q.tm=='m'?h<12:q.tm=='a'?h>=12&&h<17:h>=17)(+b.time.slice(0,2))));
+if(!L.length)return '<div class="card">No buses match this search.</div>';
+return L.map(b=>{const left=b.seats-booked(b.id,q.d).length;return `<div class="card"><div class="bus"><div><h3>${esc(b.name)} <span class="tag">${esc(b.cat)}</span></h3><div>${esc(b.from)} → ${esc(b.to)} · departs ${esc(b.time)}</div><div class="mu">${esc(b.desc)}</div></div><div style="text-align:right"><b>₹${b.price}</b><div class="${left?'ok':'bad'}">${left} seats left</div><button class="p" ${left?'':'disabled'} onclick="go('book',{bus:${b.id},date:'${q.d}',sel:[],step:1})">Select seats</button></div></div>${comments(b.id)}</div>`}).join('')}
+function comments(id){const c=db.comments.filter(x=>x.bus==id);return `<details style="margin-top:10px"><summary class="mu">💬 Comments (${c.length})</summary>${c.map(x=>`<p><b>${esc(x.user)}</b>: ${esc(x.text)}</p>`).join('')}${me?`<div class="row"><input id="cm${id}" placeholder="Write a comment"><button class="s" onclick="addC(${id})">Post</button></div>`:'<p class="mu">Log in to comment.</p>'}</details>`}
+function addC(id){const t=val('cm'+id);if(!t)return;db.comments.push({bus:id,user:me.name,text:t});save();render()}
+function login(){return `<div class="card" style="max-width:420px;margin:auto"><h2>Login</h2><label>Email</label><input id="e"><br><br><label>Password</label><input id="p" type="password"><br><br><button class="p" onclick="doLogin()">Login</button> <button onclick="go('reg')">Register</button> <button onclick="go('forgot')">Forgot password?</button><p class="mu">Demo admin: admin@gobus.com / admin123</p></div>`}
+function doLogin(){const u=db.users.find(u=>u.email==val('e').toLowerCase()&&u.pw==val('p'));if(!u)return toast('Invalid email or password');me=u;save();go(u.role=='admin'?'admin':'dash')}
+function reg(){return `<div class="card" style="max-width:420px;margin:auto"><h2>Create account</h2><label>Full name</label><input id="n"><br><br><label>Email</label><input id="e"><br><br><label>Password (min 6)</label><input id="p" type="password"><br><br><button class="p" onclick="doReg()">Register</button></div>`}
+function doReg(){const n=val('n'),e=val('e').toLowerCase(),p=val('p');if(!n||!/\S+@\S+\.\S+/.test(e)||p.length<6)return toast('Enter a name, valid email and 6+ character password');if(db.users.some(u=>u.email==e))return toast('Email already registered');me={id:Date.now(),name:n,email:e,pw:p,role:'user'};db.users.push(me);save();toast('Welcome, '+esc(n)+'!');go('dash')}
+function forgot(){return `<div class="card" style="max-width:420px;margin:auto"><h2>Reset password</h2><label>Registered email</label><input id="e"><br><br><label>New password</label><input id="p" type="password"><br><br><button class="p" onclick="doForgot()">Reset</button><p class="mu">Demo only: a real system would email a reset link.</p></div>`}
+function doForgot(){const u=db.users.find(u=>u.email==val('e').toLowerCase());if(!u||val('p').length<6)return toast('Unknown email or password too short');u.pw=val('p');save();toast('Password updated. Please log in.');go('login')}
+function book(){if(!me){return `<div class="card">Please <a href="#" onclick="go('login');return false">log in</a> or <a href="#" onclick="go('reg');return false">register</a> to book.</div>`}
+const b=busOf(v.bus),taken=booked(b.id,v.date);
+if(v.step==1){let g='';for(let i=1;i<=b.seats;i++){const c=(i-1)%4;if(c==2)g+='<span class="gap"></span>';const x=taken.includes(i),t=v.sel.includes(i);g+=`<button class="seat ${x?'x':''} ${t?'t':''}" ${x?'disabled':''} onclick="pick(${i})">${i}</button>`;}
+return `<div class="card"><h2>${esc(b.name)} · ${v.date}</h2><div class="mu">${esc(b.from)} → ${esc(b.to)} at ${esc(b.time)} · tap seats to select (greyed = booked)</div><div class="seats">${g}</div><p>Selected: <b>${v.sel.join(', ')||'none'}</b> · Total <b>₹${v.sel.length*b.price}</b></p><button onclick="go('home')">Back</button> <button class="p" ${v.sel.length?'':'disabled'} onclick="go('book',{...v,step:2})">Continue</button></div>`}
+if(v.step==2)return `<div class="card"><h2>Passenger details</h2>${v.sel.map((s,i)=>`<div class="row"><div><label>Seat ${s} – name</label><input id="pn${i}"></div><div><label>Age</label><input id="pa${i}" type="number" min="1" max="110"></div></div><br>`).join('')}<button onclick="go('book',{...v,step:1})">Back</button> <button class="p" onclick="toPay()">Proceed to payment</button></div>`;
+return `<div class="card"><h2>Secure payment</h2><p>Amount: <b>₹${v.sel.length*b.price}</b> <span class="mu">(demo gateway – no real charge)</span></p><div class="row"><div><label>Card number</label><input id="cn" inputmode="numeric" placeholder="4242 4242 4242 4242"></div><div><label>Expiry</label><input id="ce" placeholder="MM/YY"></div><div><label>CVV</label><input id="cv" type="password" maxlength="4"></div></div><br><button onclick="go('book',{...v,step:2})">Back</button> <button class="p" onclick="pay()">Pay ₹${v.sel.length*b.price}</button></div>`}
+function pick(i){const s=v.sel,k=s.indexOf(i);k>=0?s.splice(k,1):s.length<6?s.push(i):toast('Max 6 seats per booking');render()}
+function toPay(){const ps=v.sel.map((s,i)=>({seat:s,name:val('pn'+i),age:val('pa'+i)}));if(ps.some(p=>!p.name||!p.age))return toast('Fill in all passenger details');go('book',{...v,ps,step:3})}
+function pay(){if(val('cn').replace(/\s/g,'').length<12||!/^\d\d\/\d\d$/.test(val('ce'))||val('cv').length<3)return toast('Enter valid demo card details');
+const b=busOf(v.bus);if(v.sel.some(s=>booked(b.id,v.date).includes(s))){toast('Sorry, a seat was just taken. Pick again.');return go('book',{...v,sel:[],step:1})}
+const bk={id:'GB'+(db.nid++),user:me.id,bus:b.id,date:v.date,seats:v.sel,ps:v.ps,amount:v.sel.length*b.price,status:'Confirmed',at:new Date().toLocaleString()};db.bookings.push(bk);save();
+toast('✉️ Confirmation email sent to '+esc(me.email)+' – Booking '+bk.id+', seats '+bk.seats.join(', '));go('dash')}
+function dash(){if(!me)return login();const m=db.bookings.filter(b=>b.user==me.id).reverse();
+return `<div class="card"><h2>My bookings</h2>${m.length?'<div class="wrap"><table><tr><th>ID</th><th>Bus</th><th>Date</th><th>Seats</th><th>Paid</th><th>Status</th><th></th></tr>'+m.map(b=>`<tr><td>${b.id}</td><td>${esc(busOf(b.bus).name)}</td><td>${b.date}</td><td>${b.seats.join(', ')}</td><td>₹${b.amount}</td><td class="${b.status=='Confirmed'?'ok':'bad'}">${b.status}</td><td>${b.status=='Confirmed'?`<button class="s" onclick="cancel('${b.id}')">Cancel</button>`:''}</td></tr>`).join('')+'</table></div>':'<p class="mu">No bookings yet. Search for a bus on the Home page.</p>'}</div>
+<div class="card"><h3>Change password</h3><div class="row"><input id="np" type="password" placeholder="New password (6+)"><button onclick="chpw()">Update</button></div></div>`}
+function cancel(id){if(!confirm('Cancel booking '+id+'?'))return;db.bookings.find(b=>b.id==id).status='Cancelled';save();toast('Booking '+id+' cancelled. Refund initiated (demo).');render()}
+function chpw(){if(val('np').length<6)return toast('Password too short');const u=db.users.find(u=>u.id==me.id);u.pw=me.pw=val('np');save();toast('Password changed')}
+function admin(){if(!me||me.role!='admin')return login();const tab=v.tab||'buses',T=(k,l)=>`<button class="${tab==k?'p':''}" onclick="go('admin',{tab:'${k}'})">${l}</button> `;
+let h=`<div class="card"><h2>Admin panel</h2>${T('buses','Buses')}${T('cats','Categories')}${T('users','Users')}${T('bookings','Bookings')}${T('news','News & comments')}${T('report','Report')}</div>`;
+if(tab=='buses')h+=`<div class="card"><h3>${v.edit?'Update':'Add'} bus</h3>${busForm(db.buses.find(b=>b.id==v.edit)||{})}</div><div class="card wrap"><table><tr><th>Name</th><th>Category</th><th>Route</th><th>Time</th><th>Fare</th><th>Seats</th><th></th></tr>${db.buses.map(b=>`<tr><td>${esc(b.name)}</td><td>${esc(b.cat)}</td><td>${esc(b.from)}→${esc(b.to)}</td><td>${esc(b.time)}</td><td>₹${b.price}</td><td>${b.seats}</td><td><button class="s" onclick="go('admin',{tab:'buses',edit:${b.id}})">Edit</button> <button class="s" onclick="delBus(${b.id})">Delete</button></td></tr>`).join('')}</table></div>`;
+if(tab=='cats')h+=`<div class="card"><h3>Bus categories</h3><p>${db.cats.map(c=>`<span class="tag">${esc(c)} <a href="#" onclick="delCat('${esc(c)}');return false">✕</a></span> `).join('')}</p><div class="row"><input id="nc" placeholder="e.g. Volvo, Sleeper coach"><button class="p" onclick="addCat()">Add category</button></div></div>`;
+if(tab=='users')h+=`<div class="card wrap"><table><tr><th>Name</th><th>Email</th><th>Role</th><th></th></tr>${db.users.map(u=>`<tr><td>${esc(u.name)}</td><td>${esc(u.email)}</td><td>${u.role}</td><td>${u.role=='admin'?'':`<button class="s" onclick="delUser(${u.id})">Remove</button>`}</td></tr>`).join('')}</table></div>`;
+if(tab=='bookings')h+=`<div class="card wrap"><table><tr><th>ID</th><th>User</th><th>Bus</th><th>Date</th><th>Seats</th><th>₹</th><th>Status</th></tr>${db.bookings.map(b=>`<tr><td>${b.id}</td><td>${esc((db.users.find(u=>u.id==b.user)||{}).name)}</td><td>${esc(busOf(b.bus).name)}</td><td>${b.date}</td><td>${b.seats.join(', ')}</td><td>${b.amount}</td><td>${b.status}</td></tr>`).join('')||'<tr><td>No bookings yet</td></tr>'}</table></div>`;
+if(tab=='news')h+=`<div class="card"><h3>News</h3><div class="row"><input id="nw" placeholder="Announcement"><button class="p" onclick="db.news.push(val('nw'));save();render()">Post</button></div>${db.news.map(n=>`<p>• ${esc(n)}</p>`).join('')}</div><div class="card"><h3>Comments</h3>${db.comments.map((c,i)=>`<p><b>${esc(c.user)}</b> on ${esc(busOf(c.bus).name)}: ${esc(c.text)} <button class="s" onclick="db.comments.splice(${i},1);save();render()">Delete</button></p>`).join('')||'<p class="mu">None yet.</p>'}</div>`;
+if(tab=='report'){const ok=db.bookings.filter(b=>b.status=='Confirmed'),rev=ok.reduce((a,b)=>a+b.amount,0);
+h+=`<div class="card"><h3>Report</h3><p>Users: <b>${db.users.length-1}</b> · Buses: <b>${db.buses.length}</b> · Confirmed bookings: <b>${ok.length}</b> · Cancelled: <b>${db.bookings.length-ok.length}</b> · Revenue: <b>₹${rev}</b></p><div class="wrap"><table><tr><th>Bus</th><th>Bookings</th><th>Seats sold</th><th>Revenue</th></tr>${db.buses.map(b=>{const x=ok.filter(k=>k.bus==b.id);return `<tr><td>${esc(b.name)}</td><td>${x.length}</td><td>${x.reduce((a,k)=>a+k.seats.length,0)}</td><td>₹${x.reduce((a,k)=>a+k.amount,0)}</td></tr>`}).join('')}</table></div><br><button onclick="print()">Print / save report</button></div>`}
+return h}
+function busForm(b){return `<div class="row"><div><label>Name</label><input id="bn" value="${esc(b.name)}"></div><div><label>Category</label><select id="bc">${db.cats.map(c=>`<option ${b.cat==c?'selected':''}>${esc(c)}</option>`).join('')}</select></div><div><label>From</label><input id="bf" value="${esc(b.from)}"></div><div><label>To</label><input id="bt" value="${esc(b.to)}"></div><div><label>Departure</label><input id="bh" type="time" value="${esc(b.time||'08:00')}"></div><div><label>Fare ₹</label><input id="bp" type="number" value="${b.price||''}"></div></div><br><label>Description</label><input id="bd" value="${esc(b.desc)}"><br><br><button class="p" onclick="saveBus(${b.id||0})">${b.id?'Update':'Add'} bus</button> ${b.id?`<button onclick="go('admin',{tab:'buses'})">Cancel</button>`:''} <span class="mu">20 seats per bus in this demo</span>`}
+function saveBus(id){const o={name:val('bn'),cat:val('bc'),from:val('bf'),to:val('bt'),time:val('bh'),price:+val('bp'),desc:val('bd'),seats:20};if(!o.name||!o.from||!o.to||!o.price)return toast('Fill name, route and fare');
+if(id)Object.assign(db.buses.find(b=>b.id==id),o);else db.buses.push({id:Date.now(),...o});save();go('admin',{tab:'buses'})}
+function delBus(id){if(confirm('Delete this bus?')){db.buses=db.buses.filter(b=>b.id!=id);save();render()}}
+function addCat(){const c=val('nc');if(c&&!db.cats.includes(c)){db.cats.push(c);save();render()}}
+function delCat(c){db.cats=db.cats.filter(x=>x!=c);save();render()}
+function delUser(id){if(confirm('Remove this user?')){db.users=db.users.filter(u=>u.id!=id);save();render()}}
+render();
+</script></body></html>
